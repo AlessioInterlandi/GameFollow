@@ -1,0 +1,21 @@
+{
+  "name": "rispondi-recensioni",
+  "version": "0.1.0",
+  "description": "Micro-SaaS: risposte alle recensioni Google generate con AI",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "seed": "node src/db/seed.js",
+    "test": "node src/db/seed.js && node test/api.test.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^13.0.2",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0"
+  },
+  "type": "module"
+}

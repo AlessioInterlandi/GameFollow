@@ -1,0 +1,36 @@
+-- Schema per PostgreSQL/Supabase.
+-- Da incollare una volta sola nel SQL Editor della dashboard.
+--
+-- Differenze rispetto a SQLite:
+--   INTEGER PRIMARY KEY AUTOINCREMENT  ->  BIGSERIAL PRIMARY KEY  (o UUID)
+--   TEXT con datetime('now')           ->  TIMESTAMPTZ DEFAULT now()
+--   INTEGER usato come booleano        ->  BOOLEAN
+--   niente virgolette doppie sui nomi: PostgreSQL abbassa tutto a minuscolo
+--
+-- Tabelle: organizations, users, reviews  (stessi campi della versione SQLite)
+-- Indice su reviews(org_id, status): resta la query piu' frequente.
+--
+--
+-- ROW LEVEL SECURITY
+--
+-- Attiva RLS su OGNI tabella che contiene dati di un cliente:
+--   ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
+--
+-- Senza questa riga, chiunque abbia la chiave anon legge tutto.
+-- E' l'errore piu' comune di chi inizia con Supabase.
+--
+-- La policy deve confrontare org_id con l'organizzazione dell'utente
+-- letta DA UNA TABELLA, non da un campo del token:
+--
+--   CREATE POLICY "solo la propria organizzazione" ON reviews
+--     FOR ALL USING (
+--       org_id = (SELECT org_id FROM users WHERE auth_id = auth.uid())
+--     );
+--
+-- Perche' non usare i metadata del JWT: alcuni campi sono modificabili
+-- dall'utente stesso. Se ci basi l'autorizzazione, un cliente puo'
+-- dichiararsi parte di un'altra organizzazione.
+--
+-- Nota: la service_role key IGNORA tutte queste policy.
+-- Il tuo backend la usa, quindi le RLS sono una seconda rete di sicurezza,
+-- non la prima. La prima resta il filtro org_id nelle query.

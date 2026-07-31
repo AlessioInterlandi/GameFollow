@@ -1,0 +1,18 @@
+-- Definizione delle tabelle.
+--
+-- organizations : l'azienda cliente. E' questa l'unita' che paga.
+--   id, name, plan, google_connected, tone, auto_send, created_at
+--
+-- users : chi accede. Ogni utente appartiene a una organization.
+--   id, org_id, email (unica), password_hash, created_at
+--
+-- reviews : le recensioni scaricate da Google.
+--   id, org_id, author, rating, text, review_date,
+--   status, draft_reply, published_reply, created_at
+--
+-- Stati previsti per status:
+--   da_generare -> da_approvare -> pubblicata     (oppure: ignorata)
+--
+-- Nota: org_id compare in ogni tabella che contiene dati di un cliente.
+-- E' la colonna che tiene separati i clienti tra loro.
+-- Aggiungi un indice su (org_id, status): e' la query piu' frequente.
