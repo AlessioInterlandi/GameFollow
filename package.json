@@ -1,7 +1,7 @@
 {
-  "name": "rispondi-recensioni",
+  "name": "assistai",
   "version": "0.1.0",
-  "description": "Micro-SaaS: risposte alle recensioni Google generate con AI",
+  "description": "AssistAI — micro-SaaS multi-tenant: risposte alle recensioni Google generate con AI",
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",

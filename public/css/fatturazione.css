@@ -1,0 +1,170 @@
+:root{
+  --bg:#fbfaf9; --surface:#fff; --border:#e8e4df;
+  --text:#1c1a18; --muted:#6d6660;
+  --accent:#f59e0b; --accent-soft:#fef3c7;
+  --ok:#15803d; --ok-soft:#dcfce7;
+  --warn:#b45309; --warn-soft:#fef3c7;
+  --danger:#b42318;
+  --dark-bg:#18181b; --dark-text:#fafaf9; --dark-muted:#a8a29e;
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- barra in alto ---------- */
+.topbar{
+  background:var(--dark-bg); color:var(--dark-text);
+  padding:14px 22px; display:flex; align-items:center; justify-content:space-between;
+}
+.logo{font-weight:600;font-size:1.05rem}
+.logo span{color:var(--accent)}
+.org{color:var(--dark-muted);font-size:.9rem;margin-left:10px}
+.topbar a{color:var(--dark-muted);font-size:.9rem;text-decoration:none}
+.topbar a:hover{color:var(--dark-text)}
+
+/* ---------- menu account ---------- */
+.account-menu{position:relative}
+.avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:#412402;color:#FAC775;
+  font-size:.75rem;font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+  border:none;cursor:pointer;padding:0;font-family:inherit;
+}
+.dropdown{
+  position:absolute;top:calc(100% + 8px);right:0;min-width:170px;
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  box-shadow:0 6px 20px rgba(0,0,0,.15);padding:6px;z-index:20;
+}
+.dropdown[hidden]{display:none}
+.dropdown a{display:block;padding:8px 10px;border-radius:6px;font-size:.9rem;color:var(--text);text-decoration:none}
+.dropdown a:hover{background:var(--bg)}
+
+.wrap{max-width:720px;margin:0 auto;padding:26px 22px}
+
+h1{font-size:1.5rem;font-weight:600;letter-spacing:-.01em;margin-bottom:22px}
+h2{font-size:1.1rem;font-weight:600;margin-bottom:4px}
+.hint{font-size:.88rem;color:var(--muted);margin-bottom:12px}
+section{margin-bottom:32px}
+
+/* ---------- piano attuale ---------- */
+.piano{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:20px;
+}
+.piano-testa{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:14px;flex-wrap:wrap;
+}
+.piano-nome{font-size:1.05rem;font-weight:600}
+.piano-prezzo{font-size:2rem;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.piano-prezzo span{font-size:.95rem;font-weight:400;color:var(--muted)}
+
+.badge{
+  display:inline-block;font-size:.78rem;font-weight:600;
+  padding:3px 10px;border-radius:99px;
+  background:var(--ok-soft);color:var(--ok);
+}
+.badge.attesa{background:var(--warn-soft);color:var(--warn)}
+.badge.fallito{background:#fee4e2;color:var(--danger)}
+
+.piano-righe{
+  margin-top:18px;padding-top:16px;border-top:1px solid var(--border);
+}
+.riga{
+  display:flex;justify-content:space-between;gap:12px;
+  padding:7px 0;font-size:.94rem;
+}
+.riga .k{color:var(--muted)}
+.riga .v{font-weight:500;text-align:right}
+
+/* ---------- metodo di pagamento ---------- */
+.carta{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;flex-wrap:wrap;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:16px 18px;
+}
+.carta-dati{display:flex;align-items:center;gap:14px}
+.carta-icona{
+  width:44px;height:30px;border-radius:5px;
+  background:var(--text);color:#fff;
+  font-size:.62rem;font-weight:700;letter-spacing:.5px;
+  display:flex;align-items:center;justify-content:center;
+}
+.carta-num{font-size:.96rem;font-weight:500}
+.carta-scad{font-size:.84rem;color:var(--muted)}
+
+/* ---------- dati di fatturazione ---------- */
+.dati{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:18px;
+}
+.dati .riga:not(:last-child){border-bottom:1px solid var(--border)}
+
+.campo-modifica{
+  font:inherit;font-size:.94rem;padding:4px 8px;
+  border:1px solid var(--border);border-radius:6px;
+  text-align:right;max-width:240px;width:100%;
+}
+textarea.campo-modifica{min-height:48px;resize:vertical;text-align:left}
+
+/* ---------- elenco fatture ---------- */
+table{
+  width:100%;border-collapse:collapse;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;font-size:.92rem;
+}
+th{
+  text-align:left;font-size:.78rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+  padding:11px 14px;background:var(--bg);
+  border-bottom:1px solid var(--border);
+}
+td{padding:12px 14px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+td.importo{font-weight:500;white-space:nowrap}
+td.azione{text-align:right;white-space:nowrap}
+td a{color:var(--accent);text-decoration:none;font-weight:500}
+td a:hover{text-decoration:underline}
+
+/* ---------- bottoni ---------- */
+.btn{
+  font:inherit;font-size:.88rem;padding:8px 15px;border-radius:8px;cursor:pointer;
+  background:var(--surface);color:var(--text);border:1px solid var(--border);
+  text-decoration:none;display:inline-block;
+  transition:border-color .15s;
+}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{opacity:.88}
+.btn.pericolo{border-color:transparent;color:var(--danger);background:transparent}
+.btn.pericolo:hover{background:#fee4e2}
+.btn:disabled{cursor:default;opacity:.6}
+.btn:disabled:hover{border-color:var(--border)}
+
+/* ---------- avvisi ---------- */
+.avviso{
+  background:var(--accent-soft);border-radius:var(--radius);
+  padding:13px 15px;font-size:.88rem;color:#78350f;
+}
+.avviso.rosso{background:#fee4e2;color:var(--danger)}
+
+/* ---------- chiusura ---------- */
+.chiudi{
+  border-top:1px solid var(--border);padding-top:20px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;
+}
+.chiudi p{font-size:.88rem;color:var(--muted)}
+
+/* ---------- mobile ---------- */
+@media(max-width:560px){
+  .wrap{padding:20px 16px}
+  .piano-prezzo{font-size:1.7rem}
+  th:nth-child(2),td:nth-child(2){display:none}
+}

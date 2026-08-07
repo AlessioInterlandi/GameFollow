@@ -1,5 +1,103 @@
-<!-- Schermata di accesso.
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NoteKip — mockup login</title>
 
-     Form con email e password, che chiama POST /api/auth/login.
-     In caso di errore mostra un messaggio generico.
-     Al successo porta a /app.html. -->
+<!-- MOCKUP STATICO. Diventerà public/login.html.
+     Niente registrazione: gli account li crei tu a mano. -->
+
+<style>
+:root{
+  --bg:#fbfaf9; --surface:#fff; --border:#e8e4df;
+  --text:#1c1a18; --muted:#6d6660;
+  --accent:#f59e0b; --danger:#b42318; --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.6;
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:22px; -webkit-font-smoothing:antialiased;
+}
+.card{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:32px; width:100%; max-width:380px;
+}
+.brand{font-size:1.3rem;font-weight:600;letter-spacing:-.01em}
+.brand span{color:var(--accent)}
+.sub{color:var(--muted);font-size:.9rem;margin-bottom:24px}
+
+label{display:block;font-size:.88rem;font-weight:500;margin-bottom:6px}
+input{
+  width:100%; padding:11px 12px; font:inherit; font-size:.98rem;
+  color:var(--text); background:var(--bg);
+  border:1px solid var(--border); border-radius:8px;
+  margin-bottom:16px; transition:border-color .15s;
+}
+input:focus{outline:none;border-color:var(--accent)}
+
+button{
+  width:100%; font:inherit; font-size:1rem; font-weight:500;
+  padding:12px; border-radius:8px; cursor:pointer;
+  background:var(--accent); color:#fff; border:1px solid var(--accent);
+  transition:opacity .15s;
+}
+button:hover{opacity:.88}
+
+.err{
+  display:none; background:#fee4e2; color:var(--danger);
+  font-size:.88rem; padding:10px 12px; border-radius:8px; margin-bottom:16px;
+}
+.err.show{display:block}
+
+.help{
+  font-size:.82rem; color:var(--muted);
+  text-align:center; margin-top:18px;
+}
+.help a{color:var(--accent)}
+
+.note{
+  max-width:380px; margin-top:20px; padding:14px;
+  background:#fef3c7; border:1px dashed var(--accent);
+  border-radius:var(--radius); font-size:.85rem; color:#78350f;
+}
+</style>
+</head>
+<body>
+
+<div>
+  <div class="card">
+    <div class="brand">Note<span>Kip</span></div>
+    <p class="sub">Accedi al tuo pannello</p>
+
+    <div class="err">Email o password non corretti.</div>
+
+    <form>
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="mario@trattoriadamario.it" required>
+
+      <label for="pw">Password</label>
+      <input type="password" id="pw" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
+
+      <button type="submit">Accedi</button>
+    </form>
+
+    <p class="help">
+      Password dimenticata? <a href="mailto:[LA-TUA-EMAIL]">Scrivimi</a> e te la reimposto.
+    </p>
+  </div>
+
+  <div class="note">
+    <strong>Promemoria &mdash; togli prima di usarlo davvero.</strong><br><br>
+    Niente pulsante "Registrati": gli account li crei tu a mano.<br>
+    Niente recupero password automatico: con pochi clienti lo fai tu in trenta secondi.<br><br>
+    Il messaggio d'errore dice <em>"email o password non corretti"</em>, mai
+    "questa email non esiste": altrimenti chiunque pu&ograve; scoprire chi sono i tuoi clienti.
+  </div>
+</div>
+
+<script src="js/login.js"></script>
+</body>
+</html>

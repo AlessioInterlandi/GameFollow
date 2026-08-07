@@ -1,8 +1,96 @@
-<!-- Impostazioni.
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NoteKip — impostazioni</title>
+<link rel="stylesheet" href="css/impostazioni.css">
+</head>
+<body>
 
-     Due blocchi:
-     - account Google: stato del collegamento, pulsanti collega / scollega
-     - tono delle risposte e invio automatico
+<div class="topbar">
+  <div>
+    <span class="logo">Note<span>Kip</span></span>
+    <span class="org">Trattoria da Mario</span>
+  </div>
+  <div class="account-menu">
+    <button class="avatar" id="avatar" type="button" aria-haspopup="true" aria-expanded="false">MR</button>
+    <div class="dropdown" id="account-dropdown" hidden>
+      <a href="app.html">Recensioni</a>
+      <a href="fatturazione.html">Fatturazione</a>
+      <a href="#" id="logout-link">Esci</a>
+    </div>
+  </div>
+</div>
 
-     Il pulsante "collega Google" e' il momento piu' delicato
-     dell'onboarding: se non lo capisce, il cliente non parte mai. -->
+<div class="wrap">
+
+  <section>
+    <h2>Account Google</h2>
+    <p class="hint">Da qui NoteKip legge le recensioni e pubblica le risposte.</p>
+    <div class="status" id="stato-google">
+      <div class="who">
+        &#10003; Collegato<br>
+        <span class="name">Trattoria da Mario</span> &middot; via Emilia 44, Modena
+      </div>
+      <button class="btn" id="scollega-google">Scollega</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Come rispondi</h2>
+    <p class="hint">Serve a far somigliare le risposte alle tue. Pi&ugrave; sei preciso, meno dovrai correggere.</p>
+
+    <label for="firma">Con che nome firmi</label>
+    <input type="text" id="firma" class="short" value="Mario">
+
+    <label for="tono">Come parli ai clienti</label>
+    <textarea id="tono">Diretto, cordiale, un po' ruvido. Do del lei. Niente frasi da call center. Firmo sempre col mio nome.</textarea>
+
+    <label for="fatti">Cose vere che posso citare</label>
+    <textarea id="fatti">La pasta la fa mia madre Anna ogni mattina alle sei. Nei weekend siamo in tre in sala. Il parcheggio è scomodo, lo so.</textarea>
+  </section>
+
+  <section>
+    <h2>Quando pubblicare</h2>
+    <p class="hint">Puoi cambiare idea in qualsiasi momento.</p>
+
+    <div class="opt on" data-valore="conferma">
+      <span class="dot"></span>
+      <span>
+        <span class="t">Chiedimi sempre conferma</span><br>
+        <span class="d">Niente viene pubblicato senza che tu lo legga. Consigliato all'inizio.</span>
+      </span>
+    </div>
+
+    <div class="opt" data-valore="auto-4-5">
+      <span class="dot"></span>
+      <span>
+        <span class="t">Pubblica da solo le recensioni da 4 e 5 stelle</span><br>
+        <span class="d">Le negative restano sempre da approvare.</span>
+      </span>
+    </div>
+
+    <div class="opt" data-valore="sempre">
+      <span class="dot"></span>
+      <span>
+        <span class="t">Pubblica sempre da solo</span><br>
+        <span class="d">Solo quando ti fidi. Si torna indietro quando vuoi.</span>
+      </span>
+    </div>
+
+    <div class="alert">
+      &#9993; Ti scrivo sempre subito quando arriva una recensione da 1 o 2 stelle,
+      qualunque sia questa impostazione.
+    </div>
+  </section>
+
+  <div class="save">
+    <button class="btn primary" id="btn-salva">Salva</button>
+  </div>
+
+</div>
+
+<script src="js/impostazioni.js"></script>
+</body>
+</html>

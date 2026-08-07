@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NoteKip — fatturazione</title>
+<link rel="stylesheet" href="css/fatturazione.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <span class="logo">Note<span>Kip</span></span>
+    <span class="org">Trattoria da Mario</span>
+  </div>
+  <div class="account-menu">
+    <button class="avatar" id="avatar" type="button" aria-haspopup="true" aria-expanded="false">MR</button>
+    <div class="dropdown" id="account-dropdown" hidden>
+      <a href="impostazioni.html">Impostazioni</a>
+      <a href="app.html">Recensioni</a>
+      <a href="#" id="logout-link">Esci</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <h1>Fatturazione</h1>
+
+  <!-- ============ PIANO ATTUALE ============ -->
+  <section>
+    <h2>Il tuo piano</h2>
+    <p class="hint">Nessun vincolo: puoi disdire quando vuoi.</p>
+
+    <div class="piano">
+      <div class="piano-testa">
+        <div>
+          <div class="piano-nome">Un locale</div>
+          <div class="piano-prezzo">99 &euro;<span> / mese</span></div>
+        </div>
+        <span class="badge" id="badge-piano">Attivo</span>
+      </div>
+
+      <div class="piano-righe">
+        <div class="riga">
+          <span class="k">Prossimo addebito</span>
+          <span class="v">1 settembre 2026</span>
+        </div>
+        <div class="riga">
+          <span class="k">Importo</span>
+          <span class="v">99,00 &euro; (IVA inclusa)</span>
+        </div>
+        <div class="riga">
+          <span class="k">Cliente dal</span>
+          <span class="v">1 febbraio 2026</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ METODO DI PAGAMENTO ============ -->
+  <section>
+    <h2>Metodo di pagamento</h2>
+    <p class="hint">I dati della carta sono gestiti da Stripe: NoteKip non li vede e non li conserva.</p>
+
+    <div class="carta">
+      <div class="carta-dati">
+        <span class="carta-icona">VISA</span>
+        <div>
+          <div class="carta-num">&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4242</div>
+          <div class="carta-scad">Scade 07/2029</div>
+        </div>
+      </div>
+      <button class="btn">Cambia carta</button>
+    </div>
+  </section>
+
+  <!-- ============ DATI DI FATTURAZIONE ============ -->
+  <section>
+    <h2>Dati di fatturazione</h2>
+    <p class="hint">Servono per emettere la fattura elettronica. Se cambiano, aggiornali prima del prossimo addebito.</p>
+
+    <div class="dati" id="dati-fatturazione">
+      <div class="riga">
+        <span class="k">Ragione sociale</span>
+        <span class="v">Trattoria da Mario di Mario Rossi</span>
+      </div>
+      <div class="riga">
+        <span class="k">Partita IVA</span>
+        <span class="v">IT01234567890</span>
+      </div>
+      <div class="riga">
+        <span class="k">Codice fiscale</span>
+        <span class="v">RSSMRA70A01F257X</span>
+      </div>
+      <div class="riga">
+        <span class="k">Codice destinatario SDI</span>
+        <span class="v">ABCDEFG</span>
+      </div>
+      <div class="riga">
+        <span class="k">PEC</span>
+        <span class="v">trattoriadamario@pec.it</span>
+      </div>
+      <div class="riga">
+        <span class="k">Indirizzo</span>
+        <span class="v">via Emilia 44<br>41121 Modena (MO)</span>
+      </div>
+    </div>
+
+    <p style="margin-top:12px"><button class="btn" id="btn-modifica-dati" data-modifica="false">Modifica dati</button></p>
+  </section>
+
+  <!-- ============ FATTURE ============ -->
+  <section>
+    <h2>Fatture</h2>
+    <p class="hint">Le fatture arrivano al tuo codice destinatario tramite il Sistema di Interscambio. Qui trovi una copia di cortesia.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Numero</th>
+          <th>Importo</th>
+          <th>Stato</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1 ago 2026</td>
+          <td>2026/012</td>
+          <td class="importo">99,00 &euro;</td>
+          <td><span class="badge">Pagata</span></td>
+          <td class="azione"><a href="#">Scarica</a></td>
+        </tr>
+        <tr>
+          <td>1 lug 2026</td>
+          <td>2026/009</td>
+          <td class="importo">99,00 &euro;</td>
+          <td><span class="badge">Pagata</span></td>
+          <td class="azione"><a href="#">Scarica</a></td>
+        </tr>
+        <tr>
+          <td>1 giu 2026</td>
+          <td>2026/007</td>
+          <td class="importo">99,00 &euro;</td>
+          <td><span class="badge">Pagata</span></td>
+          <td class="azione"><a href="#">Scarica</a></td>
+        </tr>
+        <tr>
+          <td>1 mag 2026</td>
+          <td>2026/005</td>
+          <td class="importo">99,00 &euro;</td>
+          <td><span class="badge">Pagata</span></td>
+          <td class="azione"><a href="#">Scarica</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ DISDETTA ============ -->
+  <div class="chiudi">
+    <p>Se disdici, il servizio resta attivo fino alla fine del mese gi&agrave; pagato.</p>
+    <button class="btn pericolo" id="btn-disdici">Disdici l'abbonamento</button>
+  </div>
+
+</div>
+
+<script src="js/fatturazione.js"></script>
+</body>
+</html>

@@ -1,11 +1,62 @@
-<!-- Dashboard: la pagina che il cliente apre tutti i giorni.
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NoteKip — Dashboard</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <h1 class="sr-only">Dashboard NoteKip</h1>
 
-     Struttura:
-     - intestazione con nome azienda e link (recensioni, impostazioni, esci)
-     - riga di contatori: totali, da approvare, pubblicate, media stelle,
-       ore risparmiate  <- questo e' il numero che gli fa rinnovare l'abbonamento
-     - filtri per stato + pulsante "scarica nuove recensioni"
-     - elenco delle recensioni, ognuna con le sue azioni
+  <div class="topbar">
+    <div>
+      <span class="logo">Note<span>Kip</span></span>
+      <span class="org" id="org-nome"></span>
+    </div>
+    <div class="account-menu">
+      <button class="avatar" id="avatar" type="button" aria-haspopup="true" aria-expanded="false"></button>
+      <div class="dropdown" id="account-dropdown" hidden>
+        <a href="impostazioni.html">Impostazioni</a>
+        <a href="fatturazione.html">Fatturazione</a>
+        <a href="#" id="logout-link">Esci</a>
+      </div>
+    </div>
+  </div>
 
-     Il contenuto arriva via JavaScript chiamando /api/recensioni.
-     L'HTML qui e' solo l'impalcatura vuota. -->
+  <div class="pagina">
+
+    <div class="stats">
+      <div class="stat">
+        <p class="label">Nuove recensioni</p>
+        <p class="value">7</p>
+      </div>
+      <div class="stat">
+        <p class="label">Da approvare</p>
+        <p class="value warn">3</p>
+      </div>
+      <div class="stat">
+        <p class="label">Risposte inviate</p>
+        <p class="value">41</p>
+      </div>
+      <div class="stat">
+        <p class="label">Copertura</p>
+        <p class="value ok">94%</p>
+      </div>
+    </div>
+
+    <div class="status">
+      <span>&#10003; Automazione attiva &middot; ultimo controllo 12 min fa &middot; prossimo alle 18:00</span>
+      <button class="btn" id="controlla-ora">&#8635; Controlla ora</button>
+    </div>
+
+    <h2>In attesa di approvazione</h2>
+
+    <div id="lista-recensioni"></div>
+
+  </div>
+
+  <script src="js/comune.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

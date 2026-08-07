@@ -1,0 +1,96 @@
+:root{
+  --bg:#fbfaf9; --surface:#fff; --border:#e8e4df;
+  --text:#1c1a18; --muted:#6d6660;
+  --accent:#f59e0b; --accent-soft:#fef3c7;
+  --ok:#15803d; --ok-soft:#dcfce7;
+  --warn:#b45309; --warn-soft:#fef3c7;
+  --danger:#b42318;
+  --dark-bg:#18181b; --dark-text:#fafaf9; --dark-muted:#a8a29e;
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+.sr-only{
+  position:absolute;width:1px;height:1px;
+  overflow:hidden;clip:rect(0 0 0 0);
+}
+
+/* ---------- barra in alto ---------- */
+.topbar{
+  background:var(--dark-bg); color:var(--dark-text);
+  padding:14px 22px; display:flex; align-items:center; justify-content:space-between;
+}
+.logo{font-weight:600;font-size:1.05rem}
+.logo span{color:var(--accent)}
+.org{color:var(--dark-muted);font-size:.9rem;margin-left:10px}
+
+/* ---------- menu account ---------- */
+.account-menu{position:relative}
+
+.dropdown{
+  position:absolute;top:calc(100% + 6px);right:0;min-width:180px;
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  box-shadow:0 6px 20px rgba(0,0,0,.15);padding:6px;z-index:20;
+}
+.dropdown[hidden]{display:none}
+.dropdown a{display:block;padding:8px 10px;border-radius:6px;font-size:.9rem;color:var(--text);text-decoration:none}
+.dropdown a:hover{background:var(--bg)}
+
+.avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:#412402;color:#FAC775;
+  font-size:.75rem;font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+  border:none;cursor:pointer;padding:0;font-family:inherit;
+}
+
+/* ---------- contenuto pagina ---------- */
+.pagina{max-width:900px;margin:0 auto;padding:26px 22px}
+.pagina h2{font-size:1.1rem;font-weight:600;margin:0 0 12px}
+
+/* ---------- contatori ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+.stat .label{font-size:.85rem;color:var(--muted);margin:0 0 4px}
+.stat .value{font-size:1.7rem;font-weight:600;margin:0}
+.stat .value.warn{color:var(--warn)}
+.stat .value.ok{color:var(--ok)}
+
+/* ---------- stato automazione ---------- */
+.status{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  background:var(--ok-soft);border-radius:var(--radius);padding:12px 16px;margin-bottom:26px;
+  font-size:.9rem;color:var(--ok);
+}
+
+/* ---------- bottoni ---------- */
+.btn{
+  font:inherit;font-size:.88rem;padding:7px 15px;border-radius:8px;cursor:pointer;
+  background:var(--surface);color:var(--text);border:1px solid var(--border);
+}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.btn.primary:hover{opacity:.88}
+.btn.ghost{border-color:transparent;color:var(--muted);background:transparent}
+
+/* ---------- recensioni ---------- */
+.review{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:18px;margin-bottom:14px;
+  transition:box-shadow .3s ease,border-color .3s ease;
+}
+.review-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}
+.author{font-weight:600;font-size:.95rem}
+.date{font-size:.8rem;color:var(--muted)}
+.badge{display:inline-block;font-size:.75rem;color:var(--muted);background:var(--bg);border-radius:999px;padding:1px 8px;margin-left:4px}
+.stars{color:var(--accent);font-size:.9rem;letter-spacing:2px;margin:0 0 8px}
+.text{color:var(--muted);margin:0 0 14px}
+.draft{background:var(--bg);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 var(--radius) var(--radius) 0}
+.draft-label{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 5px}
+.draft p:last-child{margin:0}
+.actions{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}
