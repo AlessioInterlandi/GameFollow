@@ -1,62 +1,56 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NoteKip — Dashboard</title>
+  <title>GameFollow — Dashboard</title>
   <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/dashboard-readable.css">
 </head>
 <body>
-  <h1 class="sr-only">Dashboard NoteKip</h1>
-
-  <div class="topbar">
-    <div>
-      <span class="logo">Note<span>Kip</span></span>
-      <span class="org" id="org-nome"></span>
+  <aside class="sidebar">
+    <a class="logo" href="app.html">Game<span>Follow</span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a class="active" href="app.html"><i>⌂</i> Dashboard</a><a href="recensioni.html"><i>☷</i> Reviews</a><a href="risposte.html"><i>▤</i> Replies</a>
+      <a href="issue-detection.html"><i>♧</i> Issue Detection</a><a href="knowledge-base.html"><i>◇</i> Knowledge Base</a><a href="analisi.html"><i>▥</i> Analytics</a>
+      <a href="competitor.html"><i>◎</i> Competitor</a><a href="integrazioni.html"><i>⌁</i> Integrations</a><a href="impostazioni.html"><i>⚙</i> Settings</a>
+    </nav>
+    <div class="connected">
+      <div class="game-thumb">VH</div><div><b>Void Horizon</b><small>Connected</small></div><span>⌄</span>
+      <hr><div class="source"><strong>●</strong><div>Steam<small>Connected</small></div></div>
+      <div class="source"><strong class="play">▶</strong><div>Google Play<small>Connected</small></div></div>
+      <div class="source"><strong>▣</strong><div>App Store<small>Connect</small></div></div>
     </div>
-    <div class="account-menu">
-      <button class="avatar" id="avatar" type="button" aria-haspopup="true" aria-expanded="false"></button>
-      <div class="dropdown" id="account-dropdown" hidden>
-        <a href="impostazioni.html">Impostazioni</a>
-        <a href="fatturazione.html">Fatturazione</a>
-        <a href="#" id="logout-link">Esci</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="pagina">
-
-    <div class="stats">
-      <div class="stat">
-        <p class="label">Nuove recensioni</p>
-        <p class="value">7</p>
-      </div>
-      <div class="stat">
-        <p class="label">Da approvare</p>
-        <p class="value warn">3</p>
-      </div>
-      <div class="stat">
-        <p class="label">Risposte inviate</p>
-        <p class="value">41</p>
-      </div>
-      <div class="stat">
-        <p class="label">Copertura</p>
-        <p class="value ok">94%</p>
-      </div>
-    </div>
-
-    <div class="status">
-      <span>&#10003; Automazione attiva &middot; ultimo controllo 12 min fa &middot; prossimo alle 18:00</span>
-      <button class="btn" id="controlla-ora">&#8635; Controlla ora</button>
-    </div>
-
-    <h2>In attesa di approvazione</h2>
-
-    <div id="lista-recensioni"></div>
-
-  </div>
-
-  <script src="js/comune.js"></script>
+    <div class="upgrade"><span>♙</span><b>Upgrade to Pro</b><p>Unlock advanced features and unlimited analytics.</p><button>Upgrade plan</button></div>
+    <a class="collapse" href="#">← &nbsp; Collapse menu</a>
+  </aside>
+  <main>
+    <header class="topbar">
+      <button class="nav-toggle" type="button" aria-label="Open menu">☰</button>
+      <div class="game-select"><div class="game-thumb">VH</div><b>Void Horizon</b><span>⌄</span></div>
+      <div class="top-actions"><button class="icon-btn">♧<em></em></button><button class="icon-btn">?</button><span class="divider"></span><span class="avatar">SD</span><div><b>Studio Dreamforge</b><small>Pro Plan</small></div><span>⌄</span></div>
+    </header>
+    <section class="content">
+      <div class="page-heading"><div><h1>Overview</h1><p>All your games' reviews, analyzed by AI.</p></div><div class="heading-actions"><button>▣ &nbsp; Last 30 days　⌄</button><button>Export report　⇩</button></div></div>
+      <section class="metrics">
+        <article><small>Average rating</small><strong>4.72 <span class="stars">★★★★★</span></strong><p class="positive">+0.18 vs last month</p></article><article><small>Sentiment (this month)</small><strong class="positive">+14%</strong><div class="sparkline">⌁⌁⌁⌁⌁⌁</div></article><article><small>Total reviews</small><strong>12,482</strong><p class="positive">+1,243 vs last month</p></article><article><small>Unanswered</small><strong class="negative">347</strong><p>2.8% of total</p></article><article><small>AI replies</small><strong>8,421</strong><p>67.5% of total</p></article><article><small>Average response time</small><strong>5h 42m</strong><p class="positive">-1h 15m vs last month</p></article>
+      </section>
+      <section class="triple-row">
+        <article class="panel issue-table"><h2>Top reported issues</h2><table><thead><tr><th>Issue</th><th>Reports</th><th>Change</th></tr></thead><tbody><tr><td>◉　Multiplayer</td><td>1,243</td><td class="negative">+84%</td></tr><tr><td>▣　Performance</td><td>832</td><td class="negative">+31%</td></tr><tr><td>♧　Controller</td><td>421</td><td class="positive">-12%</td></tr><tr><td>▤　UI</td><td>187</td><td class="positive">-5%</td></tr><tr><td>▧　Crashes</td><td>155</td><td class="negative">+7%</td></tr></tbody></table><a href="#">View all issues　→</a></article>
+        <article class="panel platform"><h2>Rating by platform</h2><table><thead><tr><th>Platform</th><th>Rating</th><th>Reviews</th></tr></thead><tbody><tr><td>●　Steam</td><td class="stars">★★★★★ <b>4.72</b></td><td>8,421</td></tr><tr><td><span class="play">▶</span>　Google Play</td><td class="stars">★★★★★ <b>4.41</b></td><td>2,143</td></tr><tr><td>▣　App Store</td><td class="stars">★★★★★ <b>4.56</b></td><td>1,918</td></tr></tbody></table><a href="#">View platform details　→</a></article>
+        <article class="panel sentiment"><h2>Sentiment distribution</h2><div class="sentiment-data"><div class="donut"></div><div><p><i class="dot green"></i> Positive　　<b>72%</b> <small>(8,987)</small></p><p><i class="dot orange"></i> Neutral　　<b>15%</b> <small>(1,874)</small></p><p><i class="dot red"></i> Negative　 <b>13%</b> <small>(1,621)</small></p></div></div></article>
+      </section>
+      <section class="mid-row">
+        <article class="panel critical"><p class="alarm">▲　Critical issue detected</p><span class="critical-tag">♙　 POSSIBLE CRITICAL ISSUE</span><h2>Multiplayer disconnects</h2><p>247 reviews <b class="negative">+84%</b> vs last week</p><div class="platform-chips"><span>●　Steam　182</span><span>♧　Xbox　43</span><span>♧　PlayStation　22</span></div><div class="date-data"><span>First reported<br><b>Aug 12</b></span><span>Last reported<br><b>Aug 13</b></span></div><h3>AI summary</h3><p class="summary">Most reports concern disconnections from multiplayer matches after roughly 5-10 minutes. The issue increased significantly after version 2.1.</p><div class="panel-actions"><button>View full issue</button><button class="orange">♙　Create ticket　⌁</button></div></article>
+        <article class="panel update"><div class="panel-title"><h2>Update analysis</h2><button>Version 2.1　⌄</button></div><div class="chart"><span class="axis a100">100%</span><span class="axis a75">75%</span><span class="axis a50">50%</span><span class="axis a25">25%</span><div class="before">Before patch 2.1<br><b>68%</b></div><div class="after">After patch 2.1<br><b>84%</b></div><div class="line orange-line"></div><div class="line green-line"></div></div><div class="insight">♧　 <b>Update 2.1 improved player sentiment by 16%.</b><br><span>　　Crash reports decreased by 73%.</span></div><a href="#">View full analysis　→</a></article>
+        <article class="panel recent"><div class="panel-title"><h2>Recent reviews</h2><a href="#">View all</a></div><div id="recent-reviews"></div><a href="#">View all reviews　→</a></article>
+      </section>
+      <section class="bottom-row">
+        <article class="panel competitors"><h2>Competitor comparison <span>PRO</span></h2><table><thead><tr><th>Issue</th><th>Your game</th><th>Competitor A</th><th>Competitor B</th><th>Competitor C</th></tr></thead><tbody><tr><td>Performance</td><td><b>6%</b><i class="bar b1"></i>18%</td><td><i class="bar gray"></i>9%</td><td><i class="bar gray"></i>12%</td><td><i class="bar gray"></i>14%</td></tr><tr><td>Multiplayer</td><td><b>21%</b><i class="bar b2"></i>21%</td><td><i class="bar gray"></i>14%</td><td><i class="bar gray"></i>18%</td><td><i class="bar gray"></i>13%</td></tr><tr><td>Graphics</td><td><b>4%</b><i class="bar b3"></i>4%</td><td><i class="bar gray"></i>8%</td><td><i class="bar gray"></i>6%</td><td><i class="bar gray"></i>5%</td></tr><tr><td>Controls</td><td><b>1%</b><i class="bar b4"></i>12%</td><td><i class="bar gray"></i>7%</td><td><i class="bar gray"></i>11%</td><td><i class="bar gray"></i>9%</td></tr></tbody></table></article>
+        <article class="panel automation"><h2>Reply automation</h2><div class="automation-data"><div class="mini-donut"><b>67%</b></div><div><p><b>Replies<br>handled by AI</b><small>8,421 / 12,482 reviews</small></p></div><div class="legend"><p><i class="dot green"></i> Auto reply　 5,719 (45%)</p><p><i class="dot orange"></i> Awaiting approval　2,702 (22%)</p><p><i class="dot red"></i> Human only　 2,061 (16%)</p></div></div><a href="#">View automation settings　→</a></article>
+      </section>
+    </section>
+  </main>
   <script src="js/app.js"></script>
 </body>
 </html>
