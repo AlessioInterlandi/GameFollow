@@ -1,1 +1,360 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Settings · GameFollow</title><link rel="stylesheet" href="css/style.css"><style>.settings{grid-template-columns:150px 1fr 260px}.settings aside p{padding:8px;margin:0}.settings aside p:first-child{background:#fff4e4;color:#e38300;border-radius:4px}.info p{padding:8px 0;border-bottom:1px solid #eee;margin:0}.info p span{float:right;font-weight:600}.team{margin-top:14px}.member{padding:7px 0;border-bottom:1px solid #eee}.member small{float:right;color:#666}</style></head><body><aside class="sidebar"><a class="logo" href="app.html">Game<span>Follow</span></a><nav class="main-nav" aria-label="Main navigation"><a href="app.html"><i>⌂</i> Dashboard</a><a href="recensioni.html"><i>☷</i> Reviews</a><a href="risposte.html"><i>▤</i> Replies</a><a href="issue-detection.html"><i>♧</i> Issue Detection</a><a href="knowledge-base.html"><i>◇</i> Knowledge Base</a><a href="analisi.html"><i>▥</i> Analytics</a><a href="competitor.html"><i>◎</i> Competitor</a><a href="integrazioni.html"><i>⌁</i> Integrations</a><a class="active" href="impostazioni.html"><i>⚙</i> Settings</a></nav><div class="connected"><div class="game-thumb">VH</div><div><b>Void Horizon</b><small>Connected</small></div><span>⌄</span><hr><div class="source"><strong>●</strong><div>Steam<small>Connected</small></div></div><div class="source"><strong class="play">▶</strong><div>Google Play<small>Connected</small></div></div><div class="source"><strong>▣</strong><div>App Store<small>Connect</small></div></div></div><div class="upgrade"><span>♙</span><b>Upgrade to Pro</b><p>Unlock advanced features and unlimited analytics.</p><button>Upgrade plan</button></div><a class="collapse" href="#">← &nbsp; Collapse menu</a></aside><main><header class="topbar"><button class="nav-toggle" type="button" aria-label="Open menu">☰</button><div class="game-select"><div class="game-thumb">VH</div><b>Void Horizon</b><span>⌄</span></div><div class="top-actions"><button class="icon-btn">♧<em></em></button><button class="icon-btn">?</button><span class="divider"></span><span class="avatar">SD</span><div><b>Studio Dreamforge</b><small>Pro Plan</small></div><span>⌄</span></div></header><section class="content"><div class="page-heading"><div><h1>Settings</h1><p>Manage your account and preferences.</p></div></div><div class="grid-3 settings"><aside class="panel"><p>Account</p><p>Profile</p><p>Billing</p><p>Team</p><p>Notifications</p><p>Security</p><p>App settings</p><p>Plans &amp; limits</p></aside><section><article class="panel info"><h2>Account information</h2><p>Name <span>Marco Rossi</span></p><p>Email <span>marco.rossi@dreamforge.com</span></p><p>Role <span>Owner</span></p><p>Language <span>English</span></p><button style="margin-top:12px">Edit profile</button></article><article class="panel team"><h2>Team members</h2><p class="member">●　Marco Rossi <small>Owner</small></p><p class="member">●　Luca Bianchi <small>Editor</small></p><p class="member">●　Giulia Verdi <small>Viewer</small></p><button style="margin-top:10px">Invite member</button></article></section><article class="panel"><h2>Subscription</h2><small>Current plan</small><h1 style="margin:3px 0 12px">Pro</h1><p class="ok">✓ Up to 5 games</p><p class="ok">✓ Unlimited reviews</p><p class="ok">✓ Advanced AI</p><p class="ok">✓ Automations</p><p class="ok">✓ Premium analytics</p><hr style="border:0;border-top:1px solid #eee;margin:18px 0"><small>Expires June 12, 2026</small><button style="float:right;background:#ff9800;color:white">Upgrade plan</button></article></div></section></main><script src="js/app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Settings · GameFollow</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <a class="logo" href="app.html">Game<span>Follow</span></a>
+  <nav class="main-nav" aria-label="Main navigation">
+    <a href="app.html"><i>⌂</i> Dashboard</a>
+    <a href="recensioni.html"><i>☷</i> Reviews</a>
+    <a href="risposte.html"><i>▤</i> Replies</a>
+    <a href="issue-detection.html"><i>♧</i> Issue Detection</a>
+    <a href="knowledge-base.html"><i>◇</i> Knowledge Base</a>
+    <a href="analisi.html"><i>▥</i> Analytics</a>
+    <a href="competitor.html"><i>◎</i> Competitor</a>
+    <a href="integrazioni.html"><i>⌁</i> Integrations</a>
+    <a class="active" href="impostazioni.html"><i>⚙</i> Settings</a>
+  </nav>
+  <div class="connected">
+    <div class="game-thumb">VH</div>
+    <div><b>Void Horizon</b><small>Connected</small></div>
+    <span>⌄</span>
+    <hr>
+    <div class="source"><strong>●</strong><div>Steam<small>Connected</small></div></div>
+    <div class="source"><strong class="play">▶</strong><div>Google Play<small>Connected</small></div></div>
+    <div class="source"><strong>▣</strong><div>App Store<small>Connect</small></div></div>
+  </div>
+  <div class="upgrade">
+    <span>♙</span>
+    <b>Upgrade to Pro</b>
+    <p>Unlock advanced features and unlimited analytics.</p>
+    <button>Upgrade plan</button>
+  </div>
+  <a class="collapse" href="#">← &nbsp; Collapse menu</a>
+</aside>
+<main>
+  <header class="topbar">
+    <button class="nav-toggle" type="button" aria-label="Open menu">☰</button>
+    <div class="game-select"><div class="game-thumb">VH</div><b>Void Horizon</b><span>⌄</span></div>
+    <div class="top-actions">
+      <button class="icon-btn">♧<em></em></button>
+      <button class="icon-btn">?</button>
+      <span class="divider"></span>
+      <span class="avatar">SD</span>
+      <div><b>Studio Dreamforge</b><small>Pro Plan</small></div>
+      <span>⌄</span>
+    </div>
+  </header>
+  <section class="content">
+    <div class="page-heading">
+      <div><h1>Settings</h1><p>Manage your account and preferences.</p></div>
+    </div>
+
+    <div class="settings-layout">
+      <nav class="panel settings-nav" aria-label="Settings sections">
+        <button type="button" class="active" data-tab="profile">Profile</button>
+        <button type="button" data-tab="billing">Billing</button>
+        <button type="button" data-tab="team">Team</button>
+        <button type="button" data-tab="notifications">Notifications</button>
+        <button type="button" data-tab="security">Security</button>
+        <button type="button" data-tab="app-settings">App settings</button>
+        <button type="button" data-tab="plans">Plans &amp; limits</button>
+      </nav>
+
+      <div class="settings-panels">
+
+        <div class="settings-panel active" data-panel="profile">
+          <div class="grid-2">
+            <article class="panel">
+              <h2>Personal information</h2>
+              <div class="field-row">
+                <div class="field"><label for="p-name">Name</label><input id="p-name" type="text" value="Marco Rossi"></div>
+                <div class="field"><label for="p-email">Email</label><input id="p-email" type="email" value="marco.rossi@dreamforge.com"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label for="p-lang">Language</label><select id="p-lang"><option>English</option><option>Italian</option></select></div>
+                <div class="field"><label for="p-tz">Timezone</label><select id="p-tz"><option>(GMT+01:00) Rome</option></select></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label for="p-role">Role</label><input id="p-role" type="text" value="Owner" disabled></div>
+                <div class="field"><label for="p-company">Company</label><input id="p-company" type="text" value="Studio Dreamforge"></div>
+              </div>
+              <div class="field"><label for="p-site">Website</label><input id="p-site" type="text" value="https://dreamforge.com"></div>
+              <button style="background:#ff9800;color:#fff;border-color:#ff9800">Save changes</button>
+            </article>
+            <div>
+              <article class="panel" style="text-align:center;margin-bottom:16px">
+                <h2>Profile photo</h2>
+                <div class="avatar-lg">SD</div>
+                <button>Change photo</button>
+                <p style="color:var(--muted);font-size:11px;margin:10px 0 0">JPG, PNG, max 2MB</p>
+              </article>
+              <article class="panel">
+                <h2>Password</h2>
+                <p style="letter-spacing:3px;margin:0 0 12px">••••••••••••</p>
+                <button>Change password</button>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-panel" data-panel="billing">
+          <div class="grid-2">
+            <article class="panel">
+              <h2>Current plan</h2>
+              <p style="color:var(--muted);font-size:12px;margin:0 0 2px">Current plan</p>
+              <p class="plan-price">Studio <span>€149 / mo</span></p>
+              <ul style="list-style:none;padding:0;display:grid;gap:8px;font-size:13px;margin:0 0 16px">
+                <li class="ok">✓ 5 games</li>
+                <li class="ok">✓ 10 platforms</li>
+                <li class="ok">✓ 20,000 reviews / month</li>
+                <li class="ok">✓ AI automation</li>
+                <li class="ok">✓ Issue Detection</li>
+                <li class="ok">✓ Priority support</li>
+              </ul>
+              <button>Manage plan</button>
+            </article>
+            <div>
+              <article class="panel" style="margin-bottom:16px">
+                <h2>Payment method</h2>
+                <div style="display:flex;align-items:center;gap:12px;justify-content:space-between">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <b style="border:1px solid var(--line);border-radius:4px;padding:4px 8px;font-size:11px">VISA</b>
+                    <span>•••• 4262</span>
+                  </div>
+                  <button>Update</button>
+                </div>
+                <a href="#" class="link" style="display:block;margin-top:12px">+ Add payment method</a>
+              </article>
+              <article class="panel">
+                <h2>Billing history</h2>
+                <table>
+                  <thead><tr><th>Date</th><th>Invoice</th><th>Amount</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td>May 12, 2025</td><td>#INV-2025-0012</td><td>€59.00</td><td class="link">PDF</td></tr>
+                    <tr><td>Apr 12, 2025</td><td>#INV-2025-0011</td><td>€59.00</td><td class="link">PDF</td></tr>
+                    <tr><td>Mar 12, 2025</td><td>#INV-2025-0010</td><td>€59.00</td><td class="link">PDF</td></tr>
+                  </tbody>
+                </table>
+                <a href="#" class="link" style="display:block;margin-top:10px">View all invoices　→</a>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-panel" data-panel="team">
+          <article class="panel">
+            <div class="title-row">
+              <h2 style="margin:0">Team members</h2>
+              <button style="background:#ff9800;color:#fff;border-color:#ff9800">Invite member</button>
+            </div>
+            <table>
+              <thead><tr><th>Member</th><th>Role</th><th>Permissions</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><b>Marco Rossi</b> (you)<br><small style="color:var(--muted)">marco.rossi@dreamforge.com</small></td><td><span class="role-badge owner">Owner</span></td><td>All</td><td><span class="status-badge active">Active</span></td></tr>
+                <tr><td><b>Luca Bianchi</b><br><small style="color:var(--muted)">luca@dreamforge.com</small></td><td><span class="role-badge">Editor</span></td><td>Reviews, Replies, Analytics</td><td><span class="status-badge active">Active</span></td></tr>
+                <tr><td><b>Giulia Verdi</b><br><small style="color:var(--muted)">giulia@dreamforge.com</small></td><td><span class="role-badge">Viewer</span></td><td>Read-only</td><td><span class="status-badge active">Active</span></td></tr>
+                <tr><td><b>Alessandro Neri</b><br><small style="color:var(--muted)">alessandro@dreamforge.com</small></td><td><span class="role-badge">Editor</span></td><td>Reviews, Replies</td><td><span class="status-badge invited">Invited</span></td></tr>
+              </tbody>
+            </table>
+          </article>
+        </div>
+
+        <div class="settings-panel" data-panel="notifications">
+          <div class="grid-2">
+            <article class="panel">
+              <h2>Notification channels</h2>
+              <div class="toggle-row"><div><b>Email</b><small>Receive email notifications</small></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>In-app</b><small>Notifications inside the platform</small></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>Slack</b><small>Receive notifications on Slack</small></div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>Discord</b><small>Receive notifications on Discord</small></div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+            </article>
+            <article class="panel">
+              <h2>Events</h2>
+              <div class="toggle-row"><div><b>New reviews</b><small>When new reviews come in</small></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>Critical issues</b><small>When a critical issue is detected</small></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>Replies awaiting approval</b><small>When an AI reply is waiting for you</small></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>Weekly digest</b><small>Weekly summary by email</small></div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>Mentions</b><small>When someone mentions you</small></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>Billing</b><small>Invoices, payments, renewals</small></div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+            </article>
+          </div>
+        </div>
+
+        <div class="settings-panel" data-panel="security">
+          <article class="panel" style="margin-bottom:16px">
+            <div class="title-row">
+              <div><h2 style="margin:0 0 4px">Two-factor authentication (2FA)</h2><p style="color:var(--muted);margin:0;font-size:13px">Add an extra layer of security to your account.</p></div>
+              <button>Manage 2FA</button>
+            </div>
+            <p style="margin:10px 0 0;font-size:13px">Status　<span class="ok">● Active</span></p>
+          </article>
+          <div class="grid-2">
+            <article class="panel">
+              <h2>Active sessions</h2>
+              <div class="session-item"><div><b>Chrome on macOS</b><small>Milan, Italy · IP 93.45.87.69</small></div><span class="ok" style="font-size:11px">Active now</span></div>
+              <div class="session-item"><div><b>Safari on iPhone</b><small>Milan, Italy · IP 93.45.87.69</small></div><small style="color:var(--muted)">2 hours ago</small></div>
+              <div class="session-item"><div><b>Chrome on Windows</b><small>Rome, Italy · IP 151.24.33.12</small></div><small style="color:var(--muted)">1 day ago</small></div>
+              <div style="display:flex;justify-content:space-between;margin-top:12px">
+                <a href="#" class="link">View all sessions</a>
+                <button>Sign out all</button>
+              </div>
+            </article>
+            <article class="panel">
+              <h2>Other settings</h2>
+              <div class="toggle-row"><b>Change password</b><a href="#" class="link">Update</a></div>
+              <div class="toggle-row"><b>Login activity</b><a href="#" class="link">View history</a></div>
+              <div class="toggle-row"><b>API tokens</b><a href="#" class="link">Manage tokens</a></div>
+              <div class="toggle-row"><b class="danger">Delete account</b><a href="#" class="link danger">Delete permanently</a></div>
+            </article>
+          </div>
+        </div>
+
+        <div class="settings-panel" data-panel="app-settings">
+          <div class="grid-2">
+            <article class="panel">
+              <h2>General settings</h2>
+              <div class="field"><label for="a-lang">App language</label><select id="a-lang"><option>English</option></select></div>
+              <div class="field"><label for="a-date">Date format</label><select id="a-date"><option>MM/DD/YYYY</option><option>DD/MM/YYYY</option></select></div>
+              <div class="field"><label for="a-currency">Currency</label><select id="a-currency"><option>Euro (€)</option><option>US Dollar ($)</option></select></div>
+              <div class="field"><label for="a-theme">Theme</label><select id="a-theme"><option>Light</option><option>Dark</option></select></div>
+            </article>
+            <article class="panel">
+              <h2>Behavior</h2>
+              <div class="toggle-row"><b>Show AI suggestions</b><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="toggle-row"><b>Confirm before publishing</b><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="toggle-row"><b>Preview AI reply</b><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="toggle-row"><b>Group similar reviews</b><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="toggle-row"><b>Auto-update</b><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+            </article>
+          </div>
+          <article class="panel" style="margin-top:16px">
+            <h2>Export</h2>
+            <div class="field-row">
+              <div class="field"><label for="e-format">Export format</label><select id="e-format"><option>CSV</option><option>JSON</option></select></div>
+              <div class="field"><label for="e-encoding">Encoding</label><select id="e-encoding"><option>UTF-8</option></select></div>
+            </div>
+          </article>
+        </div>
+
+        <div class="settings-panel" data-panel="plans">
+          <div class="title-row">
+            <p style="color:var(--muted);margin:0;max-width:480px">Choose the plan that fits your studio.</p>
+            <div class="billing-toggle">
+              <button type="button" class="active" data-billing="monthly">Monthly</button>
+              <button type="button" data-billing="annual">Annual<span class="save-badge">Save 20%</span></button>
+            </div>
+          </div>
+          <div class="plan-grid">
+            <article class="panel plan-card">
+              <h3>Indie</h3>
+              <p class="plan-price"><span class="amount" data-monthly="€49" data-annual="€39">€49</span><span> / mo</span></p>
+              <p class="plan-note" hidden>Billed annually · save 20%</p>
+              <ul>
+                <li>1 game</li>
+                <li>3 platforms</li>
+                <li>2,000 reviews / month</li>
+                <li class="off">AI automation</li>
+                <li class="off">Issue Detection</li>
+                <li class="off">Competitor Analysis</li>
+                <li>Email support</li>
+              </ul>
+              <button>Choose Indie</button>
+            </article>
+            <article class="panel plan-card current">
+              <span class="badge">Popular</span>
+              <h3>Studio</h3>
+              <p class="plan-price"><span class="amount" data-monthly="€149" data-annual="€119">€149</span><span> / mo</span></p>
+              <p class="plan-note" hidden>Billed annually · save 20%</p>
+              <ul>
+                <li>5 games</li>
+                <li>10 platforms</li>
+                <li>20,000 reviews / month</li>
+                <li>AI automation</li>
+                <li>Issue Detection</li>
+                <li class="off">Competitor Analysis</li>
+                <li>Priority support</li>
+              </ul>
+              <button style="background:#ff9800;color:#fff;border-color:#ff9800">Current plan</button>
+            </article>
+            <article class="panel plan-card">
+              <h3>Publisher</h3>
+              <p class="plan-price"><span class="amount" data-monthly="€399" data-annual="€319">€399</span><span> / mo</span></p>
+              <p class="plan-note" hidden>Billed annually · save 20%</p>
+              <ul>
+                <li>Multiple games</li>
+                <li>Unlimited platforms</li>
+                <li>100,000+ reviews / month</li>
+                <li>AI automation</li>
+                <li>Issue Detection</li>
+                <li>Competitor Analysis</li>
+                <li>Team seats</li>
+                <li>API access</li>
+                <li>Dedicated support</li>
+              </ul>
+              <button>Choose Publisher</button>
+            </article>
+            <article class="panel plan-card">
+              <h3>Enterprise</h3>
+              <p class="plan-price"><span class="amount">€1,000+</span><span> / mo</span></p>
+              <ul>
+                <li>Unlimited games</li>
+                <li>Unlimited platforms</li>
+                <li>Unlimited reviews</li>
+                <li>Custom permissions</li>
+                <li>Dedicated SLA</li>
+                <li>Account manager</li>
+              </ul>
+              <button>Contact us</button>
+            </article>
+          </div>
+          <p style="margin:22px 0 12px"><a href="#compare" class="link" id="compare-toggle">Compare all plans in detail　⌄</a></p>
+          <article class="panel" id="compare-table" hidden>
+            <h2>Compare plans</h2>
+            <div style="overflow-x:auto">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Feature</th>
+                    <th>Indie<br><small style="color:var(--muted);font-weight:500"><span class="amount" data-monthly="€49 / mo" data-annual="€39 / mo">€49 / mo</span></small></th>
+                    <th>Studio<br><small style="color:var(--muted);font-weight:500"><span class="amount" data-monthly="€149 / mo" data-annual="€119 / mo">€149 / mo</span></small></th>
+                    <th>Publisher<br><small style="color:var(--muted);font-weight:500"><span class="amount" data-monthly="€399 / mo" data-annual="€319 / mo">€399 / mo</span></small></th>
+                    <th>Enterprise<br><small style="color:var(--muted);font-weight:500">€1,000+ / mo</small></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Games</td><td>1</td><td>5</td><td>Multiple</td><td>Unlimited</td></tr>
+                  <tr><td>Platforms</td><td>3</td><td>10</td><td>Unlimited</td><td>Unlimited</td></tr>
+                  <tr><td>Reviews / month</td><td>2,000</td><td>20,000</td><td>100,000+</td><td>Unlimited</td></tr>
+                  <tr><td>AI automation</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+                  <tr><td>Issue Detection</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+                  <tr><td>Competitor Analysis</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+                  <tr><td>Team seats</td><td>1</td><td>5</td><td>Unlimited</td><td>Unlimited</td></tr>
+                  <tr><td>API access</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+                  <tr><td>Support</td><td>Email</td><td>Priority</td><td>Dedicated</td><td>Account manager</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap">
+              <button>Choose Indie</button>
+              <button style="background:#ff9800;color:#fff;border-color:#ff9800">Current plan</button>
+              <button>Choose Publisher</button>
+              <button>Contact us</button>
+            </div>
+          </article>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+<script src="js/impostazioni.js"></script>
+</body>
+</html>

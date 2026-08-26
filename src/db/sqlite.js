@@ -1,15 +1,152 @@
 /* Implementazione SQLite delle funzioni dichiarate in db/index.js.
  *
- * Da fare:
- * - init(): crea la cartella data/, apre il file, esegue schema.sql
- * - le funzioni di lettura e scrittura, tutte con query preparate
+ * Usa node:sqlite, il modulo integrato in Node (niente compilazione
+ * nativa: su Windows serve altrimenti Visual Studio con il workload C++,
+ * che qui non c'e'). E' ancora "experimental" in Node ma l'API e' stabile
+ * a sufficienza per un singolo processo con volumi bassi/medi. Se in futuro
+ * si preferisce better-sqlite3, questo e' l'unico file da riscrivere.
  *
- * Regola non negoziabile: ogni query su dati di un cliente deve avere
- * org_id nella WHERE. Anche quando sembra superfluo.
- *   SELECT * FROM reviews WHERE org_id = ? AND id = ?
- * Se dimentichi org_id anche in un solo punto, un cliente puo' leggere
- * i dati di un altro.
- *
- * Usa sempre query preparate con i parametri (?), mai stringhe concatenate:
- * e' quello che ti protegge dalle SQL injection.
+ * Regola non negoziabile: ogni query su dati di un cliente ha org_id
+ * nella WHERE. Query sempre preparate, mai stringhe concatenate.
  */
+import { DatabaseSync } from 'node:sqlite';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { config } from '../config.js';
+import { cifra, decifra } from '../services/secrets.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+let db;
+
+function getDb() {
+  if (!db) throw new Error('Database non inizializzato: chiama init() prima di usarlo.');
+  return db;
+}
+
+function mapOrg(row) {
+  if (!row) return undefined;
+  return { ...row, google_connected: !!row.google_connected, auto_send: !!row.auto_send };
+}
+
+export async function init() {
+  const filePath = path.resolve(config.sqliteFile);
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+
+  db = new DatabaseSync(filePath, { enableForeignKeyConstraints: true });
+  db.exec('PRAGMA journal_mode = WAL');
+
+  const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
+  db.exec(schema);
+}
+
+export async function findUserByEmail(email) {
+  return getDb().prepare('SELECT * FROM users WHERE email = ?').get(email);
+}
+
+export async function findOrgById(orgId) {
+  return mapOrg(getDb().prepare('SELECT * FROM organizations WHERE id = ?').get(orgId));
+}
+
+export async function updateOrg(orgId, campi) {
+  const consentiti = ['name', 'plan', 'tone', 'auto_send', 'google_connected'];
+  const chiavi = Object.keys(campi).filter((k) => consentiti.includes(k));
+  if (chiavi.length > 0) {
+    const setClause = chiavi.map((k) => `${k} = ?`).join(', ');
+    const valori = chiavi.map((k) => (typeof campi[k] === 'boolean' ? (campi[k] ? 1 : 0) : campi[k]));
+    getDb().prepare(`UPDATE organizations SET ${setClause} WHERE id = ?`).run(...valori, orgId);
+  }
+  return findOrgById(orgId);
+}
+
+export async function listReviews(orgId, { status } = {}) {
+  if (status) {
+    return getDb()
+      .prepare('SELECT * FROM reviews WHERE org_id = ? AND status = ? ORDER BY review_date DESC')
+      .all(orgId, status);
+  }
+  return getDb()
+    .prepare('SELECT * FROM reviews WHERE org_id = ? ORDER BY review_date DESC')
+    .all(orgId);
+}
+
+export async function getReview(orgId, id) {
+  return getDb().prepare('SELECT * FROM reviews WHERE org_id = ? AND id = ?').get(orgId, id);
+}
+
+export async function updateReview(orgId, id, campi) {
+  const consentiti = ['status', 'draft_reply', 'published_reply'];
+  const chiavi = Object.keys(campi).filter((k) => consentiti.includes(k));
+  if (chiavi.length === 0) return getReview(orgId, id);
+
+  const setClause = chiavi.map((k) => `${k} = ?`).join(', ');
+  const valori = chiavi.map((k) => campi[k]);
+  const risultato = getDb()
+    .prepare(`UPDATE reviews SET ${setClause} WHERE org_id = ? AND id = ?`)
+    .run(...valori, orgId, id);
+
+  if (risultato.changes === 0) return undefined;
+  return getReview(orgId, id);
+}
+
+export async function insertReview(orgId, recensione) {
+  const { author, rating, text, review_date } = recensione;
+  const risultato = getDb()
+    .prepare('INSERT INTO reviews (org_id, author, rating, text, review_date) VALUES (?, ?, ?, ?, ?)')
+    .run(orgId, author, rating, text ?? null, review_date);
+  return getReview(orgId, risultato.lastInsertRowid);
+}
+
+export async function stats(orgId) {
+  const conteggi = getDb()
+    .prepare('SELECT status, COUNT(*) AS n FROM reviews WHERE org_id = ? GROUP BY status')
+    .all(orgId);
+  const media = getDb()
+    .prepare('SELECT AVG(rating) AS m FROM reviews WHERE org_id = ?')
+    .get(orgId);
+
+  const base = { da_generare: 0, da_approvare: 0, pubblicata: 0, ignorata: 0 };
+  conteggi.forEach((riga) => { base[riga.status] = riga.n; });
+  const totale = Object.values(base).reduce((a, b) => a + b, 0);
+
+  return { ...base, totale, media_voto: media.m ? Number(media.m.toFixed(2)) : 0 };
+}
+
+export async function listIntegrations(orgId) {
+  return getDb()
+    .prepare('SELECT provider, connected, connected_at, api_key_hint FROM integrations WHERE org_id = ?')
+    .all(orgId)
+    .map((riga) => ({ ...riga, connected: !!riga.connected }));
+}
+
+export async function setIntegration(orgId, provider, connected, apiKeyChiaro = null) {
+  const connectedAt = connected ? new Date().toISOString() : null;
+  const apiKeyCifrata = connected && apiKeyChiaro ? cifra(apiKeyChiaro) : null;
+  const apiKeyHint = connected && apiKeyChiaro ? apiKeyChiaro.slice(-4) : null;
+
+  getDb()
+    .prepare(
+      `INSERT INTO integrations (org_id, provider, connected, connected_at, api_key, api_key_hint)
+       VALUES (?, ?, ?, ?, ?, ?)
+       ON CONFLICT (org_id, provider) DO UPDATE SET
+         connected = excluded.connected,
+         connected_at = excluded.connected_at,
+         api_key = excluded.api_key,
+         api_key_hint = excluded.api_key_hint`
+    )
+    .run(orgId, provider, connected ? 1 : 0, connectedAt, apiKeyCifrata, apiKeyHint);
+
+  return { provider, connected, connected_at: connectedAt, api_key_hint: apiKeyHint };
+}
+
+// Per uso futuro: quando un'integrazione a chiave API fara' davvero
+// chiamate esterne (es. sync recensioni Steam), il servizio chiamera'
+// questa funzione per recuperare la chiave in chiaro. Nessuna route la usa
+// ancora — nessun endpoint restituisce mai la chiave al frontend.
+export async function getIntegrationSecret(orgId, provider) {
+  const riga = getDb()
+    .prepare('SELECT api_key FROM integrations WHERE org_id = ? AND provider = ? AND connected = 1')
+    .get(orgId, provider);
+  return riga?.api_key ? decifra(riga.api_key) : undefined;
+}

@@ -226,7 +226,7 @@ npm start        # http://localhost:3000
 npm test
 ```
 
-Le dipendenze in `package.json` sono già quelle giuste: `express`, `express-session`, `better-sqlite3`, `dotenv`.
+Le dipendenze in `package.json` sono già quelle giuste: `express`, `express-session`, `dotenv`, `helmet`, `compression`, `express-rate-limit`. Il database SQLite usa `node:sqlite`, integrato in Node (>= 22.5) — nessuna compilazione nativa richiesta.
 
 Se usi Supabase aggiungi anche:
 

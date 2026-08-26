@@ -3,17 +3,32 @@
  * Sceglie il driver in base a config.dbDriver ed esporta le funzioni
  * con nomi neutri, che non dicono quale database c'e' sotto:
  *   init, findUserByEmail, findOrgById, updateOrg,
- *   listReviews, getReview, updateReview, insertReview, stats
+ *   listReviews, getReview, updateReview, insertReview, stats,
+ *   listIntegrations, setIntegration
  *
- * Mappa dei driver disponibili:
- *   sqlite    -> ./sqlite.js     un file sul disco, zero configurazione
- *   supabase  -> ./supabase.js   PostgreSQL ospitato
+ * Le route importano SOLO da qui. Cambiare database significa scrivere
+ * un nuovo driver con le stesse funzioni e cambiare una riga nel .env.
  *
- * Perche' esiste questo file: le route importano SOLO da qui.
- * Cambiare database significa scrivere un nuovo driver con le stesse
- * funzioni e cambiare una riga nel .env. Nessuna route va toccata.
- *
- * Attenzione: le funzioni Supabase sono asincrone mentre quelle SQLite no.
- * Conviene dichiarare async l'interfaccia fin dall'inizio e usare await
- * nelle route anche con SQLite, cosi' il passaggio non richiede modifiche.
+ * Import dinamico (non statico) apposta: cosi' con DB_DRIVER=sqlite non
+ * serve avere @supabase/supabase-js installato, e viceversa.
  */
+import { config } from '../config.js';
+
+const driver = config.dbDriver === 'supabase'
+  ? await import('./supabase.js')
+  : await import('./sqlite.js');
+
+export const {
+  init,
+  findUserByEmail,
+  findOrgById,
+  updateOrg,
+  listReviews,
+  getReview,
+  updateReview,
+  insertReview,
+  stats,
+  listIntegrations,
+  setIntegration,
+  getIntegrationSecret,
+} = driver;

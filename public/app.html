@@ -32,7 +32,7 @@
     <section class="content">
       <div class="page-heading"><div><h1>Overview</h1><p>All your games' reviews, analyzed by AI.</p></div><div class="heading-actions"><button>▣ &nbsp; Last 30 days　⌄</button><button>Export report　⇩</button></div></div>
       <section class="metrics">
-        <article><small>Average rating</small><strong>4.72 <span class="stars">★★★★★</span></strong><p class="positive">+0.18 vs last month</p></article><article><small>Sentiment (this month)</small><strong class="positive">+14%</strong><div class="sparkline">⌁⌁⌁⌁⌁⌁</div></article><article><small>Total reviews</small><strong>12,482</strong><p class="positive">+1,243 vs last month</p></article><article><small>Unanswered</small><strong class="negative">347</strong><p>2.8% of total</p></article><article><small>AI replies</small><strong>8,421</strong><p>67.5% of total</p></article><article><small>Average response time</small><strong>5h 42m</strong><p class="positive">-1h 15m vs last month</p></article>
+        <article><small>Average rating</small><strong id="m-rating">— <span class="stars"></span></strong></article><article><small>Sentiment (this month)</small><strong class="positive">+14%</strong><div class="sparkline">⌁⌁⌁⌁⌁⌁</div></article><article><small>Total reviews</small><strong id="m-total">—</strong></article><article><small>Unanswered</small><strong id="m-unanswered" class="negative">—</strong><p id="m-unanswered-pct"></p></article><article><small>Published replies</small><strong id="m-published">—</strong><p id="m-published-pct"></p></article><article><small>Average response time</small><strong>5h 42m</strong><p class="positive">-1h 15m vs last month</p></article>
       </section>
       <section class="triple-row">
         <article class="panel issue-table"><h2>Top reported issues</h2><table><thead><tr><th>Issue</th><th>Reports</th><th>Change</th></tr></thead><tbody><tr><td>◉　Multiplayer</td><td>1,243</td><td class="negative">+84%</td></tr><tr><td>▣　Performance</td><td>832</td><td class="negative">+31%</td></tr><tr><td>♧　Controller</td><td>421</td><td class="positive">-12%</td></tr><tr><td>▤　UI</td><td>187</td><td class="positive">-5%</td></tr><tr><td>▧　Crashes</td><td>155</td><td class="negative">+7%</td></tr></tbody></table><a href="#">View all issues　→</a></article>
@@ -50,6 +50,7 @@
       </section>
     </section>
   </main>
+  <script src="js/api.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
