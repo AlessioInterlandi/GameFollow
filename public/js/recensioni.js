@@ -1,9 +1,26 @@
 /* Pagina Reviews: elenco reale (GET /api/recensioni) e azioni reali
  * (sync, genera, approva, ignora) sulle recensioni dell'account collegato.
  */
+(function () {
+// Guardia contro una doppia esecuzione di questo script (cache del
+// browser, estensioni di live-reload, ecc.): senza, la pagina caricata
+// due volte attaccherebbe ogni listener due volte — un click su "Add
+// review" salverebbe la stessa recensione due volte in silenzio, invece
+// di limitarsi a dare l'errore di sintassi che dava prima.
+if (window.__recensioniJsInizializzato) return;
+window.__recensioniJsInizializzato = true;
+
 const corpoTabella = document.getElementById('corpo-tabella');
 const filtroStato = document.getElementById('filtro-stato');
 const btnSync = document.getElementById('btn-sync');
+
+const btnAggiungi = document.getElementById('btn-aggiungi');
+const modaleAggiungi = document.getElementById('modale-aggiungi');
+const aggiungiRating = document.getElementById('aggiungi-rating');
+const aggiungiPiattaforma = document.getElementById('aggiungi-piattaforma');
+const aggiungiAutore = document.getElementById('aggiungi-autore');
+const aggiungiTesto = document.getElementById('aggiungi-testo');
+const aggiungiErrore = document.getElementById('aggiungi-errore');
 
 const ETICHETTA_STATO = {
   da_generare: { testo: 'To generate', classe: 'orange' },
@@ -89,6 +106,49 @@ btnSync.addEventListener('click', async () => {
   }
 });
 
+btnAggiungi.addEventListener('click', () => {
+  aggiungiRating.value = '5';
+  aggiungiPiattaforma.value = 'steam';
+  aggiungiAutore.value = '';
+  aggiungiTesto.value = '';
+  aggiungiErrore.style.display = 'none';
+  modaleAggiungi.showModal();
+  aggiungiTesto.focus();
+});
+
+document.getElementById('aggiungi-annulla').addEventListener('click', () => modaleAggiungi.close());
+
+document.getElementById('aggiungi-salva').addEventListener('click', async () => {
+  const testo = aggiungiTesto.value.trim();
+  if (!testo) {
+    aggiungiErrore.textContent = 'Write (or paste) the review text first.';
+    aggiungiErrore.style.display = 'block';
+    return;
+  }
+
+  const bottoneSalva = document.getElementById('aggiungi-salva');
+  bottoneSalva.disabled = true;
+  try {
+    await api('/recensioni/manuale', {
+      method: 'POST',
+      body: {
+        rating: Number(aggiungiRating.value),
+        piattaforma: aggiungiPiattaforma.value,
+        autore: aggiungiAutore.value.trim(),
+        testo,
+      },
+    });
+    modaleAggiungi.close();
+    mostraMessaggio('Review added.', 'successo');
+    carica();
+  } catch (err) {
+    aggiungiErrore.textContent = err.message;
+    aggiungiErrore.style.display = 'block';
+  } finally {
+    bottoneSalva.disabled = false;
+  }
+});
+
 corpoTabella.addEventListener('click', async (evento) => {
   const bottone = evento.target.closest('button[data-azione]');
   if (!bottone) return;
@@ -110,3 +170,4 @@ corpoTabella.addEventListener('click', async (evento) => {
 });
 
 carica();
+})();

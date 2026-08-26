@@ -37,7 +37,7 @@
     <div class="top-actions"><button class="icon-btn">♧<em></em></button><button class="icon-btn">?</button><span class="divider"></span><span class="avatar">SD</span><div><b>Studio Dreamforge</b><small>Pro Plan</small></div><span>⌄</span></div>
   </header>
   <section class="content">
-    <div class="page-heading"><div><h1>Reviews</h1><p>All reviews collected from your connected platforms.</p></div><button id="btn-sync">⟳ &nbsp;Sync now</button></div>
+    <div class="page-heading"><div><h1>Reviews</h1><p>All reviews collected from your connected platforms.</p></div><div style="display:flex;gap:10px"><button id="btn-aggiungi">+ Add review</button><button id="btn-sync">⟳ &nbsp;Sync now</button></div></div>
     <div class="panel">
       <div class="filters">
         <select id="filtro-stato">
@@ -55,6 +55,48 @@
     </div>
   </section>
 </main>
+
+<dialog id="modale-aggiungi" style="border:1px solid var(--line);border-radius:12px;padding:0;max-width:420px;width:90%">
+  <form method="dialog" style="padding:22px">
+    <h2 style="margin:0 0 6px;font-size:16px">Add a review manually</h2>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 16px">Write (or paste) a real review and let GameFollow analyze it — useful for platforms without a review API, or just to try out AI replies and Issue Detection on real text, without waiting for a sync.</p>
+    <div class="field-row">
+      <div class="field">
+        <label for="aggiungi-rating">Rating</label>
+        <select id="aggiungi-rating">
+          <option value="5">★★★★★ (5)</option>
+          <option value="4">★★★★☆ (4)</option>
+          <option value="3">★★★☆☆ (3)</option>
+          <option value="2">★★☆☆☆ (2)</option>
+          <option value="1">★☆☆☆☆ (1)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="aggiungi-piattaforma">Platform</label>
+        <select id="aggiungi-piattaforma">
+          <option value="steam">Steam</option>
+          <option value="xbox">Xbox</option>
+          <option value="google_play">Google Play</option>
+          <option value="app_store">App Store</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="aggiungi-autore">Author (optional)</label>
+      <input id="aggiungi-autore" type="text" autocomplete="off" placeholder="e.g. a real username, or leave blank">
+    </div>
+    <div class="field">
+      <label for="aggiungi-testo">Review text</label>
+      <textarea id="aggiungi-testo" rows="4" style="width:100%;border:1px solid var(--line);border-radius:6px;padding:8px 10px;font:inherit;font-size:14px;resize:vertical" placeholder="Paste or write the review here…"></textarea>
+    </div>
+    <p id="aggiungi-errore" style="color:var(--red);font-size:12px;display:none;margin:0 0 10px"></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+      <button type="button" id="aggiungi-annulla">Cancel</button>
+      <button type="button" id="aggiungi-salva" style="background:#ff9800;color:#fff;border-color:#ff9800">Add review</button>
+    </div>
+  </form>
+</dialog>
+
 <script src="js/api.js"></script>
 <script src="js/app.js"></script>
 <script src="js/recensioni.js"></script>

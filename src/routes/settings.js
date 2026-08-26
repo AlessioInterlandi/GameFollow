@@ -13,6 +13,7 @@ import { Router } from 'express';
 import * as db from '../db/index.js';
 import * as google from '../services/google.js';
 import { richiedeLogin } from '../middleware/auth.js';
+import { pianoEffettivo } from '../piani.js';
 
 const router = Router();
 router.use(richiedeLogin);
@@ -40,6 +41,21 @@ router.put('/', async (req, res) => {
   }
   if (invio_automatico !== undefined) {
     if (typeof invio_automatico !== 'boolean') return res.status(400).json({ errore: 'Invio automatico non valido.' });
+
+    // Si puo' sempre SPEGNERE l'invio automatico (nessun piano lo richiede
+    // per farlo), ma accenderlo richiede che il piano attuale lo includa —
+    // altrimenti un account gratuito/Indie potrebbe attivarlo cambiando
+    // solo la chiamata fetch, bypassando del tutto il piano a pagamento.
+    if (invio_automatico) {
+      const org = await db.findOrgById(req.orgId);
+      if (!pianoEffettivo(org).features.ai_automation) {
+        return res.status(403).json({
+          errore: "L'invio automatico delle risposte richiede il piano Studio o superiore.",
+          piano_richiesto: 'studio',
+        });
+      }
+    }
+
     modifiche.auto_send = invio_automatico;
   }
 

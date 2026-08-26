@@ -79,14 +79,30 @@ export async function updateReview(orgId, id, campi) {
 }
 
 export async function insertReview(orgId, recensione) {
-  const { author, rating, text, review_date } = recensione;
+  const { author, rating, text, review_date, platform } = recensione;
   const { data, error } = await getClient()
     .from('reviews')
-    .insert({ org_id: orgId, author, rating, text: text ?? null, review_date })
+    .insert({ org_id: orgId, author, rating, text: text ?? null, review_date, platform: platform ?? 'steam' })
     .select()
     .single();
   if (error) throw error;
   return data;
+}
+
+// Vedi il commento gemello in sqlite.js: stesso conteggio, mese solare
+// corrente in UTC (coerente con created_at, che e' salvato in UTC da Postgres).
+export async function contaRecensioniMese(orgId) {
+  const inizioMese = new Date();
+  inizioMese.setUTCDate(1);
+  inizioMese.setUTCHours(0, 0, 0, 0);
+
+  const { count, error } = await getClient()
+    .from('reviews')
+    .select('*', { count: 'exact', head: true })
+    .eq('org_id', orgId)
+    .gte('created_at', inizioMese.toISOString());
+  if (error) throw error;
+  return count ?? 0;
 }
 
 export async function stats(orgId) {

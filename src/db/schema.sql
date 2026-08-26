@@ -62,6 +62,12 @@ CREATE TABLE IF NOT EXISTS reviews (
         CHECK (status IN ('da_generare', 'da_approvare', 'pubblicata', 'ignorata')),
     draft_reply TEXT,
     published_reply TEXT,
+    -- Piattaforma di provenienza (steam, google_play, app_store, xbox) —
+    -- serve a Issue Detection per il riepilogo per piattaforma. Nullable
+    -- perche' recensioni inserite prima di questa colonna non ce l'hanno;
+    -- 'steam' come default per il sync mock (vedi services/google.js) se
+    -- per qualche motivo non gli arriva la lista di piattaforme collegate.
+    platform TEXT DEFAULT 'steam',
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

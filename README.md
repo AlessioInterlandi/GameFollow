@@ -35,33 +35,40 @@ gamefollow/
 │   │   ├── schema.sql             tabelle (SQLite) — incluse organizations (+ campi Stripe) e payments
 │   │   ├── schema.supabase.sql    tabelle + policy RLS (PostgreSQL)
 │   │   └── seed.js               dati finti per sviluppare
-│   ├── middleware/auth.js        chi sei, e a quale studio/team appartieni
+│   ├── middleware/
+│   │   ├── auth.js               chi sei, e a quale studio/team appartieni
+│   │   └── piano.js              richiedeFeature/verificaLimite: fa rispettare i limiti/feature del piano
 │   ├── routes/
 │   │   ├── auth.js               login, logout, chi sono
 │   │   ├── reviews.js            il cuore del prodotto: recensioni + analisi AI
 │   │   ├── settings.js           collegamento piattaforme, knowledge base del gioco
 │   │   ├── integrations.js       Steam/Google Play/App Store/Xbox + strumenti OAuth (GitHub, Slack...)
+│   │   ├── issues.js             Issue Detection — raggruppa le recensioni (Python, non AI)
 │   │   └── billing.js            abbonamento, transazioni, Stripe Checkout + webhook + portale clienti
 │   └── services/
 │       ├── ai.js                 ← punto di scambio del modello AI (sentiment, topic, risposta)
-│       ├── google.js              ← da riscrivere: OAuth/API Google Play (V2)
+│       ├── pythonAnalytics.js     ponte verso scripts/analisi_problemi.py (child_process)
+│       ├── google.js              ← da riscrivere: OAuth/API Google Play (V2) — per ora mock
 │       ├── steam.js               ← da aggiungere: import recensioni Steam (V1, punto di partenza)
 │       ├── n8n.js                 chiamata ai workflow via webhook (recupero recensioni, notifiche)
 │       ├── email.js               invio email (log-only finché non c'è SMTP configurato)
 │       ├── queue.js               coda semplice per lavori in background (es. invio email)
 │       ├── secrets.js             cifratura delle chiavi API salvate (integrazioni)
 │       └── password.js            hashing
+├── scripts/
+│   └── analisi_problemi.py       Issue Detection: categorie/percentuali/gravità + grafico PNG (Python puro)
 ├── public/                      frontend: HTML + CSS + JS, senza framework
 │   ├── index.html                pagina di vendita
 │   ├── login.html
 │   ├── app.html                  dashboard (rating, sentiment, top issue)
 │   ├── recensioni.html / risposte.html      elenco recensioni, code di approvazione risposte AI
-│   ├── analisi.html / competitor.html        analytics, confronto competitor
-│   ├── issue-detection.html / knowledge-base.html   funzioni V1 da roadmap
+│   ├── analisi.html / competitor.html        analytics (competitor: ancora mockup, roadmap)
+│   ├── issue-detection.html      collegata a /api/problemi per davvero
+│   ├── knowledge-base.html       ancora mockup, roadmap
 │   ├── integrazioni.html / oauth-mock.html   collegamento piattaforme (finestra OAuth finta)
 │   ├── impostazioni.html         profilo, team, billing/piani, notifiche, sicurezza — abbonamento reale qui
 │   ├── css/style.css
-│   └── js/                       api.js · app.js · impostazioni.js · ...
+│   └── js/                       api.js · app.js · impostazioni.js · issue-detection.js · ...
 └── test/api.test.mjs
 ```
 
@@ -172,9 +179,24 @@ Regola generale: **Python/SQL per tutto ciò che è calcolo deterministico**, **
 
 **Con Python/SQL** (query sul database): rating medio, aggregazioni per piattaforma/periodo, conteggi, confronto sentiment prima/dopo una patch, qualsiasi percentuale/delta/ranking.
 
-**Con l'AI** (solo dove serve comprensione del testo): sentiment e topic extraction dal testo grezzo, clustering di recensioni simili, generazione della risposta, riassunto testuale di un issue.
+**Con l'AI** (solo dove serve comprensione del testo): sentiment e topic extraction dal testo grezzo, generazione della risposta.
 
-L'AI entra **una volta per recensione** (classificazione + eventuale generazione risposta); dashboard, trend, aggregazioni, parte numerica dell'issue detection sono puro backend.
+L'AI entra **una volta per recensione** (classificazione + eventuale generazione risposta); dashboard, trend, aggregazioni sono puro backend.
+
+**Nota (26 agosto 2026):** il clustering delle recensioni per Issue Detection, originariamente pensato per l'AI qui sopra, è stato implementato invece per parole chiave + conteggi/percentuali — vedi la sezione qui sotto per il perché. Resta comunque vero che se in futuro le categorie fisse si rivelano troppo rigide (una recensione parla dello stesso problema con parole completamente diverse), quello è il punto dove passare a un vero clustering semantico via AI, non prima.
+
+### Issue Detection: come funziona davvero (Python, non AI)
+
+`GET /api/problemi` (routes/issues.js) prende le recensioni di un'organizzazione dal database e le passa a `scripts/analisi_problemi.py` via `services/pythonAnalytics.js` (un `child_process`, niente framework in più). Lo script:
+
+- ha una lista di categorie di problema scritte a mano (es. "Multiplayer disconnects" → parole chiave `disconnect`, `connection lost`, ecc.) in `CATEGORIE` — aggiungerne una è aggiungere una riga;
+- conta quante recensioni contengono almeno una di quelle parole, per categoria;
+- calcola percentuale sul totale, andamento settimana su settimana, gravità (soglie su percentuale/andamento), prima/ultima segnalazione, riepilogo per piattaforma — tutta matematica, `datetime`/percentuali, niente chiamate a un modello;
+- `GET /api/problemi/grafico` chiama lo stesso script con `--grafico`: usa `matplotlib` per disegnare un grafico a barre e lo restituisce come PNG.
+
+Richiede Python nel PATH del server (prova `python`, poi `py`, poi `python3` — l'ordine giusto per Windows, dove di solito non c'è `python3`). Se manca, `/api/problemi` risponde 503 e il resto del sito continua a funzionare — stesso pattern già usato per Stripe non configurato. Il calcolo JSON funziona con Python "di base" (nessuna libreria da installare); il grafico PNG richiede in più `pip install matplotlib`.
+
+La feature è riservata al piano Studio e superiori (vedi `piani.js`/`middleware/piano.js`): su un piano che non la include, la route risponde 403 prima ancora di leggere le recensioni.
 
 ---
 

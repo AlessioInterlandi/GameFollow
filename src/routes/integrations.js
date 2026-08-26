@@ -23,6 +23,7 @@
 import { Router } from 'express';
 import * as db from '../db/index.js';
 import { richiedeLogin } from '../middleware/auth.js';
+import { verificaLimite } from '../middleware/piano.js';
 
 const router = Router();
 router.use(richiedeLogin);
@@ -72,6 +73,28 @@ router.get('/:provider/autorizza', (req, res) => {
 router.post('/:provider/collega', async (req, res) => {
   const def = PROVIDER_MAPPA.get(req.params.provider);
   if (!def) return res.status(404).json({ errore: 'Integrazione sconosciuta.' });
+
+  // Il limite piattaforme del piano si applica solo al gruppo 'piattaforme'
+  // (Steam, Google Play, App Store, Xbox), non a 'strumenti' (GitHub,
+  // Slack...), e solo quando si collega una piattaforma NUOVA: ricollegare
+  // (o riscrivere la chiave di) una gia' connessa non deve mai essere
+  // bloccato dal limite, altrimenti basterebbe un pagamento fallito per
+  // impedire anche solo di aggiornare una chiave scaduta.
+  if (def.gruppo === 'piattaforme') {
+    const salvate = await db.listIntegrations(req.orgId);
+    const giaConnessa = salvate.some((r) => r.provider === def.provider && r.connected);
+
+    if (!giaConnessa) {
+      const org = await db.findOrgById(req.orgId);
+      const connesse = salvate.filter((r) => r.connected && PROVIDER_MAPPA.get(r.provider)?.gruppo === 'piattaforme').length;
+      const limite = verificaLimite(org, 'piattaforme', connesse);
+      if (!limite.ok) {
+        return res.status(403).json({
+          errore: `Il tuo piano permette di collegare al massimo ${limite.limite} piattaforme. Scollegane una o fai l'upgrade del piano.`,
+        });
+      }
+    }
+  }
 
   if (def.tipo === 'chiave_api') {
     const { chiave_api: chiaveApi } = req.body ?? {};

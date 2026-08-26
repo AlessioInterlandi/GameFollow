@@ -57,8 +57,16 @@ async function seed() {
       continue;
     }
 
+    // Account di test = piano Publisher (il massimo) e abbonamento sempre
+    // attivo: cosi' si puo' provare Issue Detection, invio automatico e
+    // tutti i limiti piu' larghi senza dover passare da un vero checkout
+    // Stripe ogni volta. E' una comodita' SOLO per lo sviluppo — non tocca
+    // in nessun modo cosa vede un account vero che paga per davvero.
     const orgId = sqlite
-      .prepare('INSERT INTO organizations (name, tone) VALUES (?, ?)')
+      .prepare(
+        `INSERT INTO organizations (name, tone, plan, plan_status, current_period_end)
+         VALUES (?, ?, 'publisher', 'attivo', datetime('now', '+1 year'))`
+      )
       .run(azienda.org.name, azienda.org.tone).lastInsertRowid;
 
     const passwordHash = await password.hash(azienda.utente.password);

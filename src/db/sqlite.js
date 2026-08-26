@@ -30,6 +30,22 @@ function mapOrg(row) {
   return { ...row, google_connected: !!row.google_connected, auto_send: !!row.auto_send };
 }
 
+// Non c'e' un vero sistema di migrazioni (il progetto e' ancora in
+// sviluppo, il database si e' sempre potuto ricreare da zero con
+// src/db/seed.js) — ma cancellare data/app.db richiede accesso esclusivo
+// al file, che non sempre c'e' (es. il server e' gia' in esecuzione da
+// qualche altra parte). Per le colonne aggiunte DOPO la prima versione
+// dello schema, quindi, si controlla se mancano e si aggiungono con
+// ALTER TABLE — CREATE TABLE IF NOT EXISTS da solo non le aggiungerebbe
+// mai a un database che esiste gia'. Idempotente: si puo' chiamare a ogni
+// avvio senza problemi.
+function applicaMigrazioniColonne() {
+  const colonneReviews = db.prepare("PRAGMA table_info(reviews)").all().map((c) => c.name);
+  if (!colonneReviews.includes('platform')) {
+    db.exec("ALTER TABLE reviews ADD COLUMN platform TEXT DEFAULT 'steam'");
+  }
+}
+
 export async function init() {
   const filePath = path.resolve(config.sqliteFile);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
@@ -39,6 +55,8 @@ export async function init() {
 
   const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
   db.exec(schema);
+
+  applicaMigrazioniColonne();
 }
 
 export async function findUserByEmail(email) {
@@ -91,11 +109,27 @@ export async function updateReview(orgId, id, campi) {
 }
 
 export async function insertReview(orgId, recensione) {
-  const { author, rating, text, review_date } = recensione;
+  const { author, rating, text, review_date, platform } = recensione;
   const risultato = getDb()
-    .prepare('INSERT INTO reviews (org_id, author, rating, text, review_date) VALUES (?, ?, ?, ?, ?)')
-    .run(orgId, author, rating, text ?? null, review_date);
+    .prepare('INSERT INTO reviews (org_id, author, rating, text, review_date, platform) VALUES (?, ?, ?, ?, ?, ?)')
+    .run(orgId, author, rating, text ?? null, review_date, platform ?? 'steam');
   return getReview(orgId, risultato.lastInsertRowid);
+}
+
+// Recensioni scaricate nel mese solare in corso, per far rispettare il
+// limite recensioni_mese del piano (vedi middleware/piano.js). created_at
+// e' quando la recensione e' entrata nel nostro database (il sync), non
+// review_date (quando e' stata scritta su Steam/etc.) — cosi' il limite
+// misura davvero "quante ne abbiamo scaricate noi questo mese", coerente
+// col motivo per cui il limite esiste (costo delle chiamate AI/di sync).
+export async function contaRecensioniMese(orgId) {
+  const riga = getDb()
+    .prepare(
+      `SELECT COUNT(*) AS n FROM reviews
+       WHERE org_id = ? AND strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now')`
+    )
+    .get(orgId);
+  return riga.n;
 }
 
 export async function stats(orgId) {

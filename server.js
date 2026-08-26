@@ -14,6 +14,7 @@ import reviewsRoutes from './src/routes/reviews.js';
 import settingsRoutes from './src/routes/settings.js';
 import billingRoutes from './src/routes/billing.js';
 import integrationsRoutes from './src/routes/integrations.js';
+import issuesRoutes from './src/routes/issues.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -64,6 +65,7 @@ app.use('/api/recensioni', reviewsRoutes);
 app.use('/api/impostazioni', settingsRoutes);
 app.use('/api/abbonamento', billingRoutes);
 app.use('/api/integrazioni', integrationsRoutes);
+app.use('/api/problemi', issuesRoutes);
 
 // dotfiles: 'deny' per difesa in profondita'. Il .env vero e proprio non
 // sta comunque dentro public/, quindi non e' mai raggiungibile da qui.

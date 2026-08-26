@@ -20,7 +20,7 @@ import Stripe from 'stripe';
 import * as db from '../db/index.js';
 import * as email from '../services/email.js';
 import { config } from '../config.js';
-import { PIANI, pianoAcquistabile } from '../piani.js';
+import { PIANI, pianoAcquistabile, pianoEffettivo, pianoEffettivoId } from '../piani.js';
 import { richiedeLogin } from '../middleware/auth.js';
 import { jobQueue } from '../services/queue.js';
 
@@ -43,13 +43,21 @@ function pianoDaPriceId(priceId) {
 router.get('/', richiedeLogin, async (req, res) => {
   const org = await db.findOrgById(req.orgId);
   const pagamenti = await db.listPayments(req.orgId);
-  const pianoAttuale = PIANI[org.plan] ?? PIANI.gratis;
+
+  // pianoAttuale e' quello EFFETTIVO, non organizations.plan cosi' com'e':
+  // se il pagamento e' fallito o l'abbonamento e' scaduto per davvero, qui
+  // deve comparire gia' 'Free' con i suoi limiti — vedi pianoEffettivo in
+  // piani.js per il perche' (e per la finestra di grazia fino a
+  // current_period_end quando lo stato e' 'in_scadenza').
+  const pianoAttualeId = pianoEffettivoId(org);
+  const pianoAttuale = pianoEffettivo(org);
 
   res.json({
-    piano: org.plan,
+    piano: pianoAttualeId,
     piano_nome: pianoAttuale.nome,
     prezzo_mensile: pianoAttuale.prezzo_mensile,
     limiti: pianoAttuale.limiti,
+    features: pianoAttuale.features,
     stato: org.plan_status,
     prossimo_addebito: org.current_period_end,
     pagamenti,
@@ -58,7 +66,7 @@ router.get('/', richiedeLogin, async (req, res) => {
         .filter(([id]) => id !== 'gratis')
         .map(([id, p]) => [
           id,
-          { nome: p.nome, prezzo_mensile: p.prezzo_mensile, limiti: p.limiti, acquistabile: pianoAcquistabile(id) },
+          { nome: p.nome, prezzo_mensile: p.prezzo_mensile, limiti: p.limiti, features: p.features, acquistabile: pianoAcquistabile(id) },
         ])
     ),
   });

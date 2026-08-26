@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS reviews (
         CHECK (status IN ('da_generare', 'da_approvare', 'pubblicata', 'ignorata')),
     draft_reply TEXT,
     published_reply TEXT,
+    platform TEXT DEFAULT 'steam',
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

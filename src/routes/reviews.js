@@ -21,6 +21,8 @@ import * as google from '../services/google.js';
 import * as n8n from '../services/n8n.js';
 import * as email from '../services/email.js';
 import { richiedeLogin } from '../middleware/auth.js';
+import { verificaLimite } from '../middleware/piano.js';
+import { pianoEffettivo } from '../piani.js';
 import { jobQueue } from '../services/queue.js';
 
 const router = Router();
@@ -42,11 +44,30 @@ router.get('/stats', async (req, res) => {
   res.json(await db.stats(req.orgId));
 });
 
-router.post('/sync', (req, res) => {
+router.post('/sync', async (req, res) => {
   const { orgId } = req;
 
+  // Il limite recensioni_mese esiste per contenere il costo delle chiamate
+  // AI/di sync, non per punire chi lo raggiunge: bloccarlo qui, PRIMA di
+  // accodare il job, evita di scaricare recensioni che poi non potremmo
+  // comunque processare, e da' subito un errore chiaro invece di un 202
+  // silenzioso che non porta a nulla.
+  const org = await db.findOrgById(orgId);
+  const usoAttuale = await db.contaRecensioniMese(orgId);
+  const limite = verificaLimite(org, 'recensioni_mese', usoAttuale);
+  if (!limite.ok) {
+    return res.status(403).json({
+      errore: `Limite di ${limite.limite} recensioni al mese raggiunto per il tuo piano attuale.`,
+    });
+  }
+
   jobQueue.accoda(`sync-recensioni:${orgId}`, async () => {
-    const nuove = await google.scaricaNuoveRecensioni(10);
+    const integrazioni = await db.listIntegrations(orgId);
+    const piattaforme = integrazioni
+      .filter((r) => r.connected && ['steam', 'google_play', 'app_store', 'xbox'].includes(r.provider))
+      .map((r) => r.provider);
+
+    const nuove = await google.scaricaNuoveRecensioni(10, piattaforme);
     for (const recensione of nuove) {
       await db.insertReview(orgId, recensione);
     }
@@ -54,6 +75,48 @@ router.post('/sync', (req, res) => {
   });
 
   res.status(202).json({ accodato: true });
+});
+
+// Scrivere una recensione a mano e lasciarla analizzare dal sito, senza
+// passare da nessuna API esterna (vera o mock): utile per provare risposte
+// AI e Issue Detection su un testo vero, o per piattaforme senza API di
+// recensioni (es. l'App Store le dà col contagocce). Conta sullo stesso
+// limite recensioni_mese del sync: entra comunque nello stesso conteggio
+// di "quante recensioni processiamo questo mese".
+router.post('/manuale', async (req, res) => {
+  const { orgId } = req;
+  const { autore, rating, testo, piattaforma } = req.body ?? {};
+
+  const ratingNumero = Number(rating);
+  if (!Number.isInteger(ratingNumero) || ratingNumero < 1 || ratingNumero > 5) {
+    return res.status(400).json({ errore: 'Rating non valido (deve essere un intero da 1 a 5).' });
+  }
+  if (typeof testo !== 'string' || testo.trim() === '') {
+    return res.status(400).json({ errore: 'Il testo della recensione è obbligatorio.' });
+  }
+  const piattaformeValide = ['steam', 'google_play', 'app_store', 'xbox'];
+  if (piattaforma !== undefined && !piattaformeValide.includes(piattaforma)) {
+    return res.status(400).json({ errore: 'Piattaforma non valida.' });
+  }
+
+  const org = await db.findOrgById(orgId);
+  const usoAttuale = await db.contaRecensioniMese(orgId);
+  const limite = verificaLimite(org, 'recensioni_mese', usoAttuale);
+  if (!limite.ok) {
+    return res.status(403).json({
+      errore: `Limite di ${limite.limite} recensioni al mese raggiunto per il tuo piano attuale.`,
+    });
+  }
+
+  const recensione = await db.insertReview(orgId, {
+    author: (typeof autore === 'string' && autore.trim()) || 'Manual entry',
+    rating: ratingNumero,
+    text: testo.trim(),
+    review_date: new Date().toISOString(),
+    platform: piattaforma ?? 'steam',
+  });
+
+  res.status(201).json(recensione);
 });
 
 router.post('/:id/genera', async (req, res) => {
@@ -82,7 +145,16 @@ router.post('/:id/genera', async (req, res) => {
     const bozza = await ai.generaRisposta(recensione, org?.tone);
     const rischio = ai.classificaRischio(recensione);
 
-    if (org?.auto_send && rischio === 'auto') {
+    // org.auto_send da solo non basta: potrebbe essere rimasto 'true' da
+    // prima che il piano scendesse a Free/Indie (pagamento fallito,
+    // disdetta, ecc. — vedi piani.js). Ricontrolliamo il piano EFFETTIVO
+    // al momento dell'invio, non solo quando l'impostazione viene salvata
+    // (settings.js blocca gia' l'accensione, ma questo e' il controllo che
+    // conta davvero: e' quello che decide se pubblichiamo qualcosa a nome
+    // dello studio senza che un umano l'abbia approvato).
+    const autoAttivo = org?.auto_send && pianoEffettivo(org).features.ai_automation;
+
+    if (autoAttivo && rischio === 'auto') {
       await google.pubblicaRisposta(id, bozza);
       await db.updateReview(orgId, id, { draft_reply: bozza, published_reply: bozza, status: 'pubblicata' });
 

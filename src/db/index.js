@@ -4,8 +4,8 @@
  * con nomi neutri, che non dicono quale database c'e' sotto:
  *   init, findUserByEmail, findOrgById, updateOrg,
  *   listReviews, getReview, updateReview, insertReview, stats,
- *   listIntegrations, setIntegration, findOrgByStripeCustomerId,
- *   insertPayment, listPayments
+ *   contaRecensioniMese, listIntegrations, setIntegration,
+ *   findOrgByStripeCustomerId, insertPayment, listPayments
  *
  * Le route importano SOLO da qui. Cambiare database significa scrivere
  * un nuovo driver con le stesse funzioni e cambiare una riga nel .env.
@@ -29,6 +29,7 @@ export const {
   updateReview,
   insertReview,
   stats,
+  contaRecensioniMese,
   listIntegrations,
   setIntegration,
   getIntegrationSecret,
