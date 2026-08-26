@@ -107,41 +107,30 @@
           <div class="grid-2">
             <article class="panel">
               <h2>Current plan</h2>
-              <p style="color:var(--muted);font-size:12px;margin:0 0 2px">Current plan</p>
-              <p class="plan-price">Studio <span>€149 / mo</span></p>
-              <ul style="list-style:none;padding:0;display:grid;gap:8px;font-size:13px;margin:0 0 16px">
-                <li class="ok">✓ 5 games</li>
-                <li class="ok">✓ 10 platforms</li>
-                <li class="ok">✓ 20,000 reviews / month</li>
-                <li class="ok">✓ AI automation</li>
-                <li class="ok">✓ Issue Detection</li>
-                <li class="ok">✓ Priority support</li>
-              </ul>
-              <button>Manage plan</button>
+              <p style="color:var(--muted);font-size:12px;margin:0 0 2px" id="billing-status-label">Current plan</p>
+              <p class="plan-price" id="billing-plan-name">…</p>
+              <ul style="list-style:none;padding:0;display:grid;gap:8px;font-size:13px;margin:0 0 16px" id="billing-plan-limits"></ul>
+              <button id="btn-manage-plan">Manage plan</button>
+              <button id="btn-cancel-plan" class="link danger" style="background:none;border:none;display:block;margin-top:10px;padding:0;cursor:pointer" hidden>Cancel subscription</button>
+              <p id="billing-unavailable" style="color:var(--muted);font-size:12px;margin-top:10px" hidden>
+                Payments aren't configured yet on this server (missing Stripe keys).
+              </p>
             </article>
             <div>
               <article class="panel" style="margin-bottom:16px">
                 <h2>Payment method</h2>
-                <div style="display:flex;align-items:center;gap:12px;justify-content:space-between">
-                  <div style="display:flex;align-items:center;gap:12px">
-                    <b style="border:1px solid var(--line);border-radius:4px;padding:4px 8px;font-size:11px">VISA</b>
-                    <span>•••• 4262</span>
-                  </div>
-                  <button>Update</button>
-                </div>
-                <a href="#" class="link" style="display:block;margin-top:12px">+ Add payment method</a>
+                <p style="color:var(--muted);font-size:13px;margin:0 0 12px">Card details are handled by Stripe — GameFollow never sees or stores them.</p>
+                <button id="btn-payment-method">Manage in Stripe　→</button>
               </article>
               <article class="panel">
                 <h2>Billing history</h2>
                 <table>
-                  <thead><tr><th>Date</th><th>Invoice</th><th>Amount</th><th></th></tr></thead>
-                  <tbody>
-                    <tr><td>May 12, 2025</td><td>#INV-2025-0012</td><td>€59.00</td><td class="link">PDF</td></tr>
-                    <tr><td>Apr 12, 2025</td><td>#INV-2025-0011</td><td>€59.00</td><td class="link">PDF</td></tr>
-                    <tr><td>Mar 12, 2025</td><td>#INV-2025-0010</td><td>€59.00</td><td class="link">PDF</td></tr>
+                  <thead><tr><th>Date</th><th>Plan</th><th>Amount</th><th>Status</th></tr></thead>
+                  <tbody id="billing-history-body">
+                    <tr><td colspan="4" style="color:var(--muted)">No transactions yet.</td></tr>
                   </tbody>
                 </table>
-                <a href="#" class="link" style="display:block;margin-top:10px">View all invoices　→</a>
+                <a href="#" class="link" id="btn-view-invoices" style="display:block;margin-top:10px">View full invoices in Stripe　→</a>
               </article>
             </div>
           </div>
@@ -251,7 +240,7 @@
             </div>
           </div>
           <div class="plan-grid">
-            <article class="panel plan-card">
+            <article class="panel plan-card" data-piano="indie">
               <h3>Indie</h3>
               <p class="plan-price"><span class="amount" data-monthly="€49" data-annual="€39">€49</span><span> / mo</span></p>
               <p class="plan-note" hidden>Billed annually · save 20%</p>
@@ -264,9 +253,9 @@
                 <li class="off">Competitor Analysis</li>
                 <li>Email support</li>
               </ul>
-              <button>Choose Indie</button>
+              <button data-piano-choose="indie">Choose Indie</button>
             </article>
-            <article class="panel plan-card current">
+            <article class="panel plan-card" data-piano="studio">
               <span class="badge">Popular</span>
               <h3>Studio</h3>
               <p class="plan-price"><span class="amount" data-monthly="€149" data-annual="€119">€149</span><span> / mo</span></p>
@@ -280,9 +269,9 @@
                 <li class="off">Competitor Analysis</li>
                 <li>Priority support</li>
               </ul>
-              <button style="background:#ff9800;color:#fff;border-color:#ff9800">Current plan</button>
+              <button data-piano-choose="studio">Choose Studio</button>
             </article>
-            <article class="panel plan-card">
+            <article class="panel plan-card" data-piano="publisher">
               <h3>Publisher</h3>
               <p class="plan-price"><span class="amount" data-monthly="€399" data-annual="€319">€399</span><span> / mo</span></p>
               <p class="plan-note" hidden>Billed annually · save 20%</p>
@@ -297,9 +286,9 @@
                 <li>API access</li>
                 <li>Dedicated support</li>
               </ul>
-              <button>Choose Publisher</button>
+              <button data-piano-choose="publisher">Choose Publisher</button>
             </article>
-            <article class="panel plan-card">
+            <article class="panel plan-card" data-piano="enterprise">
               <h3>Enterprise</h3>
               <p class="plan-price"><span class="amount">€1,000+</span><span> / mo</span></p>
               <ul>
@@ -310,7 +299,7 @@
                 <li>Dedicated SLA</li>
                 <li>Account manager</li>
               </ul>
-              <button>Contact us</button>
+              <button data-piano-choose="enterprise">Contact us</button>
             </article>
           </div>
           <p style="margin:22px 0 12px"><a href="#compare" class="link" id="compare-toggle">Compare all plans in detail　⌄</a></p>
@@ -341,10 +330,10 @@
               </table>
             </div>
             <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap">
-              <button>Choose Indie</button>
-              <button style="background:#ff9800;color:#fff;border-color:#ff9800">Current plan</button>
-              <button>Choose Publisher</button>
-              <button>Contact us</button>
+              <button data-piano-choose="indie">Choose Indie</button>
+              <button data-piano-choose="studio">Choose Studio</button>
+              <button data-piano-choose="publisher">Choose Publisher</button>
+              <button data-piano-choose="enterprise">Contact us</button>
             </div>
           </article>
         </div>

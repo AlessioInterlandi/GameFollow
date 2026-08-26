@@ -25,7 +25,16 @@ if (config.trustProxy) app.set('trust proxy', 1);
 
 app.use(helmet());
 app.use(compression());
-app.use(express.json({ limit: '100kb' }));
+
+// Il corpo del webhook Stripe deve restare grezzo per la verifica della
+// firma (vedi routes/billing.js, che applica express.raw() da solo su
+// quella singola route): qui saltiamo il parsing JSON generico solo per
+// quel percorso, altrimenti express.json() lo consumerebbe prima che il
+// webhook possa leggerlo.
+app.use((req, res, next) => {
+  if (req.path === '/api/abbonamento/webhook') return next();
+  express.json({ limit: '100kb' })(req, res, next);
+});
 
 app.use(
   session({

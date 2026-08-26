@@ -1,5 +1,9 @@
 /* Logica condivisa dall'intestazione (.topbar), presente in ogni pagina
- * dopo il login: nome del locale, menu account, logout.
+ * dopo il login: nome dello studio, menu account, logout.
+ *
+ * NOTA: nessuna pagina attuale include ancora questo file (ogni pagina ha
+ * la propria versione inline dell'header) — tenerlo aggiornato comunque,
+ * per quando verra' effettivamente adottato al posto della duplicazione.
  *
  * Ogni pagina che include questo file deve avere nel proprio HTML:
  * #org-nome #avatar #account-dropdown #logout-link
@@ -8,8 +12,8 @@
  */
 
 const account = {
-  ristorante: 'Trattoria da Mario',
-  iniziali: 'MR',
+  ristorante: 'Il tuo studio',
+  iniziali: '..',
 };
 
 function escapeHtml(testo) {
@@ -19,7 +23,7 @@ function escapeHtml(testo) {
 }
 
 function caricaAccount() {
-  document.getElementById('org-nome').textContent = account.ristorante;
+  document.getElementById('org-nome').textContent = account.ristorante; // TODO: /api/auth/me
   document.getElementById('avatar').textContent = account.iniziali;
 }
 

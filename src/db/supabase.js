@@ -39,7 +39,7 @@ export async function findOrgById(orgId) {
 }
 
 export async function updateOrg(orgId, campi) {
-  const consentiti = ['name', 'plan', 'tone', 'auto_send', 'google_connected'];
+  const consentiti = ['name', 'plan', 'plan_status', 'tone', 'auto_send', 'google_connected', 'stripe_customer_id', 'stripe_subscription_id', 'current_period_end'];
   const patch = Object.fromEntries(Object.entries(campi).filter(([k]) => consentiti.includes(k)));
 
   if (Object.keys(patch).length === 0) return findOrgById(orgId);
@@ -139,4 +139,39 @@ export async function getIntegrationSecret(orgId, provider) {
     .maybeSingle();
   if (error) throw error;
   return data?.api_key ? decifra(data.api_key) : undefined;
+}
+
+export async function findOrgByStripeCustomerId(stripeCustomerId) {
+  const { data, error } = await getClient()
+    .from('organizations').select('*').eq('stripe_customer_id', stripeCustomerId).maybeSingle();
+  if (error) throw error;
+  return data ?? undefined;
+}
+
+// ignoreDuplicates sull'id evento Stripe: stesso motivo del driver sqlite,
+// un webhook ripetuto non deve duplicare la transazione registrata.
+export async function insertPayment(orgId, pagamento) {
+  const { stripe_event_id, stripe_invoice_id, plan, amount_cents, currency, status } = pagamento;
+  const { error } = await getClient()
+    .from('payments')
+    .upsert(
+      {
+        org_id: orgId,
+        stripe_event_id,
+        stripe_invoice_id: stripe_invoice_id ?? null,
+        plan,
+        amount_cents,
+        currency: currency ?? 'eur',
+        status,
+      },
+      { onConflict: 'stripe_event_id', ignoreDuplicates: true }
+    );
+  if (error) throw error;
+}
+
+export async function listPayments(orgId) {
+  const { data, error } = await getClient()
+    .from('payments').select('*').eq('org_id', orgId).order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
 }

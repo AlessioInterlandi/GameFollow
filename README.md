@@ -27,11 +27,12 @@ gamefollow/
 ├── .env.example                 variabili da copiare in .env
 ├── src/
 │   ├── config.js                tutte le variabili in un posto solo
+│   ├── piani.js                  i piani a pagamento (nome, prezzo, limiti, price id Stripe)
 │   ├── db/
 │   │   ├── index.js             ← punto di scambio del database
 │   │   ├── sqlite.js             implementazione SQLite
 │   │   ├── supabase.js           implementazione Supabase/PostgreSQL
-│   │   ├── schema.sql             tabelle (SQLite)
+│   │   ├── schema.sql             tabelle (SQLite) — incluse organizations (+ campi Stripe) e payments
 │   │   ├── schema.supabase.sql    tabelle + policy RLS (PostgreSQL)
 │   │   └── seed.js               dati finti per sviluppare
 │   ├── middleware/auth.js        chi sei, e a quale studio/team appartieni
@@ -39,20 +40,28 @@ gamefollow/
 │   │   ├── auth.js               login, logout, chi sono
 │   │   ├── reviews.js            il cuore del prodotto: recensioni + analisi AI
 │   │   ├── settings.js           collegamento piattaforme, knowledge base del gioco
-│   │   └── billing.js            abbonamento
+│   │   ├── integrations.js       Steam/Google Play/App Store/Xbox + strumenti OAuth (GitHub, Slack...)
+│   │   └── billing.js            abbonamento, transazioni, Stripe Checkout + webhook + portale clienti
 │   └── services/
 │       ├── ai.js                 ← punto di scambio del modello AI (sentiment, topic, risposta)
 │       ├── google.js              ← da riscrivere: OAuth/API Google Play (V2)
 │       ├── steam.js               ← da aggiungere: import recensioni Steam (V1, punto di partenza)
 │       ├── n8n.js                 chiamata ai workflow via webhook (recupero recensioni, notifiche)
+│       ├── email.js               invio email (log-only finché non c'è SMTP configurato)
+│       ├── queue.js               coda semplice per lavori in background (es. invio email)
+│       ├── secrets.js             cifratura delle chiavi API salvate (integrazioni)
 │       └── password.js            hashing
 ├── public/                      frontend: HTML + CSS + JS, senza framework
 │   ├── index.html                pagina di vendita
 │   ├── login.html
 │   ├── app.html                  dashboard (rating, sentiment, top issue)
-│   ├── impostazioni.html         collegamento gioco/piattaforme, knowledge base
+│   ├── recensioni.html / risposte.html      elenco recensioni, code di approvazione risposte AI
+│   ├── analisi.html / competitor.html        analytics, confronto competitor
+│   ├── issue-detection.html / knowledge-base.html   funzioni V1 da roadmap
+│   ├── integrazioni.html / oauth-mock.html   collegamento piattaforme (finestra OAuth finta)
+│   ├── impostazioni.html         profilo, team, billing/piani, notifiche, sicurezza — abbonamento reale qui
 │   ├── css/style.css
-│   └── js/                       api.js · login.js · app.js · impostazioni.js
+│   └── js/                       api.js · app.js · impostazioni.js · ...
 └── test/api.test.mjs
 ```
 
@@ -204,15 +213,34 @@ Dettagli e confronto con i competitor (Appbot, AppFollow) nel documento PDF coll
 
 ## Cosa cambia quando diventi maggiorenne
 
-Tre file, nessuna riscrittura dell'app:
+Due file, nessuna riscrittura dell'app:
 
 | File | Adesso | Poi |
 |---|---|---|
 | `services/steam.js` / `services/google.js` | recensioni inventate | import reale via API Steam / Google Play |
-| `routes/billing.js` | segna il piano come attivo | Stripe Checkout + webhook |
 | `services/n8n.js` | scrive nel log | webhook n8n reali |
 
 Tieni le firme delle funzioni così come sono descritte nei commenti: è quello che rende la sostituzione indolore.
+
+`routes/billing.js` non è più in questa tabella: il codice di fatturazione (Stripe Checkout, webhook, portale clienti, storico transazioni) è già scritto e testato — vedi sotto. Quello che manca non è codice, è un account Stripe *attivo* per incassare per davvero, e quello richiede la P.IVA che arriva a gennaio 2027. Fino ad allora il sito funziona lo stesso: senza `STRIPE_SECRET_KEY` nel `.env`, le route di `/api/abbonamento` rispondono 503 invece di andare in errore, il resto del sito resta usabile normalmente.
+
+---
+
+## Abbonamenti e transazioni (Stripe)
+
+Piani, limiti e prezzi vivono in `src/piani.js` — un solo file, coerente con la tabella "Modello di pricing" qui sopra. `organizations` ha `plan`, `plan_status` (`nessuno`/`attivo`/`in_scadenza`/`scaduto`), `stripe_customer_id`, `stripe_subscription_id`, `current_period_end`. Ogni pagamento riuscito o fallito diventa una riga nella nuova tabella `payments` (le "transazioni": importo, piano, stato, id evento Stripe per l'idempotenza) — è quello che alimenta lo storico mostrato in Impostazioni → Billing.
+
+Il piano si attiva SOLO dal webhook Stripe (`POST /api/abbonamento/webhook`), mai dal checkout diretto: `/checkout` crea solo la sessione di pagamento, così nessuno può attivarsi un piano gratis cambiando una chiamata `fetch`. Il portale clienti Stripe (`POST /api/abbonamento/portal`) gestisce da solo cambio carta, fatture scaricabili e cancellazione — non c'è nessuna di quelle schermate da costruire a mano.
+
+**Per attivare la modalità test (nessun incasso reale, nessuna P.IVA richiesta):**
+
+1. Crea un account gratuito su [stripe.com](https://stripe.com) — resta in modalità Test di default.
+2. Dashboard → Product catalog: crea 3 prodotti (Indie, Studio, Publisher) ciascuno con un prezzo ricorrente mensile (49€, 149€, 399€). Copia i tre `price_...` in `STRIPE_PRICE_INDIE` / `STUDIO` / `PUBLISHER` nel `.env`.
+3. Dashboard → Developers → API keys: copia la chiave segreta di test (`sk_test_...`) in `STRIPE_SECRET_KEY`.
+4. In locale, per ricevere i webhook, installa la [Stripe CLI](https://stripe.com/docs/stripe-cli) ed esegui `stripe listen --forward-to localhost:3000/api/abbonamento/webhook`: stampa un `whsec_...` da mettere in `STRIPE_WEBHOOK_SECRET`.
+5. Riavvia il server. Il checkout ora funziona con le [carte di test](https://stripe.com/docs/testing) di Stripe (es. `4242 4242 4242 4242`, qualsiasi data futura e CVC).
+
+Il piano Enterprise resta volutamente fuori da questo sistema: è "su misura" (vedi pricing), il pulsante "Contact us" apre un'email invece di un checkout.
 
 ---
 

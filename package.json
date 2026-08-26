@@ -1,7 +1,7 @@
 {
-  "name": "assistai",
+  "name": "gamefollow",
   "version": "0.1.0",
-  "description": "AssistAI — micro-SaaS multi-tenant: risposte alle recensioni Google generate con AI",
+  "description": "GameFollow — micro-SaaS multi-tenant: Game Review Intelligence & Management per sviluppatori di videogiochi",
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
@@ -20,7 +20,8 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
     "express-session": "^1.19.0",
-    "helmet": "^8.1.0"
+    "helmet": "^8.1.0",
+    "stripe": "^22.5.0"
   },
   "type": "module"
 }

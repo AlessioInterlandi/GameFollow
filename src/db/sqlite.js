@@ -50,7 +50,7 @@ export async function findOrgById(orgId) {
 }
 
 export async function updateOrg(orgId, campi) {
-  const consentiti = ['name', 'plan', 'tone', 'auto_send', 'google_connected'];
+  const consentiti = ['name', 'plan', 'plan_status', 'tone', 'auto_send', 'google_connected', 'stripe_customer_id', 'stripe_subscription_id', 'current_period_end'];
   const chiavi = Object.keys(campi).filter((k) => consentiti.includes(k));
   if (chiavi.length > 0) {
     const setClause = chiavi.map((k) => `${k} = ?`).join(', ');
@@ -149,4 +149,30 @@ export async function getIntegrationSecret(orgId, provider) {
     .prepare('SELECT api_key FROM integrations WHERE org_id = ? AND provider = ? AND connected = 1')
     .get(orgId, provider);
   return riga?.api_key ? decifra(riga.api_key) : undefined;
+}
+
+export async function findOrgByStripeCustomerId(stripeCustomerId) {
+  return mapOrg(
+    getDb().prepare('SELECT * FROM organizations WHERE stripe_customer_id = ?').get(stripeCustomerId)
+  );
+}
+
+// ON CONFLICT DO NOTHING sull'id evento Stripe: se lo stesso webhook arriva
+// due volte (Stripe ritenta in caso di rete lenta), la seconda scrittura
+// e' un no-op invece di duplicare la transazione.
+export async function insertPayment(orgId, pagamento) {
+  const { stripe_event_id, stripe_invoice_id, plan, amount_cents, currency, status } = pagamento;
+  getDb()
+    .prepare(
+      `INSERT INTO payments (org_id, stripe_event_id, stripe_invoice_id, plan, amount_cents, currency, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT (stripe_event_id) DO NOTHING`
+    )
+    .run(orgId, stripe_event_id, stripe_invoice_id ?? null, plan, amount_cents, currency ?? 'eur', status);
+}
+
+export async function listPayments(orgId) {
+  return getDb()
+    .prepare('SELECT * FROM payments WHERE org_id = ? ORDER BY created_at DESC')
+    .all(orgId);
 }

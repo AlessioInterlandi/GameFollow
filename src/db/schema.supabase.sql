@@ -11,9 +11,14 @@ CREATE TABLE IF NOT EXISTS organizations (
     id BIGSERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     plan TEXT NOT NULL DEFAULT 'gratis',
+    plan_status TEXT NOT NULL DEFAULT 'nessuno'
+        CHECK (plan_status IN ('nessuno', 'attivo', 'in_scadenza', 'scaduto')),
     google_connected BOOLEAN NOT NULL DEFAULT false,
     tone TEXT,
     auto_send BOOLEAN NOT NULL DEFAULT false,
+    stripe_customer_id TEXT UNIQUE,
+    stripe_subscription_id TEXT UNIQUE,
+    current_period_end TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -63,6 +68,23 @@ CREATE TABLE IF NOT EXISTS integrations (
     UNIQUE (org_id, provider)
 );
 
+-- payments : storico delle transazioni reali, una riga per evento Stripe,
+-- scritta solo dal webhook (mai dal checkout diretto). stripe_event_id
+-- garantisce l'idempotenza: Stripe puo' rimandare lo stesso evento.
+CREATE TABLE IF NOT EXISTS payments (
+    id BIGSERIAL PRIMARY KEY,
+    org_id BIGINT NOT NULL REFERENCES organizations(id),
+    stripe_event_id TEXT NOT NULL UNIQUE,
+    stripe_invoice_id TEXT,
+    plan TEXT NOT NULL,
+    amount_cents INTEGER NOT NULL,
+    currency TEXT NOT NULL DEFAULT 'eur',
+    status TEXT NOT NULL CHECK (status IN ('pagato', 'fallito', 'rimborsato')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_payments_org ON payments (org_id, created_at DESC);
+
 --
 -- ROW LEVEL SECURITY
 --
@@ -92,6 +114,7 @@ ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE integrations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "solo la propria organizzazione" ON organizations;
 CREATE POLICY "solo la propria organizzazione" ON organizations
@@ -110,6 +133,10 @@ CREATE POLICY "solo le recensioni della propria organizzazione" ON reviews
 DROP POLICY IF EXISTS "solo le integrazioni della propria organizzazione" ON integrations;
 CREATE POLICY "solo le integrazioni della propria organizzazione" ON integrations
   FOR ALL USING (org_id = current_org_id());
+
+DROP POLICY IF EXISTS "solo i pagamenti della propria organizzazione" ON payments;
+CREATE POLICY "solo i pagamenti della propria organizzazione" ON payments
+  FOR SELECT USING (org_id = current_org_id());
 
 -- Nota: la service_role key (quella usata dal backend, in src/db/supabase.js)
 -- IGNORA tutte queste policy. Le RLS sono la seconda rete di sicurezza:

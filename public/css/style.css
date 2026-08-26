@@ -57,7 +57,7 @@ body{font-size:15px}.main-nav a{font-size:14px}.connected{font-size:12px}.connec
 .plan-note{color:var(--green);font-size:11px;font-weight:600;margin:-10px 0 14px}
 .plan-card ul{list-style:none;padding:0;margin:0 0 18px;display:grid;gap:8px;font-size:13px}
 .plan-card ul li.off{color:#aaa}
-.plan-card button{width:100%}
+.plan-card button{width:100%}button[data-piano-choose]:not(:disabled){background:#ff9d00;border-color:#ff9d00;color:#fff;font-weight:700}button[data-piano-choose]:not(:disabled):hover{background:#e68900;border-color:#e68900}button[data-piano-choose]:disabled{opacity:.5;cursor:not-allowed}
 .plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}
 .billing-toggle{display:inline-flex;border:1px solid var(--line);border-radius:8px;padding:3px;gap:2px}
 .billing-toggle button{border:0;background:none;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600}

@@ -21,6 +21,10 @@ export const config = {
   sessionSecret: process.env.SESSION_SECRET,
   trustProxy: bool(process.env.TRUST_PROXY, false),
 
+  // Base pubblica dell'app: serve a costruire gli URL di successo/annullo
+  // che Stripe Checkout usa per tornare al sito dopo il pagamento.
+  appUrl: process.env.APP_URL || `http://localhost:${numero(process.env.PORT, 3000)}`,
+
   dbDriver: process.env.DB_DRIVER || 'sqlite',
   sqliteFile: process.env.SQLITE_FILE || './data/app.db',
 
@@ -40,7 +44,18 @@ export const config = {
   smtpPass: process.env.SMTP_PASS || '',
   emailFrom: process.env.EMAIL_FROM || 'no-reply@gamefollow.app',
 
-  prezzoMensile: numero(process.env.PREZZO_MENSILE, 49),
+  // Stripe: SECRET_KEY e WEBHOOK_SECRET restano vuote finche' non esiste un
+  // account Stripe collegato. Con la chiave assente le route di
+  // /api/abbonamento rispondono 503 invece di andare in errore a meta'
+  // richiesta (vedi routes/billing.js) — cosi' il resto del sito continua
+  // a funzionare anche prima di avere Stripe configurato.
+  stripe: {
+    secretKey: process.env.STRIPE_SECRET_KEY || '',
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
+    prezzoIndie: process.env.STRIPE_PRICE_INDIE || '',
+    prezzoStudio: process.env.STRIPE_PRICE_STUDIO || '',
+    prezzoPublisher: process.env.STRIPE_PRICE_PUBLISHER || '',
+  },
 
   rateLimit: {
     loginWindowMs: numero(process.env.RATE_LIMIT_LOGIN_WINDOW_MS, 15 * 60 * 1000),

@@ -1,7 +1,8 @@
 -- Definizione delle tabelle.
 --
 -- organizations : l'azienda cliente. E' questa l'unita' che paga.
---   id, name, plan, google_connected, tone, auto_send, created_at
+--   id, name, plan, plan_status, google_connected, tone, auto_send,
+--   stripe_customer_id, stripe_subscription_id, current_period_end, created_at
 --
 -- users : chi accede. Ogni utente appartiene a una organization.
 --   id, org_id, email (unica), password_hash, created_at
@@ -21,9 +22,24 @@ CREATE TABLE IF NOT EXISTS organizations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     plan TEXT NOT NULL DEFAULT 'gratis',
+    -- 'nessuno' finche' non c'e' mai stato un abbonamento; poi rispecchia
+    -- lo stato dell'abbonamento Stripe (attivo, in_scadenza, scaduto).
+    -- Aggiornato SOLO dal webhook (vedi routes/billing.js), mai da una
+    -- richiesta diretta del frontend.
+    plan_status TEXT NOT NULL DEFAULT 'nessuno'
+        CHECK (plan_status IN ('nessuno', 'attivo', 'in_scadenza', 'scaduto')),
     google_connected INTEGER NOT NULL DEFAULT 0,
     tone TEXT,
     auto_send INTEGER NOT NULL DEFAULT 0,
+    -- Id cliente/abbonamento lato Stripe. NULL finche' non ha mai pagato.
+    -- Servono per ritrovare l'organizzazione quando arriva un evento
+    -- webhook (Stripe manda l'id cliente, non il nostro org_id).
+    stripe_customer_id TEXT UNIQUE,
+    stripe_subscription_id TEXT UNIQUE,
+    -- Fine del periodo gia' pagato: e' la data mostrata come "prossimo
+    -- addebito" finche' l'abbonamento e' attivo, o "attivo fino al" se e'
+    -- stata richiesta la disdetta.
+    current_period_end TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -72,3 +88,25 @@ CREATE TABLE IF NOT EXISTS integrations (
     api_key_hint TEXT,
     UNIQUE (org_id, provider)
 );
+
+-- payments : storico delle transazioni reali (le fatture pagate/fallite/
+-- rimborsate). Una riga per evento Stripe, scritta SOLO dal webhook —
+-- mai dal checkout diretto, per lo stesso motivo per cui il piano non si
+-- attiva mai su richiesta diretta del frontend.
+--
+-- stripe_event_id: usato per l'idempotenza. Stripe puo' mandare lo stesso
+-- evento piu' di una volta (retry di rete); senza questo controllo
+-- rischieremmo di registrare due volte lo stesso pagamento.
+CREATE TABLE IF NOT EXISTS payments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    org_id INTEGER NOT NULL REFERENCES organizations(id),
+    stripe_event_id TEXT NOT NULL UNIQUE,
+    stripe_invoice_id TEXT,
+    plan TEXT NOT NULL,
+    amount_cents INTEGER NOT NULL,
+    currency TEXT NOT NULL DEFAULT 'eur',
+    status TEXT NOT NULL CHECK (status IN ('pagato', 'fallito', 'rimborsato')),
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_payments_org ON payments (org_id, created_at DESC);
