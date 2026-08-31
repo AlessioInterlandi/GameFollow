@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GameFollow — Log in</title>
+<title>GameFollow — Registrati</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
@@ -41,7 +41,6 @@ a:hover{opacity:.85}
 
 .shell{min-height:100vh;display:grid;grid-template-columns:1fr 1.15fr}
 
-/* ---------- glass primitive ---------- */
 .glass{
   background:var(--panel-glass);
   border:1px solid var(--glass-border);
@@ -51,7 +50,6 @@ a:hover{opacity:.85}
   box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 24px 48px -24px rgba(0,0,0,.6);
 }
 
-/* ---------- left: brand / animated charts ---------- */
 .showcase{
   position:relative;padding:56px 56px;display:flex;flex-direction:column;
   justify-content:center;overflow:hidden;
@@ -67,7 +65,6 @@ a:hover{opacity:.85}
 .showcase-copy h1 span{color:var(--accent)}
 .showcase-copy p{color:var(--muted);font-size:15px}
 
-/* chart stack */
 .chart-stack{margin-top:36px;display:flex;flex-direction:column;gap:16px}
 
 .cs-main{padding:20px 20px 16px}
@@ -87,7 +84,6 @@ a:hover{opacity:.85}
 .chart-grid line{stroke:var(--border);stroke-width:1}
 .chart-dots circle{fill:var(--bg);stroke:var(--accent);stroke-width:2}
 
-/* secondary cards row: donut + bars side by side, normal flow (no overlap) */
 .cs-row{display:flex;gap:16px}
 .cs-donut{flex:0 0 190px;padding:16px}
 .cs-donut .cs-title{font-size:12px;margin-bottom:10px}
@@ -112,9 +108,8 @@ a:hover{opacity:.85}
 
 .showcase-foot{display:flex;gap:22px;color:var(--muted-2);font-size:12px;font-family:var(--font-mono);margin-top:32px;flex-wrap:wrap}
 
-/* ---------- right: login card ---------- */
 .auth{display:flex;align-items:center;justify-content:center;padding:32px}
-.auth-inner{width:100%;max-width:380px}
+.auth-inner{width:100%;max-width:400px}
 .auth-inner .mobile-brand{display:none;font-size:19px;font-weight:750;margin-bottom:28px}
 .auth-inner .mobile-brand span{color:var(--accent)}
 
@@ -131,6 +126,7 @@ input{
 }
 input::placeholder{color:var(--muted-2)}
 input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,157,0,.14)}
+.field-hint{margin-top:-11px;margin-bottom:16px;font-size:11.5px;color:var(--muted-2)}
 
 button{
   width:100%;font:inherit;font-size:14.5px;font-weight:650;
@@ -140,6 +136,7 @@ button{
   transition:opacity .15s ease, transform .15s ease;
 }
 button:hover{opacity:.92;transform:translateY(-1px)}
+button:disabled{opacity:.6;cursor:default;transform:none}
 
 .err{
   display:none;background:rgba(248,113,113,.1);color:var(--red);
@@ -148,14 +145,14 @@ button:hover{opacity:.92;transform:translateY(-1px)}
 }
 .err.show{display:block}
 
-.help{font-size:13px;color:var(--muted);text-align:center;margin-top:20px}
-
-.note{
-  margin-top:20px;padding:14px 16px;
-  background:rgba(255,157,0,.06);border:1px dashed var(--glass-border-strong);
-  border-radius:12px;font-size:12.5px;color:var(--muted);line-height:1.6;
+.ok{
+  display:none;background:rgba(34,197,94,.1);color:var(--green);
+  border:1px solid rgba(34,197,94,.28);
+  font-size:13px;padding:12px 14px;border-radius:9px;margin-bottom:16px;line-height:1.55;
 }
-.note strong{color:var(--accent-light)}
+.ok.show{display:block}
+
+.help{font-size:13px;color:var(--muted);text-align:center;margin-top:20px}
 
 .legal-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:20px;font-size:12px;color:var(--muted-2)}
 .legal-links a{color:var(--muted-2);text-decoration:underline;text-underline-offset:2px}
@@ -186,29 +183,28 @@ button:hover{opacity:.92;transform:translateY(-1px)}
       <div class="mobile-brand">Game<span>Follow</span></div>
 
       <div class="card glass">
-        <h2>Bentornato</h2>
-        <p class="sub">Accedi al tuo pannello</p>
+        <h2>Crea il tuo account</h2>
+        <p class="sub">Gratis per iniziare, nessuna carta richiesta</p>
 
-        <div class="err">
-          <span id="errMsg">Email o password non corretti.</span>
-          <span id="resendWrap" style="display:none"> <a href="#" id="resendLink">Rinvia email di conferma</a></span>
-        </div>
+        <div class="err" id="err"></div>
+        <div class="ok" id="ok"></div>
 
-        <form>
+        <form id="form-registrazione">
+          <label for="nomeOrg">Nome studio / azienda</label>
+          <input type="text" id="nomeOrg" placeholder="Il tuo studio" required minlength="2" autocomplete="organization">
+
           <label for="email">Email</label>
-          <input type="email" id="email" placeholder="tu@tuostudio.dev" required>
+          <input type="email" id="email" placeholder="tu@tuostudio.dev" required autocomplete="email">
 
           <label for="pw">Password</label>
-          <input type="password" id="pw" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
+          <input type="password" id="pw" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required minlength="8" autocomplete="new-password">
+          <div class="field-hint">Almeno 8 caratteri.</div>
 
-          <button type="submit">Accedi</button>
+          <button type="submit" id="submitBtn">Crea account</button>
         </form>
 
         <p class="help">
-          Non hai un account? <a href="registrati.html">Registrati</a>
-        </p>
-        <p class="help">
-          Password dimenticata? <a href="mailto:[LA-TUA-EMAIL]">Scrivimi</a> e te la reimposto.
+          Hai gi&agrave; un account? <a href="login.html">Accedi</a>
         </p>
       </div>
 
@@ -291,6 +287,6 @@ button:hover{opacity:.92;transform:translateY(-1px)}
 </div>
 
 <script src="js/cookie-consent.js" defer></script>
-<script src="js/login.js"></script>
+<script src="js/registrati.js"></script>
 </body>
 </html>

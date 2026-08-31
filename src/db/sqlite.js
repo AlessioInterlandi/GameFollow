@@ -44,6 +44,21 @@ function applicaMigrazioniColonne() {
   if (!colonneReviews.includes('platform')) {
     db.exec("ALTER TABLE reviews ADD COLUMN platform TEXT DEFAULT 'steam'");
   }
+
+  const colonneUsers = db.prepare("PRAGMA table_info(users)").all().map((c) => c.name);
+  if (!colonneUsers.includes('email_verified_at')) {
+    db.exec('ALTER TABLE users ADD COLUMN email_verified_at TEXT');
+    db.exec('ALTER TABLE users ADD COLUMN verify_token_hash TEXT');
+    db.exec('ALTER TABLE users ADD COLUMN verify_token_expires TEXT');
+
+    // Queste colonne sono appena nate: ogni utente che esiste GIA' a
+    // questo punto e' un account creato a mano (o dal seed) prima che
+    // esistesse la registrazione self-service — va trattato come gia'
+    // verificato, altrimenti chi ha gia' un account smetterebbe di colpo
+    // di poter fare login. Solo gli account creati DA QUI IN AVANTI con
+    // POST /register nascono con email_verified_at = NULL per davvero.
+    db.exec("UPDATE users SET email_verified_at = datetime('now') WHERE email_verified_at IS NULL");
+  }
 }
 
 export async function init() {
@@ -65,6 +80,74 @@ export async function findUserByEmail(email) {
 
 export async function findOrgById(orgId) {
   return mapOrg(getDb().prepare('SELECT * FROM organizations WHERE id = ?').get(orgId));
+}
+
+// Registrazione self-service: crea l'organizzazione E il suo primo utente
+// (owner) in una singola transazione — o nascono entrambi, o non nasce
+// nessuno dei due, mai un'organizzazione orfana senza utenti se qualcosa
+// va storto a meta'. Il piano parte 'gratis' (default di schema.sql).
+export async function creaOrganizzazioneEUtente({ nomeOrg, email, passwordHash, verifyTokenHash, verifyTokenExpires }) {
+  const database = getDb();
+  database.exec('BEGIN');
+  try {
+    const org = database
+      .prepare('INSERT INTO organizations (name) VALUES (?)')
+      .run(nomeOrg);
+    const utente = database
+      .prepare(
+        `INSERT INTO users (org_id, email, password_hash, verify_token_hash, verify_token_expires)
+         VALUES (?, ?, ?, ?, ?)`
+      )
+      .run(org.lastInsertRowid, email, passwordHash, verifyTokenHash, verifyTokenExpires);
+    database.exec('COMMIT');
+
+    return {
+      org: await findOrgById(org.lastInsertRowid),
+      user: database.prepare('SELECT * FROM users WHERE id = ?').get(utente.lastInsertRowid),
+    };
+  } catch (err) {
+    database.exec('ROLLBACK');
+    throw err;
+  }
+}
+
+// token in chiaro -> SHA-256 -> confrontato con verify_token_hash: vedi
+// routes/auth.js per come viene calcolato l'hash da confrontare. La
+// scadenza si controlla direttamente nella WHERE: un token scaduto non
+// fa match, stessa risposta "link non valido" di un token sbagliato.
+//
+// datetime(...) su ENTRAMBI i lati del confronto, non solo su 'now': il
+// valore salvato arriva da new Date().toISOString() in JS ("2026-08-31T09:34:59.368Z"),
+// mentre datetime('now') di SQLite produce "2026-08-31 09:35:00" (spazio,
+// niente millisecondi/Z). Confrontati come stringhe pure, senza normalizzarli
+// entrambi, ' ' (spazio) < 'T' nell'ordine ASCII: un token scaduto da anni
+// risulterebbe SEMPRE "maggiore" del now e non scadrebbe mai. Verificato
+// con un test dedicato prima di questa correzione.
+export async function trovaUtentePerTokenVerifica(tokenHash) {
+  return getDb()
+    .prepare(
+      `SELECT * FROM users
+       WHERE verify_token_hash = ? AND datetime(verify_token_expires) > datetime('now')`
+    )
+    .get(tokenHash);
+}
+
+export async function impostaEmailVerificata(userId) {
+  getDb()
+    .prepare(
+      `UPDATE users SET email_verified_at = datetime('now'), verify_token_hash = NULL, verify_token_expires = NULL
+       WHERE id = ?`
+    )
+    .run(userId);
+}
+
+// Usata sia dalla registrazione (primo invio) sia da "rinvia email di
+// verifica": genera sempre un token nuovo, quello vecchio smette subito
+// di funzionare (un solo link valido alla volta).
+export async function impostaNuovoTokenVerifica(userId, tokenHash, scadenza) {
+  getDb()
+    .prepare('UPDATE users SET verify_token_hash = ?, verify_token_expires = ? WHERE id = ?')
+    .run(tokenHash, scadenza, userId);
 }
 
 export async function updateOrg(orgId, campi) {

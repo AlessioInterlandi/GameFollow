@@ -52,7 +52,7 @@ function mostraMessaggio(testo, tipo = 'info') {
   messaggio.className = `flash flash-${tipo}`;
   messaggio.textContent = testo;
   messaggio.style.cssText = 'padding:10px 16px;border-radius:8px;color:#fff;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.2);';
-  messaggio.style.background = tipo === 'errore' ? '#dc2626' : tipo === 'successo' ? '#16a34a' : '#334155';
+  messaggio.style.background = tipo === 'errore' ? '#dc2626' : tipo === 'successo' ? '#16a34a' : '#241B10';
 
   contenitore.appendChild(messaggio);
   setTimeout(() => messaggio.remove(), 4000);

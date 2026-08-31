@@ -6,6 +6,12 @@
  * un attaccante non puo' bloccare l'accesso a un utente vero cambiando
  * solo la password nei tentativi.
  *
+ * registerLimiter: stesso principio del loginLimiter ma su /api/auth/register
+ * e /api/auth/rinvia-verifica — qui il rischio non e' solo il brute force,
+ * ma anche lo spam: ogni chiamata crea una riga nel DB e puo' far partire
+ * una vera email verso una casella altrui (l'utente registrante non deve
+ * necessariamente possedere l'email che inserisce). Conteggio per IP.
+ *
  * apiLimiter: rete piu' larga su tutte le /api, protezione generica da
  * abusi e da un singolo client che martella il server.
  */
@@ -24,6 +30,15 @@ export const loginLimiter = rateLimit({
   legacyHeaders: false,
   skip: disattivoInTest,
   message: { errore: 'Troppi tentativi di accesso. Riprova piu tardi.' },
+});
+
+export const registerLimiter = rateLimit({
+  windowMs: config.rateLimit.registerWindowMs,
+  limit: config.rateLimit.registerMax,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: disattivoInTest,
+  message: { errore: 'Troppi tentativi di registrazione. Riprova piu tardi.' },
 });
 
 export const apiLimiter = rateLimit({

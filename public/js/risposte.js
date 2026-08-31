@@ -15,7 +15,7 @@ function rigaAzioni(recensione) {
   if (recensione.status === 'da_approvare') {
     return `
       <button class="action" data-azione="modifica" data-id="${recensione.id}">Edit</button>
-      <button class="action" style="background:#ff9800;color:#fff" data-azione="approva" data-id="${recensione.id}">Approve</button>
+      <button class="action" style="background:#FF9D00;color:#fff" data-azione="approva" data-id="${recensione.id}">Approve</button>
       <button class="action" data-azione="ignora" data-id="${recensione.id}">Ignore</button>`;
   }
   if (recensione.status === 'pubblicata') return '<span class="ok">✓ Published</span>';

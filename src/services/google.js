@@ -14,13 +14,18 @@
  * org_id, e non deve mai arrivare al frontend.
  */
 const AUTORI_FINTI = ['ShadowPlayer_98', 'AlexM', 'GameHunter_42', 'QuestSeeker', 'IndieLover99', 'RetroFan'];
+
+// Ogni testo finto porta con se' il range di voto plausibile per il suo
+// sentiment (min/max stelle), cosi' il voto casuale resta coerente con
+// quello che la recensione dice invece di poter uscire, es., a 5 stelle
+// su un testo che si lamenta di crash continui.
 const TESTI_FINTI = [
-  'Amazing game! The atmosphere is incredible.',
-  'The game is good but the multiplayer is terrible.',
-  'Some bugs in the UI, but overall fun.',
-  'Crashes every time I try to load the second level.',
-  'Great art style, controls feel a bit clunky though.',
-  null,
+  { testo: 'Amazing game! The atmosphere is incredible.', min: 4, max: 5 },
+  { testo: 'The game is good but the multiplayer is terrible.', min: 2, max: 3 },
+  { testo: 'Some bugs in the UI, but overall fun.', min: 3, max: 4 },
+  { testo: 'Crashes every time I try to load the second level.', min: 1, max: 2 },
+  { testo: 'Great art style, controls feel a bit clunky though.', min: 3, max: 4 },
+  { testo: null, min: 1, max: 5 },
 ];
 
 export function urlAutorizzazione(orgId) {
@@ -33,15 +38,22 @@ export function urlAutorizzazione(orgId) {
 // Issue Detection riflette account per account cosa e' stato collegato,
 // invece di mostrare sempre le stesse tre piattaforme per tutti.
 // Se l'org non ne ha ancora collegata nessuna, si ripiega su 'steam'.
+//
+// Autore e testo avanzano con moduli diversi (autore ogni riga, testo ogni
+// AUTORI_FINTI.length righe) invece dello stesso indice: cosi' le coppie
+// autore+testo non si ripetono finche' non si esauriscono tutte le
+// combinazioni (6 autori x 6 testi = 36), invece di ripetersi identiche
+// gia' dal settimo elemento come succedeva con "i % 6" su entrambi.
 export async function scaricaNuoveRecensioni(quante = 10, piattaforme = ['steam']) {
   const disponibili = piattaforme.length > 0 ? piattaforme : ['steam'];
 
   return Array.from({ length: quante }, (_, i) => {
-    const testo = TESTI_FINTI[i % TESTI_FINTI.length];
+    const voce = TESTI_FINTI[Math.floor(i / AUTORI_FINTI.length) % TESTI_FINTI.length];
+    const voto = voce.min + Math.floor(Math.random() * (voce.max - voce.min + 1));
     return {
       author: AUTORI_FINTI[i % AUTORI_FINTI.length],
-      rating: 1 + Math.floor(Math.random() * 5),
-      text: testo,
+      rating: voto,
+      text: voce.testo,
       review_date: new Date(Date.now() - i * 3_600_000).toISOString(),
       platform: disponibili[i % disponibili.length],
     };

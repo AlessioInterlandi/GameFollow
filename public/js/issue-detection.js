@@ -22,7 +22,7 @@ const elFiltroGravita = document.getElementById('problemi-filtro-gravita');
 const elFiltroPiattaforma = document.getElementById('problemi-filtro-piattaforma');
 const elFiltroRicerca = document.getElementById('problemi-filtro-ricerca');
 
-const COLORE_GRAVITA = { alta: '#ff3b30', media: '#ffad35', bassa: '#39963c' };
+const COLORE_GRAVITA = { alta: '#F87171', media: '#FF9D00', bassa: '#22C55E' };
 
 let problemiCompleti = [];
 let chartProblemi = null;
@@ -70,7 +70,7 @@ function creaCardPrincipale(problema) {
         <p>Severity　<span class="${problema.gravita === 'alta' ? 'bad' : ''}">● ${GRAVITA_LABELS[problema.gravita]}</span></p>
         <p>First reported　${formattaData(problema.primo_segnalato)}</p>
         <p>Last reported　${formattaData(problema.ultimo_segnalato)}</p>
-        <button disabled title="Ticket tracker integration coming soon" style="float:right;background:#ff9800;color:#fff;opacity:.6;cursor:not-allowed">Create issue</button>
+        <button disabled title="Ticket tracker integration coming soon" style="float:right;background:#FF9D00;color:#fff;opacity:.6;cursor:not-allowed">Create issue</button>
       </div>
     </div>
   `;
@@ -146,6 +146,11 @@ function disegnaGrafico(filtrati) {
     return;
   }
 
+  if (typeof Chart !== 'undefined') {
+    Chart.defaults.color = '#AFA189';
+    Chart.defaults.borderColor = '#2E2416';
+  }
+
   chartProblemi = new Chart(elGraficoCanvas.getContext('2d'), {
     type: 'bar',
     data: {
@@ -156,7 +161,10 @@ function disegnaGrafico(filtrati) {
       indexAxis: 'y',
       responsive: true,
       plugins: { legend: { display: false } },
-      scales: { x: { beginAtZero: true, ticks: { precision: 0 } } },
+      scales: {
+        x: { beginAtZero: true, ticks: { precision: 0, color: '#AFA189' }, grid: { color: '#2E2416' } },
+        y: { grid: { display: false }, ticks: { color: '#AFA189' } },
+      },
     },
   });
 }

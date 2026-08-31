@@ -62,6 +62,12 @@ export const config = {
     loginMax: numero(process.env.RATE_LIMIT_LOGIN_MAX, 10),
     apiWindowMs: numero(process.env.RATE_LIMIT_API_WINDOW_MS, 15 * 60 * 1000),
     apiMax: numero(process.env.RATE_LIMIT_API_MAX, 300),
+    // Piu' stretto del login apposta: una registrazione crea una riga nel
+    // DB e (se configurato) manda una vera email, quindi e' il bersaglio
+    // naturale per bot che vogliono spammare caselle altrui o riempire il
+    // database di organizzazioni finte. Copre sia /register che /rinvia-verifica.
+    registerWindowMs: numero(process.env.RATE_LIMIT_REGISTER_WINDOW_MS, 60 * 60 * 1000),
+    registerMax: numero(process.env.RATE_LIMIT_REGISTER_MAX, 5),
   },
 };
 

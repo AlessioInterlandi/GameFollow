@@ -31,8 +31,28 @@ CREATE TABLE IF NOT EXISTS users (
     auth_id UUID UNIQUE REFERENCES auth.users(id),
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
+    -- Registrazione self-service: NULL finche' l'utente non conferma
+    -- l'email (vedi lo stesso commento in schema.sql per i dettagli).
+    email_verified_at TIMESTAMPTZ,
+    verify_token_hash TEXT,
+    verify_token_expires TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Migrazione idempotente per chi ha GIA' eseguito questo schema in passato:
+-- CREATE TABLE IF NOT EXISTS sopra non aggiunge colonne a una tabella che
+-- esiste gia', quindi le tre colonne della verifica email vanno aggiunte
+-- qui a parte. Sicura da rieseguire piu' volte (ADD COLUMN IF NOT EXISTS
+-- non fallisce se la colonna c'e' gia'). Il backfill marca come "gia'
+-- verificati" tutti gli utenti creati PRIMA di questa modifica (erano
+-- account creati a mano dal gestore del sito, quindi gia' fidati): senza
+-- questo passaggio, al prossimo deploy nessun cliente esistente riuscirebbe
+-- piu' ad accedere. E' un no-op alla seconda esecuzione, perche' a quel
+-- punto tutte le righe hanno gia' email_verified_at valorizzato.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verified_at TIMESTAMPTZ;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS verify_token_hash TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS verify_token_expires TIMESTAMPTZ;
+UPDATE users SET email_verified_at = now() WHERE email_verified_at IS NULL;
 
 CREATE TABLE IF NOT EXISTS reviews (
     id BIGSERIAL PRIMARY KEY,

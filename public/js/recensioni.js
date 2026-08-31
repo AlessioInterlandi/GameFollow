@@ -51,7 +51,7 @@ function pulsantiAzione(recensione) {
     case 'da_generare':
       return `<button class="action" data-azione="genera" data-id="${recensione.id}">Generate reply</button>`;
     case 'da_approvare':
-      return `<button class="action" style="background:#ff9800;color:#fff" data-azione="approva" data-id="${recensione.id}">Approve</button>
+      return `<button class="action" style="background:#FF9D00;color:#fff" data-azione="approva" data-id="${recensione.id}">Approve</button>
               <button class="action" data-azione="ignora" data-id="${recensione.id}">Ignore</button>`;
     case 'pubblicata':
       return '<span class="ok">✓ Published</span>';

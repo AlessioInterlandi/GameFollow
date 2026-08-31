@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 import { config } from './src/config.js';
 import * as db from './src/db/index.js';
-import { apiLimiter, loginLimiter } from './src/middleware/rateLimit.js';
+import { apiLimiter, loginLimiter, registerLimiter } from './src/middleware/rateLimit.js';
 
 import authRoutes from './src/routes/auth.js';
 import reviewsRoutes from './src/routes/reviews.js';
@@ -58,6 +58,8 @@ app.use(
 // Applica il rate limit specifico PRIMA di montare le route: la richiesta
 // di login viene contata una sola volta, sul percorso piu' stretto.
 app.use('/api/auth/login', loginLimiter);
+app.use('/api/auth/register', registerLimiter);
+app.use('/api/auth/rinvia-verifica', registerLimiter);
 app.use('/api', apiLimiter);
 
 app.use('/api/auth', authRoutes);

@@ -50,6 +50,82 @@ export async function updateOrg(orgId, campi) {
   return data ?? undefined;
 }
 
+// Crea una nuova organizzazione e il suo primo utente in un'unica
+// operazione (registrazione self-service, vedi lo stesso commento in
+// sqlite.js). Il client supabase-js non espone transazioni multi-tabella
+// come node:sqlite (niente BEGIN/COMMIT reali da qui): se l'inserimento
+// dell'utente fallisce (es. email duplicata, vincolo UNIQUE lato Postgres),
+// viene eseguita un'azione compensativa che cancella l'organizzazione
+// appena creata, cosi' da non lasciare organizzazioni "orfane" senza
+// utenti. Non e' atomico al 100% (una race fra le due insert e'
+// teoricamente possibile, es. il processo muore fra le due query), ma e'
+// il meglio ottenibile da qui senza una funzione Postgres/RPC dedicata.
+// Dato che questo driver non e' quello attivo in produzione (vedi
+// DB_DRIVER nel .env), la parita' con sqlite.js viene mantenuta per
+// correttezza futura, non perche' sia il percorso critico oggi: se in
+// futuro Supabase diventasse il driver attivo, conviene sostituire
+// questa funzione con una vera funzione Postgres (plpgsql) chiamata via
+// .rpc(), che garantisce atomicita' reale lato database.
+export async function creaOrganizzazioneEUtente({ nomeOrg, email, passwordHash, verifyTokenHash, verifyTokenExpires }) {
+  const client = getClient();
+
+  const { data: org, error: erroreOrg } = await client
+    .from('organizations').insert({ name: nomeOrg }).select().single();
+  if (erroreOrg) throw erroreOrg;
+
+  const { data: user, error: erroreUser } = await client
+    .from('users')
+    .insert({
+      org_id: org.id,
+      email,
+      password_hash: passwordHash,
+      verify_token_hash: verifyTokenHash,
+      verify_token_expires: verifyTokenExpires,
+    })
+    .select()
+    .single();
+
+  if (erroreUser) {
+    // Azione compensativa: l'org non deve restare orfana senza utenti.
+    await client.from('organizations').delete().eq('id', org.id);
+    throw erroreUser;
+  }
+
+  return { org, user };
+}
+
+// Vedi il commento gemello in sqlite.js sul perche' del confronto con la
+// scadenza (li' serve normalizzare i formati con datetime(), qui no: le
+// colonne sono TIMESTAMPTZ e Postgres confronta i timestamp nativamente
+// senza l'insidia del confronto testuale). Il principio resta lo stesso:
+// un token scaduto non deve fare match.
+export async function trovaUtentePerTokenVerifica(tokenHash) {
+  const { data, error } = await getClient()
+    .from('users')
+    .select('*')
+    .eq('verify_token_hash', tokenHash)
+    .gt('verify_token_expires', new Date().toISOString())
+    .maybeSingle();
+  if (error) throw error;
+  return data ?? undefined;
+}
+
+export async function impostaEmailVerificata(userId) {
+  const { error } = await getClient()
+    .from('users')
+    .update({ email_verified_at: new Date().toISOString(), verify_token_hash: null, verify_token_expires: null })
+    .eq('id', userId);
+  if (error) throw error;
+}
+
+export async function impostaNuovoTokenVerifica(userId, tokenHash, scadenza) {
+  const { error } = await getClient()
+    .from('users')
+    .update({ verify_token_hash: tokenHash, verify_token_expires: scadenza })
+    .eq('id', userId);
+  if (error) throw error;
+}
+
 export async function listReviews(orgId, { status } = {}) {
   let query = getClient()
     .from('reviews').select('*').eq('org_id', orgId).order('review_date', { ascending: false });

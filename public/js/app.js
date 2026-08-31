@@ -30,6 +30,143 @@ const ETICHETTA_STATO = {
   ignorata: 'Ignored',
 };
 
+const PIATTAFORMA_LABELS = { steam: 'Steam', xbox: 'Xbox', google_play: 'Google Play', app_store: 'App Store' };
+const GRAVITA_TAG_CLASSE = { alta: 'red', media: 'orange', bassa: 'green' };
+
+let chartSentiment = null;
+let chartPiattaforma = null;
+
+// Le due card sotto sono grafici reali (Chart.js), calcolati lato client
+// dalle recensioni gia' scaricate per la dashboard — nessuna chiamata in piu'.
+
+function applicaTemaGrafici() {
+  if (typeof Chart === 'undefined') return;
+  Chart.defaults.color = '#AFA189';
+  Chart.defaults.borderColor = '#2E2416';
+  Chart.defaults.font.family = "'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif";
+}
+
+function disegnaSentiment(recensioni) {
+  const canvas = document.getElementById('dash-sentiment-grafico');
+  if (!canvas || typeof Chart === 'undefined') return;
+  applicaTemaGrafici();
+
+  let positive = 0, neutre = 0, negative = 0;
+  for (const r of recensioni) {
+    if (r.rating >= 4) positive++;
+    else if (r.rating === 3) neutre++;
+    else negative++;
+  }
+  const totale = recensioni.length || 1;
+  const pct = (n) => `${Math.round((n / totale) * 100)}%`;
+
+  const elP = document.getElementById('dash-sentiment-positive');
+  const elN = document.getElementById('dash-sentiment-neutral');
+  const elNeg = document.getElementById('dash-sentiment-negative');
+  if (elP) elP.textContent = `${pct(positive)} (${positive.toLocaleString('en-US')})`;
+  if (elN) elN.textContent = `${pct(neutre)} (${neutre.toLocaleString('en-US')})`;
+  if (elNeg) elNeg.textContent = `${pct(negative)} (${negative.toLocaleString('en-US')})`;
+
+  const dati = [positive, neutre, negative];
+  const colori = ['#22C55E', '#FF9D00', '#F87171'];
+
+  if (chartSentiment) {
+    chartSentiment.data.datasets[0].data = dati;
+    chartSentiment.update();
+    return;
+  }
+
+  chartSentiment = new Chart(canvas.getContext('2d'), {
+    type: 'doughnut',
+    data: { labels: ['Positive', 'Neutral', 'Negative'], datasets: [{ data: dati, backgroundColor: colori }] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false, // riempie il .chart-box (158px), stessa altezza del grafico a fianco
+      plugins: { legend: { display: false } },
+      cutout: '65%',
+    },
+  });
+}
+
+function disegnaPiattaforma(recensioni) {
+  const canvas = document.getElementById('dash-piattaforma-grafico');
+  if (!canvas || typeof Chart === 'undefined') return;
+  applicaTemaGrafici();
+
+  const perPiattaforma = {};
+  for (const r of recensioni) {
+    const p = r.platform || 'steam';
+    if (!perPiattaforma[p]) perPiattaforma[p] = { somma: 0, conteggio: 0 };
+    perPiattaforma[p].somma += r.rating;
+    perPiattaforma[p].conteggio += 1;
+  }
+
+  const piattaforme = Object.keys(perPiattaforma);
+  const etichette = piattaforme.map((p) => `${PIATTAFORMA_LABELS[p] || p} (${perPiattaforma[p].conteggio})`);
+  const medie = piattaforme.map((p) => Math.round((perPiattaforma[p].somma / perPiattaforma[p].conteggio) * 100) / 100);
+
+  if (chartPiattaforma) {
+    chartPiattaforma.data.labels = etichette;
+    chartPiattaforma.data.datasets[0].data = medie;
+    chartPiattaforma.update();
+    return;
+  }
+
+  chartPiattaforma = new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: { labels: etichette, datasets: [{ label: 'Average rating', data: medie, backgroundColor: '#FFC569' }] },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false, // riempie il .chart-box (158px), stessa altezza del donut a fianco
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { beginAtZero: true, max: 5, grid: { color: '#2E2416' }, ticks: { color: '#AFA189' } },
+        y: { grid: { display: false }, ticks: { color: '#AFA189' } },
+      },
+    },
+  });
+}
+
+function creaRigaProblema(problema) {
+  const tr = document.createElement('tr');
+  const andamento = problema.andamento_settimanale;
+  const testoAndamento = andamento === null || andamento === undefined ? 'New' : `${andamento > 0 ? '+' : ''}${andamento}%`;
+  const classeAndamento = andamento > 0 ? 'negative' : andamento < 0 ? 'positive' : '';
+  tr.innerHTML = `<td>${escapeHtmlLocale(problema.nome)}</td><td>${problema.totale_recensioni.toLocaleString('en-US')}</td><td class="${classeAndamento}">${testoAndamento}</td>`;
+  return tr;
+}
+
+async function caricaProblemiDashboard() {
+  const nota = document.getElementById('dash-problemi-nota');
+  const tabella = document.getElementById('dash-problemi-tabella');
+  const corpo = document.getElementById('dash-problemi-corpo');
+  if (!nota || !tabella || !corpo) return;
+
+  try {
+    const dati = await api('/problemi');
+    if (!dati) return; // 401 -> api() ha gia' rimandato al login
+
+    if (!dati.problemi.length) {
+      nota.textContent = 'No issues detected in your reviews yet.';
+      tabella.hidden = true;
+      return;
+    }
+
+    corpo.innerHTML = '';
+    dati.problemi.slice(0, 5).forEach((problema) => corpo.appendChild(creaRigaProblema(problema)));
+    nota.hidden = true;
+    tabella.hidden = false;
+  } catch (errore) {
+    if (errore.status === 403) {
+      nota.innerHTML = 'Issue Detection is part of the Studio plan and up. <a class="link" href="impostazioni.html">Upgrade →</a>';
+    } else {
+      nota.textContent = 'Issue analysis not available right now.';
+    }
+    tabella.hidden = true;
+  }
+}
+
 function renderRecensioniRecenti(recensioni) {
   const contenitore = document.getElementById('recent-reviews');
   if (!contenitore) return;
@@ -95,10 +232,14 @@ async function caricaDashboard() {
     }
 
     renderRecensioniRecenti(recensioni);
+    disegnaSentiment(recensioni);
+    disegnaPiattaforma(recensioni);
   } catch {
     // api() reindirizza gia' al login su 401; altri errori restano silenziosi
     // in dashboard, non e' un flusso critico.
   }
+
+  caricaProblemiDashboard();
 }
 
 caricaDashboard();

@@ -3,57 +3,178 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GameFollow — AI review monitoring for game studios</title>
+<title>GameFollow — AI review intelligence for game studios</title>
 <style>
-:root{--ink:#171717;--muted:#6f7175;--line:#e8e8e8;--bg:#fbfaf9;--panel:#fff;--orange:#ff9800;--green:#39963c}
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#0A0908;
+  --bg-2:#141009;
+  --panel:#171109;
+  --panel-glass:rgba(23,17,9,.55);
+  --glass-border:rgba(255,157,0,.16);
+  --glass-border-strong:rgba(255,157,0,.32);
+  --border:#2E2416;
+  --border-strong:#4A3A22;
+  --ink:#F7F2E9;
+  --muted:#AFA189;
+  --muted-2:#6E6252;
+  --accent:#FF9D00;
+  --accent-ink:#1A1206;
+  --accent-light:#FFC569;
+  --green:#22C55E;
+  --red:#F87171;
+  --blue:#FFC569;
+  --font-ui:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.55 var(--font-ui);
+  -webkit-font-smoothing:antialiased;
+}
 a{color:inherit;text-decoration:none}
-.wrap{max-width:1120px;margin:auto;padding:0 28px}
-header{position:sticky;top:0;z-index:2;background:linear-gradient(105deg,#101112,#181a1c);color:#fff}
-header .wrap{display:flex;align-items:center;height:64px;gap:24px}
-.logo{font-size:20px;font-weight:750;margin-right:auto}
-.logo span{color:#ff9d00}
-header nav{display:flex;gap:22px;font-size:14px;font-weight:600;color:#d8d8d8}
-header nav a:hover{color:#fff}
-.btn{display:inline-block;font-weight:600;padding:10px 18px;border-radius:8px;cursor:pointer}
-.btn-primary{background:var(--orange);color:#fff}
-.btn-primary:hover{opacity:.9}
-.btn-ghost{border:1px solid #3a3c3d;color:#fff}
-.hero{background:linear-gradient(160deg,#101112,#1d1f20 65%);color:#fff;padding:90px 0 110px;text-align:center}
-.hero h1{font-size:44px;line-height:1.15;margin:0 0 18px;font-weight:750}
-.hero h1 span{color:#ff9d00}
-.hero p{font-size:18px;color:#c7c8ca;max-width:620px;margin:0 auto 34px}
-.hero .actions{display:flex;gap:14px;justify-content:center}
-.hero .actions .btn{font-size:15px;padding:13px 24px}
-.platforms{display:flex;gap:28px;justify-content:center;margin-top:56px;color:#8b8d8f;font-size:13px;font-weight:600;letter-spacing:.02em}
-section.features{padding:80px 0}
-.section-heading{text-align:center;max-width:600px;margin:0 auto 48px}
-.section-heading h2{font-size:30px;margin:0 0 12px}
+.wrap{max-width:1160px;margin:auto;padding:0 28px}
+
+/* ambient glow background */
+body{
+  background:
+    radial-gradient(760px 420px at 12% -6%, rgba(255,157,0,.14), transparent 60%),
+    radial-gradient(680px 460px at 92% 8%, rgba(255,157,0,.08), transparent 55%),
+    radial-gradient(900px 600px at 50% 120%, rgba(255,157,0,.06), transparent 60%),
+    var(--bg);
+}
+
+/* ---------- glass primitives ---------- */
+.glass{
+  background:var(--panel-glass);
+  border:1px solid var(--glass-border);
+  border-radius:16px;
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 24px 48px -24px rgba(0,0,0,.6);
+}
+.glass:hover{border-color:var(--glass-border-strong)}
+
+/* ---------- header ---------- */
+header{position:sticky;top:0;z-index:20;padding:14px 0}
+header .bar{
+  display:flex;align-items:center;gap:24px;height:56px;padding:0 20px;
+}
+.logo{font-size:19px;font-weight:750;margin-right:auto;letter-spacing:-.01em}
+.logo span{color:var(--accent)}
+.logo-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-left:8px;box-shadow:0 0 0 3px rgba(34,197,94,.18);vertical-align:middle;animation:pulseDot 2.4s ease-in-out infinite}
+@keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.35}}
+header nav{display:flex;gap:26px;font-size:14px;font-weight:550;color:var(--muted)}
+header nav a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14px;padding:10px 18px;border-radius:10px;cursor:pointer;border:1px solid transparent;transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease}
+.btn-primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 8px 24px -8px rgba(255,157,0,.55)}
+.btn-primary:hover{opacity:.92;transform:translateY(-1px)}
+.btn-ghost{border-color:var(--glass-border-strong);color:var(--ink);background:rgba(255,255,255,.02)}
+.btn-ghost:hover{border-color:var(--accent)}
+
+/* ---------- hero ---------- */
+.hero{padding:64px 0 40px;text-align:center;position:relative}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;
+  color:var(--accent-light);padding:6px 14px;border-radius:999px;margin-bottom:26px;
+}
+.hero h1{font-size:52px;line-height:1.12;margin:0 0 18px;font-weight:750;letter-spacing:-.02em}
+.hero h1 span{color:var(--accent)}
+.hero p.lead{font-size:18px;color:var(--muted);max-width:600px;margin:0 auto 34px}
+.hero .actions{display:flex;gap:14px;justify-content:center;margin-bottom:56px}
+
+/* live chart preview card */
+.chart-preview{max-width:920px;margin:0 auto;padding:22px 22px 18px;text-align:left}
+.chart-preview .cp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.cp-title{display:flex;align-items:center;gap:10px}
+.cp-title b{font-size:14px;font-weight:650}
+.live-chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;color:var(--green);background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.28);padding:4px 9px;border-radius:999px}
+.live-chip i{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulseDot 1.6s ease-in-out infinite}
+.cp-value{font-family:var(--font-mono);font-size:13px;color:var(--muted)}
+.cp-value b{color:var(--ink);font-size:15px}
+.cp-value .up{color:var(--green);font-weight:600}
+.chart-svg{width:100%;height:180px;display:block}
+.chart-path{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(255,157,0,.45));stroke-dasharray:900;stroke-dashoffset:900;animation:drawLine 2.4s cubic-bezier(.2,.7,.2,1) forwards .3s}
+.chart-fill{opacity:0;animation:fadeIn 1s ease forwards 1.6s}
+@keyframes drawLine{to{stroke-dashoffset:0}}
+@keyframes fadeIn{to{opacity:1}}
+.chart-grid line{stroke:var(--border);stroke-width:1}
+.chart-dots circle{fill:var(--bg);stroke:var(--accent);stroke-width:2;opacity:0;animation:fadeIn .4s ease forwards}
+.platform-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px;color:var(--muted-2);font-size:12px;font-family:var(--font-mono)}
+.platform-row span{padding:5px 10px;border:1px solid var(--border);border-radius:999px}
+
+/* ---------- trust bar ---------- */
+.trust-bar{padding:36px 0}
+.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.trust-card{padding:20px 18px;text-align:center}
+.trust-card strong{display:block;font-family:var(--font-mono);font-size:26px;color:var(--accent)}
+.trust-card span{display:block;color:var(--muted);font-size:12.5px;margin-top:6px}
+
+/* ---------- sections ---------- */
+section{padding:76px 0}
+.section-heading{text-align:center;max-width:600px;margin:0 auto 46px}
+.section-heading .kicker{font-family:var(--font-mono);font-size:12px;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;display:block}
+.section-heading h2{font-size:30px;margin:0 0 12px;font-weight:700;letter-spacing:-.01em}
 .section-heading p{color:var(--muted);font-size:16px;margin:0}
-.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.feature{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px}
-.feature .icon{width:40px;height:40px;border-radius:9px;background:#fff4e4;color:var(--orange);display:grid;place-items:center;font-size:19px;margin-bottom:14px}
-.feature h3{font-size:17px;margin:0 0 8px}
-.feature p{color:var(--muted);font-size:14px;margin:0;line-height:1.55}
-.stats{background:#101112;color:#fff;padding:60px 0}
-.stats .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
-.stats strong{display:block;font-size:32px;color:#ff9d00}
-.stats span{display:block;color:#aaa;font-size:13px;margin-top:6px}
-.cta{padding:90px 0;text-align:center}
-.cta h2{font-size:30px;margin:0 0 14px}
-.cta p{color:var(--muted);margin:0 0 30px}
-footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13px}
-footer .wrap{display:flex;justify-content:space-between;align-items:center}
+
+/* security grid */
+.sec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.sec-card{padding:26px}
+.sec-card .icon{
+  width:42px;height:42px;border-radius:11px;display:grid;place-items:center;margin-bottom:16px;
+  background:rgba(255,157,0,.1);border:1px solid var(--glass-border-strong);
+}
+.sec-card .icon svg{width:20px;height:20px}
+.sec-card h3{font-size:16px;margin:0 0 8px;font-weight:650}
+.sec-card p{color:var(--muted);font-size:14px;margin:0;line-height:1.6}
+
+/* integrations showcase */
+.integrations-panel{padding:34px}
+.int-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:8px}
+.int-item{
+  aspect-ratio:1;border-radius:13px;display:grid;place-items:center;
+  background:rgba(255,255,255,.02);border:1px solid var(--border);
+  transition:border-color .15s ease, transform .15s ease;
+}
+.int-item:hover{border-color:var(--accent);transform:translateY(-2px)}
+.int-item svg{width:26px;height:26px;color:var(--ink)}
+.int-label{text-align:center;font-size:11px;color:var(--muted-2);margin-top:8px;font-family:var(--font-mono)}
+@media(max-width:760px){.int-grid{grid-template-columns:repeat(3,1fr)}}
+
+/* testimonial / trust strip */
+.quote-panel{padding:36px;display:flex;gap:24px;align-items:center}
+.quote-mark{font-family:var(--font-mono);font-size:44px;color:var(--accent);line-height:1;flex-shrink:0}
+.quote-panel p{margin:0;font-size:16px;color:var(--ink);line-height:1.6}
+.quote-panel footer{margin-top:10px;font-size:13px;color:var(--muted);font-family:var(--font-mono)}
+
+/* CTA */
+.cta{text-align:center;padding:26px}
+.cta-panel{max-width:720px;margin:0 auto;padding:52px 40px;text-align:center}
+.cta-panel h2{font-size:30px;margin:0 0 14px;font-weight:700}
+.cta-panel p{color:var(--muted);margin:0 0 30px}
+
+footer.site-footer{border-top:1px solid var(--border);padding:32px 0;color:var(--muted-2);font-size:13px}
+footer.site-footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+footer.site-footer nav{display:flex;gap:18px;flex-wrap:wrap}
+footer.site-footer a:hover{color:var(--muted)}
+.cookie-prefs-link{background:none;border:none;padding:0;font:inherit;font-size:inherit;color:inherit;cursor:pointer}
+.cookie-prefs-link:hover{color:var(--muted)}
+
+@media(prefers-reduced-motion:reduce){
+  .chart-path,.chart-fill,.chart-dots circle,.logo-dot,.live-chip i{animation:none !important;stroke-dashoffset:0 !important;opacity:1 !important}
+}
+
 @media(max-width:760px){
   header nav{display:none}
-  .hero{padding:64px 0 80px}
-  .hero h1{font-size:32px}
-  .hero p{font-size:16px}
-  .platforms{flex-wrap:wrap;gap:16px}
-  .feature-grid{grid-template-columns:1fr}
-  .stats .wrap{grid-template-columns:1fr 1fr;row-gap:28px}
-  footer .wrap{flex-direction:column;gap:10px;text-align:center}
+  .hero h1{font-size:34px}
+  .hero p.lead{font-size:16px}
+  .trust-grid{grid-template-columns:1fr 1fr}
+  .sec-grid{grid-template-columns:1fr}
+  .quote-panel{flex-direction:column;text-align:center}
+  footer.site-footer .wrap{flex-direction:column;text-align:center}
 }
 </style>
 </head>
@@ -61,73 +182,175 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center}
 
 <header>
   <div class="wrap">
-    <a class="logo" href="index.html">Game<span>Follow</span></a>
-    <nav>
-      <a href="#features">Features</a>
-      <a href="#stats">Why GameFollow</a>
-    </nav>
-    <a class="btn btn-ghost" href="login.html">Log in</a>
+    <div class="bar glass">
+      <a class="logo" href="index.html">Game<span>Follow</span><i class="logo-dot"></i></a>
+      <nav>
+        <a href="#security">Security</a>
+        <a href="#integrations">Integrations</a>
+        <a href="#preview">Live preview</a>
+      </nav>
+      <a class="btn btn-ghost" href="login.html">Log in</a>
+      <a class="btn btn-primary" href="registrati.html">Get started</a>
+    </div>
   </div>
 </header>
 
 <section class="hero">
   <div class="wrap">
+    <span class="eyebrow glass">⬤ Trusted by indie studios shipping on 5 platforms</span>
     <h1>Every review your game gets,<br>turned into <span>action</span>.</h1>
-    <p>GameFollow collects reviews from Steam, Google Play and the App Store, spots the issues players actually care about, and drafts AI replies so your team never falls behind.</p>
+    <p class="lead">GameFollow watches Steam, Google Play, the App Store, Xbox and PlayStation in one place — spots the issues players actually care about, and drafts on-brand AI replies so your team never falls behind.</p>
     <div class="actions">
-      <a class="btn btn-primary" href="login.html">Get started</a>
+      <a class="btn btn-primary" href="registrati.html">Get started free</a>
       <a class="btn btn-ghost" href="login.html">Log in</a>
     </div>
-    <div class="platforms">
-      <span>● Steam</span>
-      <span>▶ Google Play</span>
-      <span>▣ App Store</span>
-      <span>♧ Xbox</span>
-      <span>▰ PlayStation</span>
+
+    <div class="chart-preview glass" id="preview">
+      <div class="cp-head">
+        <div class="cp-title">
+          <b>Sentiment trend</b>
+          <span class="live-chip"><i></i>LIVE</span>
+        </div>
+        <div class="cp-value">Avg rating <b>4.3</b> <span class="up">▲ 0.6</span> this week</div>
+      </div>
+      <svg class="chart-svg" viewBox="0 0 860 180" preserveAspectRatio="none">
+        <g class="chart-grid">
+          <line x1="0" y1="30" x2="860" y2="30"></line>
+          <line x1="0" y1="80" x2="860" y2="80"></line>
+          <line x1="0" y1="130" x2="860" y2="130"></line>
+        </g>
+        <path class="chart-fill" d="M0,140 C90,132 150,150 220,120 C300,86 360,110 430,88 C500,66 560,96 630,70 C700,46 770,58 860,30 L860,180 L0,180 Z" fill="url(#g1)"></path>
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FF9D00" stop-opacity="0.28"></stop>
+            <stop offset="100%" stop-color="#FF9D00" stop-opacity="0"></stop>
+          </linearGradient>
+        </defs>
+        <path class="chart-path" d="M0,140 C90,132 150,150 220,120 C300,86 360,110 430,88 C500,66 560,96 630,70 C700,46 770,58 860,30"></path>
+        <g class="chart-dots">
+          <circle cx="220" cy="120" r="4" style="animation-delay:1.0s"></circle>
+          <circle cx="430" cy="88" r="4" style="animation-delay:1.4s"></circle>
+          <circle cx="630" cy="70" r="4" style="animation-delay:1.8s"></circle>
+          <circle cx="860" cy="30" r="5" style="animation-delay:2.2s"></circle>
+        </g>
+      </svg>
+      <div class="platform-row">
+        <span>Steam</span><span>Google Play</span><span>App Store</span><span>Xbox</span><span>PlayStation</span>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="features" id="features">
+<section class="trust-bar">
+  <div class="wrap">
+    <div class="trust-grid">
+      <div class="trust-card glass"><strong>67%</strong><span>Replies automated by AI</span></div>
+      <div class="trust-card glass"><strong>5h 42m</strong><span>Average response time</span></div>
+      <div class="trust-card glass"><strong>12,482+</strong><span>Reviews analyzed per game</span></div>
+      <div class="trust-card glass"><strong>5</strong><span>Platforms in one dashboard</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="security">
   <div class="wrap">
     <div class="section-heading">
-      <h2>Built for studios shipping live games</h2>
-      <p>One dashboard for sentiment, issues and replies across every platform your players write on.</p>
+      <span class="kicker">Security</span>
+      <h2>Built to keep your data yours</h2>
+      <p>GameFollow never touches your store passwords, and your review data is never sold or shared.</p>
     </div>
-    <div class="feature-grid">
-      <article class="feature"><div class="icon">▥</div><h3>Sentiment analytics</h3><p>Track rating and sentiment trends over time, and measure the real impact of every patch you ship.</p></article>
-      <article class="feature"><div class="icon">♧</div><h3>Issue detection</h3><p>AI groups similar reviews automatically and flags critical issues before they snowball.</p></article>
-      <article class="feature"><div class="icon">▤</div><h3>AI-drafted replies</h3><p>Get on-brand reply drafts for every review, ready to approve or auto-publish for trusted cases.</p></article>
-      <article class="feature"><div class="icon">◇</div><h3>Knowledge base</h3><p>Feed the AI known issues and patch notes so replies stay accurate and consistent.</p></article>
-      <article class="feature"><div class="icon">◎</div><h3>Competitor tracking</h3><p>See how your game's pain points compare to similar titles in your genre.</p></article>
-      <article class="feature"><div class="icon">⌁</div><h3>Integrations</h3><p>Connect Steam, Google Play, App Store, GitHub, Jira and more in a few clicks.</p></article>
+    <div class="sec-grid">
+      <article class="sec-card glass">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9D00" stroke-width="1.8"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>OAuth-only connections</h3>
+        <p>Steam, Google Play and App Store are linked through official OAuth — GameFollow never sees or stores your store password.</p>
+      </article>
+      <article class="sec-card glass">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9D00" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+        <h3>Encrypted access tokens</h3>
+        <p>Every platform token is encrypted at rest and scoped to read-only review access — nothing more, nothing shared across studios.</p>
+      </article>
+      <article class="sec-card glass">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9D00" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Your data, your export</h3>
+        <p>Full data export and account deletion on demand — your reviews and reply history are never locked in.</p>
+      </article>
+      <article class="sec-card glass">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9D00" stroke-width="1.8"><path d="M12 2l3 6 6 1-4.5 4 1 6L12 16l-5.5 3 1-6L3 9l6-1z"/></svg></div>
+        <h3>Human in the loop</h3>
+        <p>AI drafts every reply — nothing goes out to players without your review, unless you explicitly enable auto-publish for trusted cases.</p>
+      </article>
+      <article class="sec-card glass">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9D00" stroke-width="1.8"><path d="M4 12h4l2-7 4 14 2-7h4"/></svg></div>
+        <h3>Transparent, indie-built</h3>
+        <p>Built and maintained by a solo indie developer — no black-box vendor, direct line to the person shipping it.</p>
+      </article>
+      <article class="sec-card glass">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9D00" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg></div>
+        <h3>Regular backups</h3>
+        <p>Your reviews, replies and knowledge base entries are backed up automatically — nothing is lost if a sync fails.</p>
+      </article>
     </div>
   </div>
 </section>
 
-<section class="stats" id="stats">
+<section id="integrations">
   <div class="wrap">
-    <div><strong>67%</strong><span>Replies automated by AI</span></div>
-    <div><strong>5h 42m</strong><span>Average response time</span></div>
-    <div><strong>12,482+</strong><span>Reviews analyzed per game</span></div>
-    <div><strong>5</strong><span>Platforms in one dashboard</span></div>
+    <div class="section-heading">
+      <span class="kicker">Integrations</span>
+      <h2>Connect the platforms you already ship on</h2>
+      <p>A few clicks, no config files — GameFollow pulls reviews in automatically from every store you connect.</p>
+    </div>
+    <div class="integrations-panel glass">
+      <div class="int-grid">
+        <div><div class="int-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></div><div class="int-label">Steam</div></div>
+        <div><div class="int-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 3l14 9-14 9z"/></svg></div><div class="int-label">Google Play</div></div>
+        <div><div class="int-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 18h4"/></svg></div><div class="int-label">App Store</div></div>
+        <div><div class="int-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 12h4M9 10v4M15 11h.01M17 13h.01"/></svg></div><div class="int-label">Xbox</div></div>
+        <div><div class="int-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 4v16M16 4v16M4 9h4M16 9h4M4 15h4M16 15h4"/></svg></div><div class="int-label">PlayStation</div></div>
+        <div><div class="int-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg></div><div class="int-label">Jira</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="quote-panel glass">
+      <div class="quote-mark">"</div>
+      <div>
+        <p>I used to scroll Steam reviews every morning trying to spot what actually mattered. Now GameFollow flags the real issues and drafts replies before I've had coffee.</p>
+        <footer>— early beta tester, indie studio</footer>
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="cta">
   <div class="wrap">
-    <h2>Stop reading reviews one by one.</h2>
-    <p>Connect your first platform in minutes and see what your players are really saying.</p>
-    <a class="btn btn-primary" href="login.html">Get started free</a>
+    <div class="cta-panel glass">
+      <h2>Stop reading reviews one by one.</h2>
+      <p>Connect your first platform in minutes and see what your players are really saying.</p>
+      <a class="btn btn-primary" href="registrati.html">Get started free</a>
+    </div>
   </div>
 </section>
 
-<footer>
+<footer class="site-footer">
   <div class="wrap">
     <span>© 2026 GameFollow</span>
-    <span><a href="login.html">Log in</a></span>
+    <nav>
+      <a href="#security">Security</a>
+      <a href="#integrations">Integrations</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="termini.html">Termini</a>
+      <a href="cookie-policy.html">Cookie</a>
+      <button type="button" class="cookie-prefs-link" onclick="window.gfCookieConsent && window.gfCookieConsent.open()">Preferenze cookie</button>
+      <a href="login.html">Log in</a>
+    </nav>
   </div>
 </footer>
 
+<script src="js/cookie-consent.js" defer></script>
 </body>
 </html>

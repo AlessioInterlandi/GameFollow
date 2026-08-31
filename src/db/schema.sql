@@ -5,7 +5,17 @@
 --   stripe_customer_id, stripe_subscription_id, current_period_end, created_at
 --
 -- users : chi accede. Ogni utente appartiene a una organization.
---   id, org_id, email (unica), password_hash, created_at
+--   id, org_id, email (unica), password_hash, created_at,
+--   email_verified_at, verify_token_hash, verify_token_expires
+--
+-- Registrazione self-service (vedi routes/auth.js POST /register): un
+-- account nuovo nasce con email_verified_at = NULL e non puo' fare login
+-- finche' non clicca il link ricevuto via email. verify_token_hash e'
+-- l'HASH del token (mai il token in chiaro: chi legge il database non deve
+-- poter verificare account a piacere), verify_token_expires la sua scadenza.
+-- Gli account creati a mano (o dal seed) restano verificati da subito: la
+-- migrazione qui sotto marca come verificati tutti gli utenti che esistono
+-- gia' al momento in cui queste colonne vengono aggiunte.
 --
 -- reviews : le recensioni scaricate da Google.
 --   id, org_id, author, rating, text, review_date,
@@ -48,6 +58,10 @@ CREATE TABLE IF NOT EXISTS users (
     org_id INTEGER NOT NULL REFERENCES organizations(id),
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
+    -- NULL = email non ancora confermata, il login resta bloccato.
+    email_verified_at TEXT,
+    verify_token_hash TEXT,
+    verify_token_expires TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

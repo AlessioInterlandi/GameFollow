@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GameFollow — Conferma email</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#0A0908;
+  --panel-glass:rgba(23,17,9,.55);
+  --glass-border:rgba(255,157,0,.16);
+  --border:#2E2416;
+  --ink:#F7F2E9;
+  --muted:#AFA189;
+  --muted-2:#6E6252;
+  --accent:#FF9D00;
+  --accent-ink:#1A1206;
+  --accent-light:#FFC569;
+  --green:#22C55E;
+  --red:#F87171;
+  --font-ui:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--font-ui);
+  background:
+    radial-gradient(760px 460px at 14% 8%, rgba(255,157,0,.14), transparent 60%),
+    radial-gradient(700px 520px at 100% 100%, rgba(255,157,0,.08), transparent 55%),
+    var(--bg);
+  color:var(--ink); line-height:1.6;
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{opacity:.85}
+
+.card{
+  width:100%;max-width:440px;padding:40px 36px;text-align:center;
+  background:var(--panel-glass);
+  border:1px solid var(--glass-border);
+  border-radius:16px;
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 24px 48px -24px rgba(0,0,0,.6);
+}
+.brand{font-size:19px;font-weight:750;letter-spacing:-.01em;margin-bottom:28px}
+.brand span{color:var(--accent)}
+
+.icon{
+  width:56px;height:56px;border-radius:50%;margin:0 auto 20px;
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+}
+.icon.loading{background:rgba(255,157,0,.1);border:1px solid rgba(255,157,0,.28)}
+.icon.success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.28);color:var(--green)}
+.icon.error{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.28);color:var(--red)}
+
+.spinner{
+  width:22px;height:22px;border-radius:50%;
+  border:2.5px solid rgba(255,157,0,.25);border-top-color:var(--accent);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+h1{font-size:19px;font-weight:700;margin-bottom:10px;letter-spacing:-.01em}
+p{color:var(--muted);font-size:14px;margin-bottom:22px}
+
+button, .btn{
+  display:inline-block;width:100%;font:inherit;font-size:14.5px;font-weight:650;
+  padding:12px;border-radius:9px;cursor:pointer;
+  background:var(--accent);color:var(--accent-ink);border:1px solid var(--accent);
+  box-shadow:0 8px 24px -8px rgba(255,157,0,.5);
+  transition:opacity .15s ease, transform .15s ease;
+  text-decoration:none;
+}
+button:hover, .btn:hover{opacity:.92;transform:translateY(-1px)}
+
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="brand">Game<span>Follow</span></div>
+
+  <div id="statoCaricamento">
+    <div class="icon loading"><div class="spinner"></div></div>
+    <h1>Conferma in corso...</h1>
+    <p>Un attimo, stiamo verificando il link.</p>
+  </div>
+
+  <div id="statoSuccesso" class="hidden">
+    <div class="icon success">&check;</div>
+    <h1>Email confermata</h1>
+    <p>Il tuo account &egrave; attivo. Ora puoi accedere.</p>
+    <a class="btn" href="login.html">Vai al login</a>
+  </div>
+
+  <div id="statoErrore" class="hidden">
+    <div class="icon error">&times;</div>
+    <h1>Link non valido o scaduto</h1>
+    <p id="messaggioErrore">Questo link di conferma non &egrave; valido o &egrave; scaduto. Puoi richiederne uno nuovo dalla pagina di accesso.</p>
+    <a class="btn" href="login.html">Torna al login</a>
+  </div>
+</div>
+
+<script src="js/verifica-email.js"></script>
+</body>
+</html>

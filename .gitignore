@@ -1,3 +1,6 @@
 node_modules/
 data/
 .env
+
+# Skill di terze parti installate da ui-ux-pro-max-cli (locali, non del progetto)
+.claude/

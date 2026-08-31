@@ -35,9 +35,9 @@
         <article><small>Average rating</small><strong id="m-rating">— <span class="stars"></span></strong></article><article><small>Sentiment (this month)</small><strong class="positive">+14%</strong><div class="sparkline">⌁⌁⌁⌁⌁⌁</div></article><article><small>Total reviews</small><strong id="m-total">—</strong></article><article><small>Unanswered</small><strong id="m-unanswered" class="negative">—</strong><p id="m-unanswered-pct"></p></article><article><small>Published replies</small><strong id="m-published">—</strong><p id="m-published-pct"></p></article><article><small>Average response time</small><strong>5h 42m</strong><p class="positive">-1h 15m vs last month</p></article>
       </section>
       <section class="triple-row">
-        <article class="panel issue-table"><h2>Top reported issues</h2><table><thead><tr><th>Issue</th><th>Reports</th><th>Change</th></tr></thead><tbody><tr><td>◉　Multiplayer</td><td>1,243</td><td class="negative">+84%</td></tr><tr><td>▣　Performance</td><td>832</td><td class="negative">+31%</td></tr><tr><td>♧　Controller</td><td>421</td><td class="positive">-12%</td></tr><tr><td>▤　UI</td><td>187</td><td class="positive">-5%</td></tr><tr><td>▧　Crashes</td><td>155</td><td class="negative">+7%</td></tr></tbody></table><a href="#">View all issues　→</a></article>
-        <article class="panel platform"><h2>Rating by platform</h2><table><thead><tr><th>Platform</th><th>Rating</th><th>Reviews</th></tr></thead><tbody><tr><td>●　Steam</td><td class="stars">★★★★★ <b>4.72</b></td><td>8,421</td></tr><tr><td><span class="play">▶</span>　Google Play</td><td class="stars">★★★★★ <b>4.41</b></td><td>2,143</td></tr><tr><td>▣　App Store</td><td class="stars">★★★★★ <b>4.56</b></td><td>1,918</td></tr></tbody></table><a href="#">View platform details　→</a></article>
-        <article class="panel sentiment"><h2>Sentiment distribution</h2><div class="sentiment-data"><div class="donut"></div><div><p><i class="dot green"></i> Positive　　<b>72%</b> <small>(8,987)</small></p><p><i class="dot orange"></i> Neutral　　<b>15%</b> <small>(1,874)</small></p><p><i class="dot red"></i> Negative　 <b>13%</b> <small>(1,621)</small></p></div></div></article>
+        <article class="panel issue-table"><h2>Top reported issues</h2><p id="dash-problemi-nota" style="color:var(--muted);font-size:12px">Loading…</p><table id="dash-problemi-tabella" hidden><thead><tr><th>Issue</th><th>Reports</th><th>Change</th></tr></thead><tbody id="dash-problemi-corpo"></tbody></table><a href="issue-detection.html">View all issues　→</a></article>
+        <article class="panel platform"><h2>Rating by platform</h2><div class="chart-box"><canvas id="dash-piattaforma-grafico"></canvas></div></article>
+        <article class="panel sentiment"><h2>Sentiment distribution</h2><div class="sentiment-data"><div class="chart-box chart-box-square"><canvas id="dash-sentiment-grafico"></canvas></div><div><p><i class="dot green"></i> Positive　　<b id="dash-sentiment-positive">—</b></p><p><i class="dot orange"></i> Neutral　　<b id="dash-sentiment-neutral">—</b></p><p><i class="dot red"></i> Negative　 <b id="dash-sentiment-negative">—</b></p></div></div></article>
       </section>
       <section class="mid-row">
         <article class="panel critical"><p class="alarm">▲　Critical issue detected</p><span class="critical-tag">♙　 POSSIBLE CRITICAL ISSUE</span><h2>Multiplayer disconnects</h2><p>247 reviews <b class="negative">+84%</b> vs last week</p><div class="platform-chips"><span>●　Steam　182</span><span>♧　Xbox　43</span><span>♧　PlayStation　22</span></div><div class="date-data"><span>First reported<br><b>Aug 12</b></span><span>Last reported<br><b>Aug 13</b></span></div><h3>AI summary</h3><p class="summary">Most reports concern disconnections from multiplayer matches after roughly 5-10 minutes. The issue increased significantly after version 2.1.</p><div class="panel-actions"><button>View full issue</button><button class="orange">♙　Create ticket　⌁</button></div></article>
@@ -51,6 +51,8 @@
     </section>
   </main>
   <script src="js/api.js"></script>
+  <script src="js/vendor/chart.umd.min.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/cookie-consent.js" defer></script>
 </body>
 </html>

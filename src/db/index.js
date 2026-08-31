@@ -3,6 +3,8 @@
  * Sceglie il driver in base a config.dbDriver ed esporta le funzioni
  * con nomi neutri, che non dicono quale database c'e' sotto:
  *   init, findUserByEmail, findOrgById, updateOrg,
+ *   creaOrganizzazioneEUtente, trovaUtentePerTokenVerifica,
+ *   impostaEmailVerificata, impostaNuovoTokenVerifica,
  *   listReviews, getReview, updateReview, insertReview, stats,
  *   contaRecensioniMese, listIntegrations, setIntegration,
  *   findOrgByStripeCustomerId, insertPayment, listPayments
@@ -24,6 +26,10 @@ export const {
   findUserByEmail,
   findOrgById,
   updateOrg,
+  creaOrganizzazioneEUtente,
+  trovaUtentePerTokenVerifica,
+  impostaEmailVerificata,
+  impostaNuovoTokenVerifica,
   listReviews,
   getReview,
   updateReview,
