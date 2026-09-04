@@ -5,14 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Analytics · GameFollow</title>
 <link rel="stylesheet" href="css/style.css">
-<style>
-.chart{height:270px;background:linear-gradient(90deg,#fff 45%,#eff9ec 45%);border:1px solid #eee;position:relative;overflow:hidden}
-.chart:before,.chart:after{content:"";position:absolute;height:3px;transform-origin:left}
-.chart:before{width:45%;top:140px;left:5%;background:#FF9D00;transform:rotate(3deg)}
-.chart:after{width:49%;top:98px;left:46%;background:#3ca244;transform:rotate(-9deg)}
-.chart b{position:absolute;bottom:8px;color:#777;font-size:9px}
-.chart .release{left:43%;top:10px;bottom:auto;color:#555}
-</style>
 </head>
 <body>
 <aside class="sidebar">
@@ -29,13 +21,11 @@
     <a href="impostazioni.html"><i>⚙</i> Settings</a>
   </nav>
   <div class="connected">
-    <div class="game-thumb">VH</div>
-    <div><b>Void Horizon</b><small>Connected</small></div>
-    <span>⌄</span>
+    <div class="game-thumb" id="sidebar-game-thumb">··</div><div><b id="sidebar-game-nome">Loading…</b><small>Active game</small></div><span>⌄</span>
     <hr>
-    <div class="source"><strong>●</strong><div>Steam<small>Connected</small></div></div>
-    <div class="source"><strong class="play">▶</strong><div>Google Play<small>Connected</small></div></div>
-    <div class="source"><strong>▣</strong><div>App Store<small>Connect</small></div></div>
+    <div class="source" data-provider="steam"><strong>●</strong><div>Steam<small class="sidebar-stato">Loading…</small></div></div>
+    <div class="source" data-provider="google_play"><strong class="play">▶</strong><div>Google Play<small class="sidebar-stato">Loading…</small></div></div>
+    <div class="source" data-provider="app_store"><strong>▣</strong><div>App Store<small class="sidebar-stato">Loading…</small></div></div>
   </div>
   <div class="upgrade">
     <span>♙</span>
@@ -43,12 +33,19 @@
     <p>Unlock advanced features and unlimited analytics.</p>
     <button>Upgrade plan</button>
   </div>
-  <a class="collapse" href="#">← &nbsp; Collapse menu</a>
+  <a class="collapse" href="#"><span class="collapse-icon">←</span><span class="collapse-label">&nbsp;Collapse menu</span></a>
 </aside>
 <main>
   <header class="topbar">
     <button class="nav-toggle" type="button" aria-label="Open menu">☰</button>
-    <div class="game-select"><div class="game-thumb">VH</div><b>Void Horizon</b><span>⌄</span></div>
+    <div class="game-select-wrap">
+    <button class="game-select" id="game-select-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="game-thumb" id="game-select-thumb">··</span><b id="game-select-nome">Loading…</b><span>⌄</span></button>
+    <div class="game-select-menu" id="game-select-menu" hidden>
+      <div class="game-select-lista" id="game-select-lista"></div>
+      <hr>
+      <button type="button" class="game-select-add" id="game-select-aggiungi-btn">+ &nbsp;Add game</button>
+    </div>
+  </div>
     <div class="top-actions">
       <button class="icon-btn">♧<em></em></button>
       <button class="icon-btn">?</button>
@@ -64,46 +61,32 @@
         <h1>Update analysis</h1>
         <p>Measure the impact of updates on sentiment and issues.</p>
       </div>
-      <button>Compare with　 Previous version　⌄</button>
     </div>
-    <div class="grid-2">
-      <div class="kpis">
-        <article class="kpi"><small>Version 2.1</small><strong>—</strong></article>
-        <article class="kpi"><small>Average sentiment<br>Before patch (2.1)</small><strong class="bad">68%</strong></article>
-        <article class="kpi"><small>After patch (2.1)</small><strong class="ok">84%</strong></article>
-        <article class="kpi"><small>Change</small><strong class="ok">+16%</strong></article>
-      </div>
-      <div class="panel">
-        <div class="chart">
-          <b class="release">Release 2.1</b>
-          <b style="left:17%">Before patch 2.1</b>
-          <b style="right:15%">After patch 2.1</b>
-        </div>
-      </div>
-    </div>
-    <div class="grid-2" style="margin-top:14px">
-      <article class="panel">
-        <h2>Impact on top issues</h2>
-        <table>
-          <tbody>
-            <tr><td>Crashes</td><td class="ok">-73%</td></tr>
-            <tr><td>Multiplayer disconnects</td><td class="ok">-31%</td></tr>
-            <tr><td>Performance</td><td class="ok">-34%</td></tr>
-            <tr><td>UI issues</td><td class="ok">-12%</td></tr>
-          </tbody>
-        </table>
-      </article>
-      <article class="panel">
-        <h2>AI summary</h2>
-        <p>Update 2.1 improved player sentiment by 16%.</p>
-        <p>Crash reports decreased by 73%.</p>
-        <p>Multiplayer disconnection issues decreased by 61%.</p>
-      </article>
-    </div>
+    <article class="panel" style="text-align:center;padding:56px 24px">
+      <div style="font-size:34px;margin-bottom:12px">▥</div>
+      <h2 style="margin:0 0 8px">Not available yet</h2>
+      <p style="color:var(--muted);max-width:460px;margin:0 auto">GameFollow doesn't yet track which game version each review belongs to, so we can't compare sentiment before and after a patch. This is on our roadmap — once version tracking ships, this page will show real before/after data for your updates instead of a placeholder.</p>
+    </article>
   </section>
 </main>
+<dialog id="modale-aggiungi-gioco" style="border:1px solid var(--line);border-radius:12px;padding:0;max-width:380px;width:90%">
+  <form method="dialog" style="padding:22px">
+    <h2 style="margin:0 0 6px;font-size:16px">Add a game</h2>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 16px">Add another game to follow with GameFollow. You can switch between your games any time from the menu at the top.</p>
+    <div class="field">
+      <label for="aggiungi-gioco-nome">Game name</label>
+      <input id="aggiungi-gioco-nome" type="text" autocomplete="off" placeholder="e.g. Void Horizon 2" maxlength="80">
+    </div>
+    <p id="aggiungi-gioco-errore" style="color:var(--red);font-size:12px;display:none;margin:8px 0 0"></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button type="button" id="aggiungi-gioco-annulla">Cancel</button>
+      <button type="button" id="aggiungi-gioco-salva" style="background:#FF9D00;color:#fff;border-color:#FF9D00">Add game</button>
+    </div>
+  </form>
+</dialog>
 <script src="js/api.js"></script>
 <script src="js/app.js"></script>
+  <script src="js/giochi.js"></script>
   <script src="js/cookie-consent.js" defer></script>
 </body>
 </html>

@@ -13,16 +13,20 @@ import { Router } from 'express';
 import * as db from '../db/index.js';
 import * as google from '../services/google.js';
 import { richiedeLogin } from '../middleware/auth.js';
+import { richiedeRuolo } from '../middleware/ruolo.js';
 import { pianoEffettivo } from '../piani.js';
 
 const router = Router();
 router.use(richiedeLogin);
+
+const LINGUE_VALIDE = ['it', 'en', 'es', 'fr'];
 
 function mappaImpostazioni(org) {
   return {
     tono: org.tone,
     invio_automatico: org.auto_send,
     google_collegato: org.google_connected,
+    lingua_sito: org.language || 'it',
   };
 }
 
@@ -31,9 +35,16 @@ router.get('/', async (req, res) => {
   res.json(mappaImpostazioni(org));
 });
 
-router.put('/', async (req, res) => {
-  const { tono, invio_automatico } = req.body ?? {};
+router.put('/', richiedeRuolo('owner'), async (req, res) => {
+  const { tono, invio_automatico, lingua_sito } = req.body ?? {};
   const modifiche = {};
+
+  if (lingua_sito !== undefined) {
+    if (typeof lingua_sito !== 'string' || !LINGUE_VALIDE.includes(lingua_sito)) {
+      return res.status(400).json({ errore: `Lingua non valida. Valori validi: ${LINGUE_VALIDE.join(', ')}.` });
+    }
+    modifiche.language = lingua_sito;
+  }
 
   if (tono !== undefined) {
     if (typeof tono !== 'string') return res.status(400).json({ errore: 'Tono non valido.' });
@@ -63,11 +74,11 @@ router.put('/', async (req, res) => {
   res.json(mappaImpostazioni(org));
 });
 
-router.post('/collega-google', (req, res) => {
+router.post('/collega-google', richiedeRuolo('owner'), (req, res) => {
   res.json({ url: google.urlAutorizzazione(req.orgId) });
 });
 
-router.post('/scollega-google', async (req, res) => {
+router.post('/scollega-google', richiedeRuolo('owner'), async (req, res) => {
   const org = await db.updateOrg(req.orgId, { google_connected: false });
   res.json(mappaImpostazioni(org));
 });

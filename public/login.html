@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-i18n-page="login">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -163,6 +163,15 @@ button:hover{opacity:.92;transform:translateY(-1px)}
 .cookie-prefs-link{background:none;border:none;padding:0;font:inherit;font-size:inherit;color:var(--muted-2);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 .cookie-prefs-link:hover{color:var(--muted)}
 
+.lang-switch{display:flex;justify-content:flex-end;margin-bottom:16px}
+.lang-switch select{
+  font:inherit;font-size:12.5px;font-weight:550;color:var(--muted);
+  background:rgba(255,255,255,.02);border:1px solid var(--border);
+  border-radius:8px;padding:7px 9px;cursor:pointer;
+}
+.lang-switch select:hover{border-color:var(--accent)}
+.lang-switch select:focus{outline:none;border-color:var(--accent)}
+
 @media(prefers-reduced-motion:reduce){
   .chart-path,.chart-fill,.donut-seg,.bar-fill,.brand .dot,.live-chip i{animation:none !important}
   .chart-path{stroke-dashoffset:0}
@@ -183,40 +192,49 @@ button:hover{opacity:.92;transform:translateY(-1px)}
 
   <main class="auth">
     <div class="auth-inner">
+      <div class="lang-switch">
+        <select data-i18n-switch aria-label="Language">
+          <option value="it">IT</option>
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="fr">FR</option>
+        </select>
+      </div>
+
       <div class="mobile-brand">Game<span>Follow</span></div>
 
       <div class="card glass">
-        <h2>Bentornato</h2>
-        <p class="sub">Accedi al tuo pannello</p>
+        <h2 data-i18n="card.heading">Bentornato</h2>
+        <p class="sub" data-i18n="card.sub">Accedi al tuo pannello</p>
 
         <div class="err">
-          <span id="errMsg">Email o password non corretti.</span>
-          <span id="resendWrap" style="display:none"> <a href="#" id="resendLink">Rinvia email di conferma</a></span>
+          <span id="errMsg" data-i18n="err.default">Email o password non corretti.</span>
+          <span id="resendWrap" style="display:none"> <a href="#" id="resendLink" data-i18n="err.resend_link">Rinvia email di conferma</a></span>
         </div>
 
         <form>
-          <label for="email">Email</label>
-          <input type="email" id="email" placeholder="tu@tuostudio.dev" required>
+          <label for="email" data-i18n="form.email_label">Email</label>
+          <input type="email" id="email" placeholder="tu@tuostudio.dev" data-i18n-placeholder="form.email_placeholder" required>
 
-          <label for="pw">Password</label>
+          <label for="pw" data-i18n="form.password_label">Password</label>
           <input type="password" id="pw" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
 
-          <button type="submit">Accedi</button>
+          <button type="submit" data-i18n="form.submit">Accedi</button>
         </form>
 
         <p class="help">
-          Non hai un account? <a href="registrati.html">Registrati</a>
+          <span data-i18n="help.no_account">Non hai un account?</span> <a href="registrati.html" data-i18n="help.signup_link">Registrati</a>
         </p>
         <p class="help">
-          Password dimenticata? <a href="mailto:[LA-TUA-EMAIL]">Scrivimi</a> e te la reimposto.
+          <span data-i18n="help.forgot">Password dimenticata?</span> <a href="mailto:[LA-TUA-EMAIL]" data-i18n="help.forgot_link">Scrivimi</a> <span data-i18n="help.forgot_suffix">e te la reimposto.</span>
         </p>
       </div>
 
       <div class="legal-links">
-        <a href="privacy.html">Privacy</a>
-        <a href="termini.html">Termini</a>
-        <a href="cookie-policy.html">Cookie</a>
-        <button type="button" class="cookie-prefs-link" onclick="window.gfCookieConsent && window.gfCookieConsent.open()">Preferenze cookie</button>
+        <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
+        <a href="termini.html" data-i18n="footer.terms">Termini</a>
+        <a href="cookie-policy.html" data-i18n="footer.cookie">Cookie</a>
+        <button type="button" class="cookie-prefs-link" onclick="window.gfCookieConsent && window.gfCookieConsent.open()" data-i18n="footer.cookie_prefs">Preferenze cookie</button>
       </div>
     </div>
   </main>
@@ -225,15 +243,15 @@ button:hover{opacity:.92;transform:translateY(-1px)}
     <div class="brand">Game<span>Follow</span><i class="dot"></i></div>
 
     <div class="showcase-copy">
-      <h1>Every review, turned into <span>action</span>.</h1>
-      <p>Sentiment, issues and AI-drafted replies for every platform your players write on — updated live.</p>
+      <h1 data-i18n-html="showcase.heading">Every review, turned into <span>action</span>.</h1>
+      <p data-i18n="showcase.sub">Sentiment, issues and AI-drafted replies for every platform your players write on — updated live.</p>
     </div>
 
     <div class="chart-stack">
       <div class="cs-main glass">
         <div class="cs-head">
-          <div class="cs-title">Sentiment trend <span class="live-chip"><i></i>LIVE</span></div>
-          <div class="cs-value">Avg <b>4.3</b> <span class="up">▲ 0.6</span></div>
+          <div class="cs-title"><span data-i18n="chart.title">Sentiment trend</span> <span class="live-chip"><i></i><span data-i18n="chart.live">LIVE</span></span></div>
+          <div class="cs-value" data-i18n-html="chart.value">Avg <b>4.3</b> <span class="up">▲ 0.6</span></div>
         </div>
         <svg class="chart-svg" viewBox="0 0 520 130" preserveAspectRatio="none">
           <g class="chart-grid">
@@ -260,22 +278,22 @@ button:hover{opacity:.92;transform:translateY(-1px)}
 
       <div class="cs-row">
         <div class="cs-donut glass">
-          <div class="cs-title">Sentiment</div>
+          <div class="cs-title" data-i18n="donut.title">Sentiment</div>
           <div class="donut-wrap">
             <svg viewBox="0 0 64 64">
               <circle class="donut-ring donut-bg" cx="32" cy="32" r="26"></circle>
               <circle class="donut-ring donut-seg" cx="32" cy="32" r="26" stroke="#22C55E" style="stroke-dashoffset:calc(163 - (163 * 0.67))"></circle>
             </svg>
             <div class="donut-legend">
-              <div><span class="leg-dot" style="background:#22C55E"></span><b>67%</b> pos</div>
-              <div><span class="leg-dot" style="background:#FF9D00"></span><b>22%</b> mix</div>
-              <div><span class="leg-dot" style="background:#F87171"></span><b>11%</b> neg</div>
+              <div><span class="leg-dot" style="background:#22C55E"></span><b>67%</b> <span data-i18n="donut.pos">pos</span></div>
+              <div><span class="leg-dot" style="background:#FF9D00"></span><b>22%</b> <span data-i18n="donut.mix">mix</span></div>
+              <div><span class="leg-dot" style="background:#F87171"></span><b>11%</b> <span data-i18n="donut.neg">neg</span></div>
             </div>
           </div>
         </div>
 
         <div class="cs-bars glass">
-          <div class="cs-title">By platform</div>
+          <div class="cs-title" data-i18n="bars.title">By platform</div>
           <div class="bar-row"><span class="lbl">Steam</span><span class="bar-track"><span class="bar-fill" style="--w:82%"></span></span></div>
           <div class="bar-row"><span class="lbl">Play</span><span class="bar-track"><span class="bar-fill" style="--w:71%"></span></span></div>
           <div class="bar-row"><span class="lbl">iOS</span><span class="bar-track"><span class="bar-fill" style="--w:64%"></span></span></div>
@@ -290,6 +308,7 @@ button:hover{opacity:.92;transform:translateY(-1px)}
 
 </div>
 
+<script src="js/i18n.js"></script>
 <script src="js/cookie-consent.js" defer></script>
 <script src="js/login.js"></script>
 </body>

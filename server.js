@@ -10,11 +10,15 @@ import * as db from './src/db/index.js';
 import { apiLimiter, loginLimiter, registerLimiter } from './src/middleware/rateLimit.js';
 
 import authRoutes from './src/routes/auth.js';
+import gamesRoutes from './src/routes/games.js';
 import reviewsRoutes from './src/routes/reviews.js';
 import settingsRoutes from './src/routes/settings.js';
 import billingRoutes from './src/routes/billing.js';
 import integrationsRoutes from './src/routes/integrations.js';
 import issuesRoutes from './src/routes/issues.js';
+import knowledgeBaseRoutes from './src/routes/knowledgeBase.js';
+import teamRoutes from './src/routes/team.js';
+import notificheRoutes from './src/routes/notifiche.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -60,14 +64,21 @@ app.use(
 app.use('/api/auth/login', loginLimiter);
 app.use('/api/auth/register', registerLimiter);
 app.use('/api/auth/rinvia-verifica', registerLimiter);
+// /api/team/accetta: stesso profilo di rischio di /register (route senza
+// login che imposta una password), stesso limite.
+app.use('/api/team/accetta', registerLimiter);
 app.use('/api', apiLimiter);
 
 app.use('/api/auth', authRoutes);
+app.use('/api/giochi', gamesRoutes);
 app.use('/api/recensioni', reviewsRoutes);
 app.use('/api/impostazioni', settingsRoutes);
 app.use('/api/abbonamento', billingRoutes);
 app.use('/api/integrazioni', integrationsRoutes);
 app.use('/api/problemi', issuesRoutes);
+app.use('/api/conoscenza', knowledgeBaseRoutes);
+app.use('/api/team', teamRoutes);
+app.use('/api/notifiche', notificheRoutes);
 
 // dotfiles: 'deny' per difesa in profondita'. Il .env vero e proprio non
 // sta comunque dentro public/, quindi non e' mai raggiungibile da qui.

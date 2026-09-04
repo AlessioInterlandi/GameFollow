@@ -197,6 +197,7 @@ router.post('/login', async (req, res) => {
     req.session.userId = utente.id;
     req.session.orgId = utente.org_id;
     req.session.email = utente.email;
+    req.session.role = utente.role;
     res.json({ ok: true });
   });
 });
@@ -210,7 +211,7 @@ router.post('/logout', (req, res) => {
 
 router.get('/me', richiedeLogin, async (req, res) => {
   const org = await db.findOrgById(req.orgId);
-  res.json({ userId: req.userId, email: req.session.email, org });
+  res.json({ userId: req.userId, email: req.session.email, role: req.role, org });
 });
 
 export default router;

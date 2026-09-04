@@ -21,28 +21,32 @@ export const PIANI = {
     nome: 'Free',
     prezzo_mensile: 0,
     stripe_price_id: null,
-    limiti: { giochi: 1, piattaforme: 1, recensioni_mese: 200 },
+    // membri: quanti UTENTI puo' avere l'organizzazione in totale (te
+    // compreso/a) — vedi routes/team.js. Free/Indie restano pensati per
+    // uno studio da soli, Studio apre a un piccolo team, Publisher senza
+    // limite (null, stesso significato di giochi/piattaforme sopra).
+    limiti: { giochi: 1, piattaforme: 1, recensioni_mese: 200, membri: 1 },
     features: { ai_automation: false, issue_detection: false, competitor_analysis: false },
   },
   indie: {
     nome: 'Indie',
     prezzo_mensile: 49,
     stripe_price_id: config.stripe.prezzoIndie,
-    limiti: { giochi: 1, piattaforme: 3, recensioni_mese: 2000 },
+    limiti: { giochi: 1, piattaforme: 3, recensioni_mese: 2000, membri: 1 },
     features: { ai_automation: false, issue_detection: false, competitor_analysis: false },
   },
   studio: {
     nome: 'Studio',
     prezzo_mensile: 149,
     stripe_price_id: config.stripe.prezzoStudio,
-    limiti: { giochi: 5, piattaforme: 10, recensioni_mese: 20000 },
+    limiti: { giochi: 5, piattaforme: 10, recensioni_mese: 20000, membri: 5 },
     features: { ai_automation: true, issue_detection: true, competitor_analysis: false },
   },
   publisher: {
     nome: 'Publisher',
     prezzo_mensile: 399,
     stripe_price_id: config.stripe.prezzoPublisher,
-    limiti: { giochi: null, piattaforme: null, recensioni_mese: 100000 },
+    limiti: { giochi: null, piattaforme: null, recensioni_mese: 100000, membri: null },
     features: { ai_automation: true, issue_detection: true, competitor_analysis: true },
   },
 };

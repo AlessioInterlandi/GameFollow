@@ -13,10 +13,14 @@ import { Router } from 'express';
 import * as db from '../db/index.js';
 import * as analytics from '../services/pythonAnalytics.js';
 import { richiedeLogin } from '../middleware/auth.js';
+import { richiedeGiocoAttivo } from '../middleware/gioco.js';
 import { richiedeFeature } from '../middleware/piano.js';
 
 const router = Router();
-router.use(richiedeLogin, richiedeFeature('issue_detection'));
+// Anche questa e' scoperta per gioco: e' il pannello "Top reported issues"
+// che compare nella stessa Dashboard che mostra il gioco attivo, quindi
+// deve analizzare le recensioni di QUEL gioco, non di tutti insieme.
+router.use(richiedeLogin, richiedeGiocoAttivo, richiedeFeature('issue_detection'));
 
 function gestisciErrorePython(err, res) {
   if (err.message === analytics.ERRORE_PYTHON_MANCANTE) {
@@ -30,7 +34,7 @@ function gestisciErrorePython(err, res) {
 }
 
 router.get('/', async (req, res) => {
-  const recensioni = await db.listReviews(req.orgId);
+  const recensioni = await db.listReviews(req.orgId, req.gameId);
 
   try {
     const problemi = await analytics.rileva(recensioni);
@@ -41,7 +45,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/grafico', async (req, res) => {
-  const recensioni = await db.listReviews(req.orgId);
+  const recensioni = await db.listReviews(req.orgId, req.gameId);
 
   try {
     const png = await analytics.generaGrafico(recensioni);

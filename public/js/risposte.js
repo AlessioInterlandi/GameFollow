@@ -5,7 +5,7 @@
 const corpoTabella = document.getElementById('corpo-tabella');
 const filtroStato = document.getElementById('filtro-stato');
 
-function escapeHtmlLocale(testo) {
+function escapeHtmlRisposte(testo) {
   const div = document.createElement('div');
   div.textContent = testo ?? '';
   return div.innerHTML;
@@ -39,8 +39,8 @@ function render(recensioni) {
 
   corpoTabella.innerHTML = conRisposta
     .map((r) => `<tr data-id="${r.id}">
-        <td>${escapeHtmlLocale(r.text || '(no text)')}</td>
-        <td class="cella-risposta">${escapeHtmlLocale(r.published_reply || r.draft_reply)}</td>
+        <td>${escapeHtmlRisposte(r.text || '(no text)')}</td>
+        <td class="cella-risposta">${escapeHtmlRisposte(r.published_reply || r.draft_reply)}</td>
         <td>${statoTag(r.status)}</td>
         <td>${rigaAzioni(r)}</td>
       </tr>`)
@@ -67,7 +67,7 @@ corpoTabella.addEventListener('click', async (evento) => {
     const cella = riga.querySelector('.cella-risposta');
     const testoAttuale = cella.textContent;
 
-    cella.innerHTML = `<textarea style="width:100%;min-height:60px">${escapeHtmlLocale(testoAttuale)}</textarea>
+    cella.innerHTML = `<textarea style="width:100%;min-height:60px">${escapeHtmlRisposte(testoAttuale)}</textarea>
       <button class="action" data-azione="salva-bozza" data-id="${id}" style="margin-top:6px">Save</button>`;
     return;
   }

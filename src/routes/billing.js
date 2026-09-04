@@ -22,6 +22,7 @@ import * as email from '../services/email.js';
 import { config } from '../config.js';
 import { PIANI, pianoAcquistabile, pianoEffettivo, pianoEffettivoId } from '../piani.js';
 import { richiedeLogin } from '../middleware/auth.js';
+import { richiedeRuolo } from '../middleware/ruolo.js';
 import { jobQueue } from '../services/queue.js';
 
 const router = Router();
@@ -72,7 +73,7 @@ router.get('/', richiedeLogin, async (req, res) => {
   });
 });
 
-router.post('/checkout', richiedeLogin, async (req, res) => {
+router.post('/checkout', richiedeLogin, richiedeRuolo('owner'), async (req, res) => {
   if (!stripe) return stripeNonConfigurato(res);
 
   const { piano } = req.body ?? {};
@@ -101,7 +102,7 @@ router.post('/checkout', richiedeLogin, async (req, res) => {
   res.json({ url: session.url });
 });
 
-router.post('/disdici', richiedeLogin, async (req, res) => {
+router.post('/disdici', richiedeLogin, richiedeRuolo('owner'), async (req, res) => {
   const org = await db.findOrgById(req.orgId);
 
   if (stripe && org.stripe_subscription_id) {
@@ -133,7 +134,7 @@ router.post('/disdici', richiedeLogin, async (req, res) => {
 // fatture scaricabili in PDF, cancellazione — senza dover ricostruire
 // nessuna di queste schermate a mano. Serve solo un customer Stripe gia'
 // esistente (cioe' aver completato almeno un checkout in passato).
-router.post('/portal', richiedeLogin, async (req, res) => {
+router.post('/portal', richiedeLogin, richiedeRuolo('owner'), async (req, res) => {
   if (!stripe) return stripeNonConfigurato(res);
 
   const org = await db.findOrgById(req.orgId);

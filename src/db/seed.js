@@ -69,13 +69,26 @@ async function seed() {
       )
       .run(azienda.org.name, azienda.org.tone).lastInsertRowid;
 
+    // email_verified_at valorizzato subito: sono account di sviluppo, non
+    // devono passare dal flusso di conferma email (vedi routes/auth.js).
+    // Senza, il login di questi account risponderebbe sempre 403 "email non
+    // confermata" — bug preesistente, non legato al multi-gioco, scoperto
+    // rieseguendo la suite di test del progetto dopo le modifiche di oggi.
     const passwordHash = await password.hash(azienda.utente.password);
     sqlite
-      .prepare('INSERT INTO users (org_id, email, password_hash) VALUES (?, ?, ?)')
+      .prepare("INSERT INTO users (org_id, email, password_hash, email_verified_at) VALUES (?, ?, ?, datetime('now'))")
       .run(orgId, azienda.utente.email, passwordHash);
 
+    // Multi-gioco: ogni organizzazione ha bisogno di almeno un gioco per
+    // poter avere recensioni (vedi creaOrganizzazioneEUtente, che fa lo
+    // stesso per la registrazione self-service — qui e' a mano perche' il
+    // seed parla direttamente a sqlite, non passa da li').
+    const gameId = sqlite
+      .prepare('INSERT INTO games (org_id, name) VALUES (?, ?)')
+      .run(orgId, `${azienda.org.name} (main game)`).lastInsertRowid;
+
     for (const recensione of azienda.recensioni) {
-      await db.insertReview(orgId, recensione);
+      await db.insertReview(orgId, gameId, recensione);
     }
 
     console.log(`Creata "${azienda.org.name}" — login: ${azienda.utente.email} / ${azienda.utente.password}`);

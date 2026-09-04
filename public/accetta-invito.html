@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="it" data-i18n-page="accetta-invito">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GameFollow — Accetta invito</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#0A0908;
+  --panel-glass:rgba(23,17,9,.55);
+  --glass-border:rgba(255,157,0,.16);
+  --border:#2E2416;
+  --ink:#F7F2E9;
+  --muted:#AFA189;
+  --muted-2:#6E6252;
+  --accent:#FF9D00;
+  --accent-ink:#1A1206;
+  --accent-light:#FFC569;
+  --green:#22C55E;
+  --red:#F87171;
+  --font-ui:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--font-ui);
+  background:
+    radial-gradient(760px 460px at 14% 8%, rgba(255,157,0,.14), transparent 60%),
+    radial-gradient(700px 520px at 100% 100%, rgba(255,157,0,.08), transparent 55%),
+    var(--bg);
+  color:var(--ink); line-height:1.6;
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{opacity:.85}
+
+.card{
+  position:relative;
+  width:100%;max-width:440px;padding:40px 36px;
+  background:var(--panel-glass);
+  border:1px solid var(--glass-border);
+  border-radius:16px;
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 24px 48px -24px rgba(0,0,0,.6);
+}
+
+.lang-switch{position:absolute;top:16px;right:16px}
+.lang-switch select{
+  font:inherit;font-size:12px;font-weight:550;color:var(--muted);
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:8px;padding:6px 8px;cursor:pointer;
+}
+.lang-switch select:hover{border-color:var(--accent)}
+.lang-switch select:focus{outline:none;border-color:var(--accent)}
+
+.brand{font-size:19px;font-weight:750;letter-spacing:-.01em;margin-bottom:28px;text-align:center}
+.brand span{color:var(--accent)}
+
+.icon{
+  width:56px;height:56px;border-radius:50%;margin:0 auto 20px;
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+}
+.icon.loading{background:rgba(255,157,0,.1);border:1px solid rgba(255,157,0,.28)}
+.icon.success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.28);color:var(--green)}
+.icon.error{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.28);color:var(--red)}
+
+.spinner{
+  width:22px;height:22px;border-radius:50%;
+  border:2.5px solid rgba(255,157,0,.25);border-top-color:var(--accent);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+h1{font-size:19px;font-weight:700;margin-bottom:10px;letter-spacing:-.01em;text-align:center}
+p.sub{color:var(--muted);font-size:14px;margin-bottom:22px;text-align:center}
+
+.invite-summary{
+  background:rgba(255,157,0,.06);border:1px dashed var(--glass-border);
+  border-radius:12px;padding:14px 16px;margin-bottom:22px;font-size:13px;color:var(--muted);line-height:1.7;
+}
+.invite-summary b{color:var(--ink)}
+.invite-summary .role-badge{
+  display:inline-block;font-size:11.5px;font-weight:650;padding:2px 9px;border-radius:999px;
+  background:rgba(255,157,0,.12);color:var(--accent-light);border:1px solid rgba(255,157,0,.28);
+  text-transform:capitalize;
+}
+
+label{display:block;font-size:13px;font-weight:550;margin-bottom:7px;color:var(--ink)}
+input{
+  width:100%;padding:11px 13px;font:inherit;font-size:14.5px;
+  color:var(--ink);background:rgba(255,255,255,.02);
+  border:1px solid var(--border);border-radius:9px;
+  margin-bottom:16px;transition:border-color .15s ease, box-shadow .15s ease;
+}
+input::placeholder{color:var(--muted-2)}
+input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,157,0,.14)}
+.field-hint{margin-top:-11px;margin-bottom:16px;font-size:11.5px;color:var(--muted-2)}
+
+button, .btn{
+  display:inline-block;width:100%;font:inherit;font-size:14.5px;font-weight:650;
+  padding:12px;border-radius:9px;cursor:pointer;
+  background:var(--accent);color:var(--accent-ink);border:1px solid var(--accent);
+  box-shadow:0 8px 24px -8px rgba(255,157,0,.5);
+  transition:opacity .15s ease, transform .15s ease;
+  text-decoration:none;text-align:center;
+}
+button:hover, .btn:hover{opacity:.92;transform:translateY(-1px)}
+button:disabled{opacity:.6;cursor:default;transform:none}
+
+.err{
+  display:none;background:rgba(248,113,113,.1);color:var(--red);
+  border:1px solid rgba(248,113,113,.28);
+  font-size:13px;padding:10px 12px;border-radius:9px;margin-bottom:16px;
+}
+.err.show{display:block}
+
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="lang-switch">
+    <select data-i18n-switch aria-label="Language">
+      <option value="it">IT</option>
+      <option value="en">EN</option>
+      <option value="es">ES</option>
+      <option value="fr">FR</option>
+    </select>
+  </div>
+
+  <div class="brand">Game<span>Follow</span></div>
+
+  <div id="statoCaricamento">
+    <div class="icon loading"><div class="spinner"></div></div>
+    <h1 data-i18n="state.loading.title">Verifica dell'invito...</h1>
+    <p class="sub" data-i18n="state.loading.sub">Un attimo, stiamo controllando il link.</p>
+  </div>
+
+  <div id="statoForm" class="hidden">
+    <h1 data-i18n="state.form.title">Unisciti al team</h1>
+    <p class="sub" data-i18n="state.form.sub">Scegli una password per attivare il tuo account.</p>
+
+    <div class="invite-summary">
+      <span data-i18n="state.form.summary_email">Email</span>: <b id="invitoEmail"></b><br>
+      <span data-i18n="state.form.summary_org">Organizzazione</span>: <b id="invitoOrg"></b><br>
+      <span data-i18n="state.form.summary_role">Ruolo</span>: <span class="role-badge" id="invitoRuolo"></span>
+    </div>
+
+    <div class="err" id="formErr"></div>
+
+    <form id="formAccetta">
+      <label for="pw" data-i18n="state.form.password_label">Password</label>
+      <input type="password" id="pw" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required minlength="8" autocomplete="new-password">
+      <div class="field-hint" data-i18n="state.form.password_hint">Almeno 8 caratteri.</div>
+
+      <label for="pwConferma" data-i18n="state.form.password_confirm_label">Conferma password</label>
+      <input type="password" id="pwConferma" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required minlength="8" autocomplete="new-password">
+
+      <button type="submit" id="submitBtn" data-i18n="state.form.submit">Attiva account</button>
+    </form>
+  </div>
+
+  <div id="statoSuccesso" class="hidden">
+    <div class="icon success">&check;</div>
+    <h1 data-i18n="state.success.title">Account attivato</h1>
+    <p class="sub" data-i18n="state.success.sub">Ti stiamo portando alla dashboard...</p>
+  </div>
+
+  <div id="statoErrore" class="hidden">
+    <div class="icon error">&times;</div>
+    <h1 data-i18n="state.error.title">Invito non valido o scaduto</h1>
+    <p class="sub" id="messaggioErrore" data-i18n="state.error.sub">Questo link di invito non &egrave; valido o &egrave; scaduto. Chiedi a chi ti ha invitato/a di mandartene uno nuovo.</p>
+    <a class="btn" href="login.html" data-i18n="state.error.button">Vai al login</a>
+  </div>
+</div>
+
+<script src="js/i18n.js"></script>
+<script src="js/accetta-invito.js"></script>
+</body>
+</html>

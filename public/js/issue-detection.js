@@ -5,9 +5,9 @@
  * completi si scaricano una volta sola, i filtri rifanno solo il render.
  */
 
-const PIATTAFORMA_LABELS = { steam: 'Steam', xbox: 'Xbox', google_play: 'Google Play', app_store: 'App Store' };
+const PIATTAFORMA_LABELS_PROBLEMI = { steam: 'Steam', xbox: 'Xbox', google_play: 'Google Play', app_store: 'App Store' };
 const GRAVITA_LABELS = { alta: 'High', media: 'Medium', bassa: 'Low' };
-const GRAVITA_TAG_CLASSE = { alta: 'red', media: 'orange', bassa: 'green' };
+const GRAVITA_TAG_CLASSE_PROBLEMI = { alta: 'red', media: 'orange', bassa: 'green' };
 
 const elCaricamento = document.getElementById('problemi-caricamento');
 const elBloccato = document.getElementById('problemi-bloccato');
@@ -27,7 +27,7 @@ const COLORE_GRAVITA = { alta: '#F87171', media: '#FF9D00', bassa: '#22C55E' };
 let problemiCompleti = [];
 let chartProblemi = null;
 
-function formattaData(iso) {
+function formattaDataProblema(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
@@ -42,7 +42,7 @@ function formattaAndamento(andamento) {
 function formattaPiattaforme(piattaforme) {
   return Object.entries(piattaforme)
     .sort((a, b) => b[1] - a[1])
-    .map(([provider, n]) => `● ${PIATTAFORMA_LABELS[provider] || provider}　${n}`)
+    .map(([provider, n]) => `● ${PIATTAFORMA_LABELS_PROBLEMI[provider] || provider}　${n}`)
     .join('　　');
 }
 
@@ -68,8 +68,8 @@ function creaCardPrincipale(problema) {
       </div>
       <div>
         <p>Severity　<span class="${problema.gravita === 'alta' ? 'bad' : ''}">● ${GRAVITA_LABELS[problema.gravita]}</span></p>
-        <p>First reported　${formattaData(problema.primo_segnalato)}</p>
-        <p>Last reported　${formattaData(problema.ultimo_segnalato)}</p>
+        <p>First reported　${formattaDataProblema(problema.primo_segnalato)}</p>
+        <p>Last reported　${formattaDataProblema(problema.ultimo_segnalato)}</p>
         <button disabled title="Ticket tracker integration coming soon" style="float:right;background:#FF9D00;color:#fff;opacity:.6;cursor:not-allowed">Create issue</button>
       </div>
     </div>
@@ -84,7 +84,7 @@ function creaCardCompatta(problema) {
   article.style.cursor = 'pointer';
 
   const riga = document.createElement('div');
-  riga.innerHTML = `<b>⚠ ${problema.nome}</b><span style="float:right">${problema.totale_recensioni} review${problema.totale_recensioni === 1 ? '' : 's'}　 <span class="tag ${GRAVITA_TAG_CLASSE[problema.gravita]}">${GRAVITA_LABELS[problema.gravita]}</span>　›</span>`;
+  riga.innerHTML = `<b>⚠ ${problema.nome}</b><span style="float:right">${problema.totale_recensioni} review${problema.totale_recensioni === 1 ? '' : 's'}　 <span class="tag ${GRAVITA_TAG_CLASSE_PROBLEMI[problema.gravita]}">${GRAVITA_LABELS[problema.gravita]}</span>　›</span>`;
   article.appendChild(riga);
 
   let dettaglio = null;
@@ -99,7 +99,7 @@ function creaCardCompatta(problema) {
     const esempi = problema.esempi.length ? problema.esempi.map((t) => `“${t}”`).join('<br>') : 'No review text available.';
     dettaglio.innerHTML = `
       <p>${formattaPiattaforme(problema.piattaforme)}</p>
-      <p>${formattaAndamento(problema.andamento_settimanale)}　·　First reported ${formattaData(problema.primo_segnalato)}　·　Last reported ${formattaData(problema.ultimo_segnalato)}</p>
+      <p>${formattaAndamento(problema.andamento_settimanale)}　·　First reported ${formattaDataProblema(problema.primo_segnalato)}　·　Last reported ${formattaDataProblema(problema.ultimo_segnalato)}</p>
       <p style="margin-top:6px">${esempi}</p>
     `;
     article.appendChild(dettaglio);

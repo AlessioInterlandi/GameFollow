@@ -1,6 +1,10 @@
 /* Pagina di atterraggio del link di conferma email.
  * Legge il token dalla query string, lo consuma chiamando
- * /api/auth/verifica-email e mostra l'esito.
+ * /api/auth/verifica-email e mostra l'esito. Il testo dei tre stati e' gia'
+ * tradotto via data-i18n direttamente nell'HTML (js/i18n.js): questo script
+ * si limita a scegliere QUALE stato mostrare, non riscrive mai il testo con
+ * il messaggio del server (che risponde sempre in italiano, vedi
+ * routes/auth.js) per non rompere la coerenza della lingua scelta.
  */
 
 (async () => {
@@ -31,13 +35,7 @@
       body: JSON.stringify({ token }),
     });
 
-    if (risposta.ok) {
-      mostra('successo');
-    } else {
-      const corpo = await risposta.json().catch(() => ({}));
-      if (corpo.errore) document.getElementById('messaggioErrore').textContent = corpo.errore;
-      mostra('errore');
-    }
+    mostra(risposta.ok ? 'successo' : 'errore');
   } catch {
     mostra('errore');
   }

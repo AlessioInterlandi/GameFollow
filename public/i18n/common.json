@@ -1,0 +1,38 @@
+{
+  "it": {
+    "nav.login": "Accedi",
+    "footer.privacy": "Privacy",
+    "footer.terms": "Termini",
+    "footer.cookie": "Cookie",
+    "footer.cookie_prefs": "Preferenze cookie",
+    "form.email_label": "Email",
+    "form.password_label": "Password"
+  },
+  "en": {
+    "nav.login": "Log in",
+    "footer.privacy": "Privacy",
+    "footer.terms": "Terms",
+    "footer.cookie": "Cookie",
+    "footer.cookie_prefs": "Cookie preferences",
+    "form.email_label": "Email",
+    "form.password_label": "Password"
+  },
+  "es": {
+    "nav.login": "Iniciar sesión",
+    "footer.privacy": "Privacidad",
+    "footer.terms": "Términos",
+    "footer.cookie": "Cookies",
+    "footer.cookie_prefs": "Preferencias de cookies",
+    "form.email_label": "Correo electrónico",
+    "form.password_label": "Contraseña"
+  },
+  "fr": {
+    "nav.login": "Se connecter",
+    "footer.privacy": "Confidentialité",
+    "footer.terms": "Conditions",
+    "footer.cookie": "Cookies",
+    "footer.cookie_prefs": "Préférences des cookies",
+    "form.email_label": "E-mail",
+    "form.password_label": "Mot de passe"
+  }
+}

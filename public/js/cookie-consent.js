@@ -22,6 +22,83 @@
   var STORAGE_KEY = 'gf_cookie_consent';
   var SIX_MONTHS_MS = 1000 * 60 * 60 * 24 * 182;
 
+  // Testi del banner nelle 4 lingue del sito. Duplicato apposta (non letto
+  // da /i18n/*.json come le pagine): questo script resta completamente
+  // self-contained, cosi' il banner funziona anche su pagine che un giorno
+  // non caricassero js/i18n.js. Legge la STESSA chiave 'gf_lang' che
+  // scrivono sia il selettore lingua delle pagine pubbliche (js/i18n.js)
+  // sia il selettore nelle Impostazioni (js/impostazioni.js).
+  var LINGUE_SUPPORTATE = ['it', 'en', 'es', 'fr'];
+  var LANG_STORAGE_KEY = 'gf_lang';
+  var TESTI = {
+    it: {
+      title: 'Usiamo i cookie',
+      text: 'Quelli tecnici (es. il login) servono a far funzionare GameFollow e sono sempre attivi. Quelli non essenziali si attivano solo se li accetti. Dettagli nella <a href="cookie-policy.html">Cookie Policy</a>.',
+      technical: 'Tecnici',
+      technical_desc: 'necessari al funzionamento del sito (es. sessione di login)',
+      analytics: 'Analitici',
+      analytics_desc: 'ci aiutano a capire come viene usato il sito, oggi non attivi',
+      accept_all: 'Accetta tutti',
+      reject: 'Rifiuta non essenziali',
+      customize: 'Personalizza',
+      save: 'Salva preferenze',
+      aria_label: 'Preferenze cookie',
+    },
+    en: {
+      title: 'We use cookies',
+      text: 'Technical cookies (e.g. login) are needed to run GameFollow and are always active. Non-essential ones only turn on if you accept them. Details in the <a href="cookie-policy.html">Cookie Policy</a>.',
+      technical: 'Technical',
+      technical_desc: 'required for the site to work (e.g. login session)',
+      analytics: 'Analytics',
+      analytics_desc: 'help us understand how the site is used, not active today',
+      accept_all: 'Accept all',
+      reject: 'Reject non-essential',
+      customize: 'Customize',
+      save: 'Save preferences',
+      aria_label: 'Cookie preferences',
+    },
+    es: {
+      title: 'Usamos cookies',
+      text: 'Las técnicas (p. ej. el inicio de sesión) son necesarias para que GameFollow funcione y siempre están activas. Las no esenciales solo se activan si las aceptas. Más detalles en la <a href="cookie-policy.html">Política de cookies</a>.',
+      technical: 'Técnicas',
+      technical_desc: 'necesarias para el funcionamiento del sitio (p. ej. sesión de acceso)',
+      analytics: 'Analíticas',
+      analytics_desc: 'nos ayudan a entender cómo se usa el sitio, hoy no están activas',
+      accept_all: 'Aceptar todas',
+      reject: 'Rechazar no esenciales',
+      customize: 'Personalizar',
+      save: 'Guardar preferencias',
+      aria_label: 'Preferencias de cookies',
+    },
+    fr: {
+      title: 'Nous utilisons des cookies',
+      text: 'Les cookies techniques (ex. la connexion) sont nécessaires au fonctionnement de GameFollow et sont toujours actifs. Les cookies non essentiels ne s\'activent que si vous les acceptez. Détails dans la <a href="cookie-policy.html">politique de cookies</a>.',
+      technical: 'Techniques',
+      technical_desc: 'nécessaires au fonctionnement du site (ex. session de connexion)',
+      analytics: 'Analytiques',
+      analytics_desc: 'nous aident à comprendre l\'utilisation du site, pas actifs aujourd\'hui',
+      accept_all: 'Tout accepter',
+      reject: 'Refuser le non essentiel',
+      customize: 'Personnaliser',
+      save: 'Enregistrer les préférences',
+      aria_label: 'Préférences cookies',
+    },
+  };
+
+  function linguaCorrente() {
+    try {
+      var salvata = localStorage.getItem(LANG_STORAGE_KEY);
+      if (LINGUE_SUPPORTATE.indexOf(salvata) !== -1) return salvata;
+    } catch (e) { /* privacy mode: si passa al rilevamento dal browser */ }
+
+    var lingue = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || 'en'];
+    for (var i = 0; i < lingue.length; i++) {
+      var codice = String(lingue[i]).slice(0, 2).toLowerCase();
+      if (LINGUE_SUPPORTATE.indexOf(codice) !== -1) return codice;
+    }
+    return 'en';
+  }
+
   function leggiConsenso() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
@@ -98,23 +175,24 @@
   var elementoBanner = null;
 
   function costruisciBanner() {
+    var t = TESTI[linguaCorrente()] || TESTI.it;
     var host = document.createElement('div');
     host.className = 'gfcc-wrap';
     host.innerHTML =
-      '<div class="gfcc-card" role="dialog" aria-label="Preferenze cookie">' +
-      '  <p class="gfcc-title">Usiamo i cookie</p>' +
-      '  <p class="gfcc-text">Quelli tecnici (es. il login) servono a far funzionare GameFollow e sono sempre attivi. Quelli non essenziali si attivano solo se li accetti. Dettagli nella <a href="cookie-policy.html">Cookie Policy</a>.</p>' +
+      '<div class="gfcc-card" role="dialog" aria-label="' + t.aria_label + '">' +
+      '  <p class="gfcc-title">' + t.title + '</p>' +
+      '  <p class="gfcc-text">' + t.text + '</p>' +
       '  <div class="gfcc-panel" data-gfcc-panel>' +
-      '    <div class="gfcc-row"><div><b>Tecnici</b>necessari al funzionamento del sito (es. sessione di login)</div>' +
+      '    <div class="gfcc-row"><div><b>' + t.technical + '</b>' + t.technical_desc + '</div>' +
       '      <label class="gfcc-switch"><input type="checkbox" checked disabled><span class="gfcc-slider"></span></label></div>' +
-      '    <div class="gfcc-row"><div><b>Analitici</b>ci aiutano a capire come viene usato il sito, oggi non attivi</div>' +
+      '    <div class="gfcc-row"><div><b>' + t.analytics + '</b>' + t.analytics_desc + '</div>' +
       '      <label class="gfcc-switch"><input type="checkbox" data-gfcc-analytics><span class="gfcc-slider"></span></label></div>' +
       '  </div>' +
       '  <div class="gfcc-actions">' +
-      '    <button type="button" class="gfcc-btn gfcc-btn-primary" data-gfcc-accept-all>Accetta tutti</button>' +
-      '    <button type="button" class="gfcc-btn gfcc-btn-ghost" data-gfcc-reject>Rifiuta non essenziali</button>' +
-      '    <button type="button" class="gfcc-btn gfcc-btn-link" data-gfcc-customize>Personalizza</button>' +
-      '    <button type="button" class="gfcc-btn gfcc-btn-primary" data-gfcc-save style="display:none">Salva preferenze</button>' +
+      '    <button type="button" class="gfcc-btn gfcc-btn-primary" data-gfcc-accept-all>' + t.accept_all + '</button>' +
+      '    <button type="button" class="gfcc-btn gfcc-btn-ghost" data-gfcc-reject>' + t.reject + '</button>' +
+      '    <button type="button" class="gfcc-btn gfcc-btn-link" data-gfcc-customize>' + t.customize + '</button>' +
+      '    <button type="button" class="gfcc-btn gfcc-btn-primary" data-gfcc-save style="display:none">' + t.save + '</button>' +
       '  </div>' +
       '</div>';
     return host;
@@ -181,5 +259,19 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     if (!leggiConsenso()) mostraBanner();
+  });
+
+  // Se l'utente cambia lingua dal selettore mentre il banner e' gia'
+  // visibile (js/i18n.js lo notifica con questo evento), lo ricostruiamo
+  // nella lingua nuova invece di lasciarlo a meta' tradotto.
+  document.addEventListener('gf-lang-changed', function () {
+    if (!elementoBanner) return;
+    var eraPersonalizzato = elementoBanner.querySelector('[data-gfcc-panel]').classList.contains('gfcc-open');
+    if (eraPersonalizzato) {
+      apriPreferenze();
+    } else {
+      nascondiBanner();
+      mostraBanner();
+    }
   });
 })();

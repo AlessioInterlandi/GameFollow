@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-i18n-page="verifica-email">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -37,6 +37,7 @@ a{color:var(--accent);text-decoration:none}
 a:hover{opacity:.85}
 
 .card{
+  position:relative;
   width:100%;max-width:440px;padding:40px 36px;text-align:center;
   background:var(--panel-glass);
   border:1px solid var(--glass-border);
@@ -45,6 +46,15 @@ a:hover{opacity:.85}
   -webkit-backdrop-filter:blur(18px) saturate(140%);
   box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 24px 48px -24px rgba(0,0,0,.6);
 }
+
+.lang-switch{position:absolute;top:16px;right:16px}
+.lang-switch select{
+  font:inherit;font-size:12px;font-weight:550;color:var(--muted);
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:8px;padding:6px 8px;cursor:pointer;
+}
+.lang-switch select:hover{border-color:var(--accent)}
+.lang-switch select:focus{outline:none;border-color:var(--accent)}
 .brand{font-size:19px;font-weight:750;letter-spacing:-.01em;margin-bottom:28px}
 .brand span{color:var(--accent)}
 
@@ -82,29 +92,39 @@ button:hover, .btn:hover{opacity:.92;transform:translateY(-1px)}
 <body>
 
 <div class="card">
+  <div class="lang-switch">
+    <select data-i18n-switch aria-label="Language">
+      <option value="it">IT</option>
+      <option value="en">EN</option>
+      <option value="es">ES</option>
+      <option value="fr">FR</option>
+    </select>
+  </div>
+
   <div class="brand">Game<span>Follow</span></div>
 
   <div id="statoCaricamento">
     <div class="icon loading"><div class="spinner"></div></div>
-    <h1>Conferma in corso...</h1>
-    <p>Un attimo, stiamo verificando il link.</p>
+    <h1 data-i18n="state.loading.title">Conferma in corso...</h1>
+    <p data-i18n="state.loading.sub">Un attimo, stiamo verificando il link.</p>
   </div>
 
   <div id="statoSuccesso" class="hidden">
     <div class="icon success">&check;</div>
-    <h1>Email confermata</h1>
-    <p>Il tuo account &egrave; attivo. Ora puoi accedere.</p>
-    <a class="btn" href="login.html">Vai al login</a>
+    <h1 data-i18n="state.success.title">Email confermata</h1>
+    <p data-i18n="state.success.sub">Il tuo account &egrave; attivo. Ora puoi accedere.</p>
+    <a class="btn" href="login.html" data-i18n="state.success.button">Vai al login</a>
   </div>
 
   <div id="statoErrore" class="hidden">
     <div class="icon error">&times;</div>
-    <h1>Link non valido o scaduto</h1>
-    <p id="messaggioErrore">Questo link di conferma non &egrave; valido o &egrave; scaduto. Puoi richiederne uno nuovo dalla pagina di accesso.</p>
-    <a class="btn" href="login.html">Torna al login</a>
+    <h1 data-i18n="state.error.title">Link non valido o scaduto</h1>
+    <p id="messaggioErrore" data-i18n="state.error.sub">Questo link di conferma non &egrave; valido o &egrave; scaduto. Puoi richiederne uno nuovo dalla pagina di accesso.</p>
+    <a class="btn" href="login.html" data-i18n="state.error.button">Torna al login</a>
   </div>
 </div>
 
+<script src="js/i18n.js"></script>
 <script src="js/verifica-email.js"></script>
 </body>
 </html>

@@ -1,0 +1,42 @@
+{
+  "it": {
+    "state.loading.title": "Conferma in corso...",
+    "state.loading.sub": "Un attimo, stiamo verificando il link.",
+    "state.success.title": "Email confermata",
+    "state.success.sub": "Il tuo account è attivo. Ora puoi accedere.",
+    "state.success.button": "Vai al login",
+    "state.error.title": "Link non valido o scaduto",
+    "state.error.sub": "Questo link di conferma non è valido o è scaduto. Puoi richiederne uno nuovo dalla pagina di accesso.",
+    "state.error.button": "Torna al login"
+  },
+  "en": {
+    "state.loading.title": "Confirming...",
+    "state.loading.sub": "One moment, we're verifying the link.",
+    "state.success.title": "Email confirmed",
+    "state.success.sub": "Your account is active. You can now log in.",
+    "state.success.button": "Go to login",
+    "state.error.title": "Invalid or expired link",
+    "state.error.sub": "This confirmation link is invalid or has expired. You can request a new one from the login page.",
+    "state.error.button": "Back to login"
+  },
+  "es": {
+    "state.loading.title": "Confirmando...",
+    "state.loading.sub": "Un momento, estamos verificando el enlace.",
+    "state.success.title": "Correo confirmado",
+    "state.success.sub": "Tu cuenta está activa. Ya puedes iniciar sesión.",
+    "state.success.button": "Ir a iniciar sesión",
+    "state.error.title": "Enlace no válido o caducado",
+    "state.error.sub": "Este enlace de confirmación no es válido o ha caducado. Puedes solicitar uno nuevo desde la página de acceso.",
+    "state.error.button": "Volver al inicio de sesión"
+  },
+  "fr": {
+    "state.loading.title": "Confirmation en cours...",
+    "state.loading.sub": "Un instant, nous vérifions le lien.",
+    "state.success.title": "Email confirmé",
+    "state.success.sub": "Votre compte est actif. Vous pouvez maintenant vous connecter.",
+    "state.success.button": "Aller à la connexion",
+    "state.error.title": "Lien invalide ou expiré",
+    "state.error.sub": "Ce lien de confirmation est invalide ou a expiré. Vous pouvez en demander un nouveau depuis la page de connexion.",
+    "state.error.button": "Retour à la connexion"
+  }
+}

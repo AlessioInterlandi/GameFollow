@@ -21,13 +21,11 @@
     <a class="active" href="impostazioni.html"><i>⚙</i> Settings</a>
   </nav>
   <div class="connected">
-    <div class="game-thumb">VH</div>
-    <div><b>Void Horizon</b><small>Connected</small></div>
-    <span>⌄</span>
+    <div class="game-thumb" id="sidebar-game-thumb">··</div><div><b id="sidebar-game-nome">Loading…</b><small>Active game</small></div><span>⌄</span>
     <hr>
-    <div class="source"><strong>●</strong><div>Steam<small>Connected</small></div></div>
-    <div class="source"><strong class="play">▶</strong><div>Google Play<small>Connected</small></div></div>
-    <div class="source"><strong>▣</strong><div>App Store<small>Connect</small></div></div>
+    <div class="source" data-provider="steam"><strong>●</strong><div>Steam<small class="sidebar-stato">Loading…</small></div></div>
+    <div class="source" data-provider="google_play"><strong class="play">▶</strong><div>Google Play<small class="sidebar-stato">Loading…</small></div></div>
+    <div class="source" data-provider="app_store"><strong>▣</strong><div>App Store<small class="sidebar-stato">Loading…</small></div></div>
   </div>
   <div class="upgrade">
     <span>♙</span>
@@ -35,12 +33,19 @@
     <p>Unlock advanced features and unlimited analytics.</p>
     <button>Upgrade plan</button>
   </div>
-  <a class="collapse" href="#">← &nbsp; Collapse menu</a>
+  <a class="collapse" href="#"><span class="collapse-icon">←</span><span class="collapse-label">&nbsp;Collapse menu</span></a>
 </aside>
 <main>
   <header class="topbar">
     <button class="nav-toggle" type="button" aria-label="Open menu">☰</button>
-    <div class="game-select"><div class="game-thumb">VH</div><b>Void Horizon</b><span>⌄</span></div>
+    <div class="game-select-wrap">
+    <button class="game-select" id="game-select-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="game-thumb" id="game-select-thumb">··</span><b id="game-select-nome">Loading…</b><span>⌄</span></button>
+    <div class="game-select-menu" id="game-select-menu" hidden>
+      <div class="game-select-lista" id="game-select-lista"></div>
+      <hr>
+      <button type="button" class="game-select-add" id="game-select-aggiungi-btn">+ &nbsp;Add game</button>
+    </div>
+  </div>
     <div class="top-actions">
       <button class="icon-btn">♧<em></em></button>
       <button class="icon-btn">?</button>
@@ -140,37 +145,32 @@
           <article class="panel">
             <div class="title-row">
               <h2 style="margin:0">Team members</h2>
-              <button style="background:#FF9D00;color:#fff;border-color:#FF9D00">Invite member</button>
+              <button id="btn-invita-membro" style="background:#FF9D00;color:#fff;border-color:#FF9D00">Invite member</button>
             </div>
-            <table>
-              <thead><tr><th>Member</th><th>Role</th><th>Permissions</th><th>Status</th></tr></thead>
-              <tbody>
-                <tr><td><b>Marco Rossi</b> (you)<br><small style="color:var(--muted)">marco.rossi@dreamforge.com</small></td><td><span class="role-badge owner">Owner</span></td><td>All</td><td><span class="status-badge active">Active</span></td></tr>
-                <tr><td><b>Luca Bianchi</b><br><small style="color:var(--muted)">luca@dreamforge.com</small></td><td><span class="role-badge">Editor</span></td><td>Reviews, Replies, Analytics</td><td><span class="status-badge active">Active</span></td></tr>
-                <tr><td><b>Giulia Verdi</b><br><small style="color:var(--muted)">giulia@dreamforge.com</small></td><td><span class="role-badge">Viewer</span></td><td>Read-only</td><td><span class="status-badge active">Active</span></td></tr>
-                <tr><td><b>Alessandro Neri</b><br><small style="color:var(--muted)">alessandro@dreamforge.com</small></td><td><span class="role-badge">Editor</span></td><td>Reviews, Replies</td><td><span class="status-badge invited">Invited</span></td></tr>
-              </tbody>
+            <p id="team-nota" style="color:var(--muted);font-size:12px">Loading…</p>
+            <table id="team-tabella" hidden>
+              <thead><tr><th>Member</th><th>Role</th><th>Permissions</th><th>Status</th><th></th></tr></thead>
+              <tbody id="team-corpo"></tbody>
             </table>
+            <p id="team-limite-nota" style="color:var(--muted);font-size:11.5px;margin-top:10px"></p>
           </article>
         </div>
 
         <div class="settings-panel" data-panel="notifications">
-          <div class="grid-2">
+          <p id="notifiche-nota" style="color:var(--muted);font-size:12px;margin-bottom:12px">Loading…</p>
+          <div class="grid-2" id="notifiche-contenuto" hidden>
             <article class="panel">
               <h2>Notification channels</h2>
-              <div class="toggle-row"><div><b>Email</b><small>Receive email notifications</small></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-              <div class="toggle-row"><div><b>In-app</b><small>Notifications inside the platform</small></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-              <div class="toggle-row"><div><b>Slack</b><small>Receive notifications on Slack</small></div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
-              <div class="toggle-row"><div><b>Discord</b><small>Receive notifications on Discord</small></div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>Email</b><small>Receive email notifications</small></div><label class="switch"><input type="checkbox" id="notif-email_enabled"><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>In-app</b><small>Notifications inside the platform</small></div><label class="switch"><input type="checkbox" id="notif-inapp_enabled"><span class="slider"></span></label></div>
             </article>
             <article class="panel">
               <h2>Events</h2>
-              <div class="toggle-row"><div><b>New reviews</b><small>When new reviews come in</small></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-              <div class="toggle-row"><div><b>Critical issues</b><small>When a critical issue is detected</small></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-              <div class="toggle-row"><div><b>Replies awaiting approval</b><small>When an AI reply is waiting for you</small></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-              <div class="toggle-row"><div><b>Weekly digest</b><small>Weekly summary by email</small></div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
-              <div class="toggle-row"><div><b>Mentions</b><small>When someone mentions you</small></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-              <div class="toggle-row"><div><b>Billing</b><small>Invoices, payments, renewals</small></div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>New reviews</b><small>When new reviews come in</small></div><label class="switch"><input type="checkbox" id="notif-event_new_reviews"><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>Critical issues</b><small>When a critical issue is detected</small></div><label class="switch"><input type="checkbox" id="notif-event_critical_issues"><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>Replies awaiting approval</b><small>When an AI reply is waiting for you</small></div><label class="switch"><input type="checkbox" id="notif-event_replies_pending"><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>Weekly digest</b><small>Weekly summary by email</small></div><label class="switch"><input type="checkbox" id="notif-event_weekly_digest"><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><b>Billing</b><small>Invoices, payments, renewals</small></div><label class="switch"><input type="checkbox" id="notif-event_billing"><span class="slider"></span></label></div>
             </article>
           </div>
         </div>
@@ -208,7 +208,12 @@
           <div class="grid-2">
             <article class="panel">
               <h2>General settings</h2>
-              <div class="field"><label for="a-lang">App language</label><select id="a-lang"><option>English</option></select></div>
+              <div class="field"><label for="a-lang">Site language</label><select id="a-lang">
+                <option value="it">Italiano</option>
+                <option value="en">English</option>
+                <option value="es">Espa&ntilde;ol</option>
+                <option value="fr">Fran&ccedil;ais</option>
+              </select><p class="field-hint" style="color:var(--muted);font-size:12px;margin:6px 0 0">Applies today to the public site (landing, login, sign up) — the dashboard itself is still English-only.</p></div>
               <div class="field"><label for="a-date">Date format</label><select id="a-date"><option>MM/DD/YYYY</option><option>DD/MM/YYYY</option></select></div>
               <div class="field"><label for="a-currency">Currency</label><select id="a-currency"><option>Euro (€)</option><option>US Dollar ($)</option></select></div>
               <div class="field"><label for="a-theme">Theme</label><select id="a-theme"><option>Light</option><option>Dark</option></select></div>
@@ -248,6 +253,7 @@
                 <li>1 game</li>
                 <li>3 platforms</li>
                 <li>2,000 reviews / month</li>
+                <li>1 team seat</li>
                 <li class="off">AI automation</li>
                 <li class="off">Issue Detection</li>
                 <li class="off">Competitor Analysis</li>
@@ -264,6 +270,7 @@
                 <li>5 games</li>
                 <li>10 platforms</li>
                 <li>20,000 reviews / month</li>
+                <li>5 team seats</li>
                 <li>AI automation</li>
                 <li>Issue Detection</li>
                 <li class="off">Competitor Analysis</li>
@@ -342,8 +349,47 @@
     </div>
   </section>
 </main>
+<dialog id="modale-aggiungi-gioco" style="border:1px solid var(--line);border-radius:12px;padding:0;max-width:380px;width:90%">
+  <form method="dialog" style="padding:22px">
+    <h2 style="margin:0 0 6px;font-size:16px">Add a game</h2>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 16px">Add another game to follow with GameFollow. You can switch between your games any time from the menu at the top.</p>
+    <div class="field">
+      <label for="aggiungi-gioco-nome">Game name</label>
+      <input id="aggiungi-gioco-nome" type="text" autocomplete="off" placeholder="e.g. Void Horizon 2" maxlength="80">
+    </div>
+    <p id="aggiungi-gioco-errore" style="color:var(--red);font-size:12px;display:none;margin:8px 0 0"></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button type="button" id="aggiungi-gioco-annulla">Cancel</button>
+      <button type="button" id="aggiungi-gioco-salva" style="background:#FF9D00;color:#fff;border-color:#FF9D00">Add game</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="modale-invita-membro" style="border:1px solid var(--line);border-radius:12px;padding:0;max-width:380px;width:90%">
+  <form method="dialog" style="padding:22px">
+    <h2 style="margin:0 0 6px;font-size:16px">Invite a team member</h2>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 16px">They'll get an email with a link to join your team on GameFollow.</p>
+    <div class="field">
+      <label for="invita-email">Email</label>
+      <input id="invita-email" type="email" autocomplete="off" placeholder="teammate@yourstudio.dev">
+    </div>
+    <div class="field">
+      <label for="invita-ruolo">Role</label>
+      <select id="invita-ruolo">
+        <option value="editor" selected>Editor — Reviews, Replies, Analytics</option>
+        <option value="viewer">Viewer — read-only</option>
+        <option value="owner">Owner — full access, incl. billing</option>
+      </select>
+    </div>
+    <p id="invita-errore" style="color:var(--red);font-size:12px;display:none;margin:8px 0 0"></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button type="button" id="invita-annulla">Cancel</button>
+      <button type="button" id="invita-salva" style="background:#FF9D00;color:#fff;border-color:#FF9D00">Send invite</button>
+    </div>
+  </form>
+</dialog>
 <script src="js/api.js"></script>
 <script src="js/app.js"></script>
+  <script src="js/giochi.js"></script>
 <script src="js/impostazioni.js"></script>
   <script src="js/cookie-consent.js" defer></script>
 </body>

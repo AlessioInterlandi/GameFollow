@@ -21,19 +21,26 @@
     <a href="impostazioni.html"><i>⚙</i> Settings</a>
   </nav>
   <div class="connected">
-    <div class="game-thumb">VH</div><div><b>Void Horizon</b><small>Connected</small></div><span>⌄</span>
+    <div class="game-thumb" id="sidebar-game-thumb">··</div><div><b id="sidebar-game-nome">Loading…</b><small>Active game</small></div><span>⌄</span>
     <hr>
-    <div class="source"><strong>●</strong><div>Steam<small>Connected</small></div></div>
-    <div class="source"><strong class="play">▶</strong><div>Google Play<small>Connected</small></div></div>
-    <div class="source"><strong>▣</strong><div>App Store<small>Connect</small></div></div>
+    <div class="source" data-provider="steam"><strong>●</strong><div>Steam<small class="sidebar-stato">Loading…</small></div></div>
+    <div class="source" data-provider="google_play"><strong class="play">▶</strong><div>Google Play<small class="sidebar-stato">Loading…</small></div></div>
+    <div class="source" data-provider="app_store"><strong>▣</strong><div>App Store<small class="sidebar-stato">Loading…</small></div></div>
   </div>
   <div class="upgrade"><span>♙</span><b>Upgrade to Pro</b><p>Unlock advanced features and unlimited analytics.</p><button>Upgrade plan</button></div>
-  <a class="collapse" href="#">← &nbsp; Collapse menu</a>
+  <a class="collapse" href="#"><span class="collapse-icon">←</span><span class="collapse-label">&nbsp;Collapse menu</span></a>
 </aside>
 <main>
   <header class="topbar">
     <button class="nav-toggle" type="button" aria-label="Open menu">☰</button>
-    <div class="game-select"><div class="game-thumb">VH</div><b>Void Horizon</b><span>⌄</span></div>
+    <div class="game-select-wrap">
+    <button class="game-select" id="game-select-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="game-thumb" id="game-select-thumb">··</span><b id="game-select-nome">Loading…</b><span>⌄</span></button>
+    <div class="game-select-menu" id="game-select-menu" hidden>
+      <div class="game-select-lista" id="game-select-lista"></div>
+      <hr>
+      <button type="button" class="game-select-add" id="game-select-aggiungi-btn">+ &nbsp;Add game</button>
+    </div>
+  </div>
     <div class="top-actions"><button class="icon-btn">♧<em></em></button><button class="icon-btn">?</button><span class="divider"></span><span class="avatar">SD</span><div><b>Studio Dreamforge</b><small>Pro Plan</small></div><span>⌄</span></div>
   </header>
   <section class="content">
@@ -53,8 +60,24 @@
     </div>
   </section>
 </main>
+<dialog id="modale-aggiungi-gioco" style="border:1px solid var(--line);border-radius:12px;padding:0;max-width:380px;width:90%">
+  <form method="dialog" style="padding:22px">
+    <h2 style="margin:0 0 6px;font-size:16px">Add a game</h2>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 16px">Add another game to follow with GameFollow. You can switch between your games any time from the menu at the top.</p>
+    <div class="field">
+      <label for="aggiungi-gioco-nome">Game name</label>
+      <input id="aggiungi-gioco-nome" type="text" autocomplete="off" placeholder="e.g. Void Horizon 2" maxlength="80">
+    </div>
+    <p id="aggiungi-gioco-errore" style="color:var(--red);font-size:12px;display:none;margin:8px 0 0"></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button type="button" id="aggiungi-gioco-annulla">Cancel</button>
+      <button type="button" id="aggiungi-gioco-salva" style="background:#FF9D00;color:#fff;border-color:#FF9D00">Add game</button>
+    </div>
+  </form>
+</dialog>
 <script src="js/api.js"></script>
 <script src="js/app.js"></script>
+  <script src="js/giochi.js"></script>
 <script src="js/risposte.js"></script>
   <script src="js/cookie-consent.js" defer></script>
 </body>

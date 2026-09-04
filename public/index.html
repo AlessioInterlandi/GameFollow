@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-i18n-page="index">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -74,6 +74,14 @@ header nav a:hover{color:var(--ink)}
 .btn-primary:hover{opacity:.92;transform:translateY(-1px)}
 .btn-ghost{border-color:var(--glass-border-strong);color:var(--ink);background:rgba(255,255,255,.02)}
 .btn-ghost:hover{border-color:var(--accent)}
+
+.lang-switch select{
+  font:inherit;font-size:12.5px;font-weight:550;color:var(--muted);
+  background:rgba(255,255,255,.02);border:1px solid var(--border);
+  border-radius:8px;padding:7px 9px;cursor:pointer;
+}
+.lang-switch select:hover{border-color:var(--accent)}
+.lang-switch select:focus{outline:none;border-color:var(--accent)}
 
 /* ---------- hero ---------- */
 .hero{padding:64px 0 40px;text-align:center;position:relative}
@@ -185,33 +193,41 @@ footer.site-footer a:hover{color:var(--muted)}
     <div class="bar glass">
       <a class="logo" href="index.html">Game<span>Follow</span><i class="logo-dot"></i></a>
       <nav>
-        <a href="#security">Security</a>
-        <a href="#integrations">Integrations</a>
-        <a href="#preview">Live preview</a>
+        <a href="#security" data-i18n="nav.security">Security</a>
+        <a href="#integrations" data-i18n="nav.integrations">Integrations</a>
+        <a href="#preview" data-i18n="nav.preview">Live preview</a>
       </nav>
-      <a class="btn btn-ghost" href="login.html">Log in</a>
-      <a class="btn btn-primary" href="registrati.html">Get started</a>
+      <div class="lang-switch">
+        <select data-i18n-switch aria-label="Language">
+          <option value="it">IT</option>
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="fr">FR</option>
+        </select>
+      </div>
+      <a class="btn btn-ghost" href="login.html" data-i18n="nav.login">Log in</a>
+      <a class="btn btn-primary" href="registrati.html" data-i18n="nav.get_started">Get started</a>
     </div>
   </div>
 </header>
 
 <section class="hero">
   <div class="wrap">
-    <span class="eyebrow glass">⬤ Trusted by indie studios shipping on 5 platforms</span>
-    <h1>Every review your game gets,<br>turned into <span>action</span>.</h1>
-    <p class="lead">GameFollow watches Steam, Google Play, the App Store, Xbox and PlayStation in one place — spots the issues players actually care about, and drafts on-brand AI replies so your team never falls behind.</p>
+    <span class="eyebrow glass" data-i18n="hero.eyebrow">⬤ Trusted by indie studios shipping on 5 platforms</span>
+    <h1 data-i18n-html="hero.heading">Every review your game gets,<br>turned into <span>action</span>.</h1>
+    <p class="lead" data-i18n="hero.lead">GameFollow watches Steam, Google Play, the App Store, Xbox and PlayStation in one place — spots the issues players actually care about, and drafts on-brand AI replies so your team never falls behind.</p>
     <div class="actions">
-      <a class="btn btn-primary" href="registrati.html">Get started free</a>
-      <a class="btn btn-ghost" href="login.html">Log in</a>
+      <a class="btn btn-primary" href="registrati.html" data-i18n="hero.cta_primary">Get started free</a>
+      <a class="btn btn-ghost" href="login.html" data-i18n="nav.login">Log in</a>
     </div>
 
     <div class="chart-preview glass" id="preview">
       <div class="cp-head">
         <div class="cp-title">
-          <b>Sentiment trend</b>
-          <span class="live-chip"><i></i>LIVE</span>
+          <b data-i18n="preview.title">Sentiment trend</b>
+          <span class="live-chip"><i></i><span data-i18n="preview.live">LIVE</span></span>
         </div>
-        <div class="cp-value">Avg rating <b>4.3</b> <span class="up">▲ 0.6</span> this week</div>
+        <div class="cp-value" data-i18n-html="preview.value">Avg rating <b>4.3</b> <span class="up">▲ 0.6</span> this week</div>
       </div>
       <svg class="chart-svg" viewBox="0 0 860 180" preserveAspectRatio="none">
         <g class="chart-grid">
@@ -244,10 +260,10 @@ footer.site-footer a:hover{color:var(--muted)}
 <section class="trust-bar">
   <div class="wrap">
     <div class="trust-grid">
-      <div class="trust-card glass"><strong>67%</strong><span>Replies automated by AI</span></div>
-      <div class="trust-card glass"><strong>5h 42m</strong><span>Average response time</span></div>
-      <div class="trust-card glass"><strong>12,482+</strong><span>Reviews analyzed per game</span></div>
-      <div class="trust-card glass"><strong>5</strong><span>Platforms in one dashboard</span></div>
+      <div class="trust-card glass"><strong>67%</strong><span data-i18n="trust.stat1_label">Replies automated by AI</span></div>
+      <div class="trust-card glass"><strong>5h 42m</strong><span data-i18n="trust.stat2_label">Average response time</span></div>
+      <div class="trust-card glass"><strong>12,482+</strong><span data-i18n="trust.stat3_label">Reviews analyzed per game</span></div>
+      <div class="trust-card glass"><strong>5</strong><span data-i18n="trust.stat4_label">Platforms in one dashboard</span></div>
     </div>
   </div>
 </section>
@@ -255,40 +271,40 @@ footer.site-footer a:hover{color:var(--muted)}
 <section id="security">
   <div class="wrap">
     <div class="section-heading">
-      <span class="kicker">Security</span>
-      <h2>Built to keep your data yours</h2>
-      <p>GameFollow never touches your store passwords, and your review data is never sold or shared.</p>
+      <span class="kicker" data-i18n="security.kicker">Security</span>
+      <h2 data-i18n="security.heading">Built to keep your data yours</h2>
+      <p data-i18n="security.sub">GameFollow never touches your store passwords, and your review data is never sold or shared.</p>
     </div>
     <div class="sec-grid">
       <article class="sec-card glass">
         <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9D00" stroke-width="1.8"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
-        <h3>OAuth-only connections</h3>
-        <p>Steam, Google Play and App Store are linked through official OAuth — GameFollow never sees or stores your store password.</p>
+        <h3 data-i18n="security.card1.title">OAuth-only connections</h3>
+        <p data-i18n="security.card1.desc">Steam, Google Play and App Store are linked through official OAuth — GameFollow never sees or stores your store password.</p>
       </article>
       <article class="sec-card glass">
         <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9D00" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
-        <h3>Encrypted access tokens</h3>
-        <p>Every platform token is encrypted at rest and scoped to read-only review access — nothing more, nothing shared across studios.</p>
+        <h3 data-i18n="security.card2.title">Encrypted access tokens</h3>
+        <p data-i18n="security.card2.desc">Every platform token is encrypted at rest and scoped to read-only review access — nothing more, nothing shared across studios.</p>
       </article>
       <article class="sec-card glass">
         <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9D00" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
-        <h3>Your data, your export</h3>
-        <p>Full data export and account deletion on demand — your reviews and reply history are never locked in.</p>
+        <h3 data-i18n="security.card3.title">Your data, your export</h3>
+        <p data-i18n="security.card3.desc">Full data export and account deletion on demand — your reviews and reply history are never locked in.</p>
       </article>
       <article class="sec-card glass">
         <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9D00" stroke-width="1.8"><path d="M12 2l3 6 6 1-4.5 4 1 6L12 16l-5.5 3 1-6L3 9l6-1z"/></svg></div>
-        <h3>Human in the loop</h3>
-        <p>AI drafts every reply — nothing goes out to players without your review, unless you explicitly enable auto-publish for trusted cases.</p>
+        <h3 data-i18n="security.card4.title">Human in the loop</h3>
+        <p data-i18n="security.card4.desc">AI drafts every reply — nothing goes out to players without your review, unless you explicitly enable auto-publish for trusted cases.</p>
       </article>
       <article class="sec-card glass">
         <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9D00" stroke-width="1.8"><path d="M4 12h4l2-7 4 14 2-7h4"/></svg></div>
-        <h3>Transparent, indie-built</h3>
-        <p>Built and maintained by a solo indie developer — no black-box vendor, direct line to the person shipping it.</p>
+        <h3 data-i18n="security.card5.title">Transparent, indie-built</h3>
+        <p data-i18n="security.card5.desc">Built and maintained by a solo indie developer — no black-box vendor, direct line to the person shipping it.</p>
       </article>
       <article class="sec-card glass">
         <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9D00" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg></div>
-        <h3>Regular backups</h3>
-        <p>Your reviews, replies and knowledge base entries are backed up automatically — nothing is lost if a sync fails.</p>
+        <h3 data-i18n="security.card6.title">Regular backups</h3>
+        <p data-i18n="security.card6.desc">Your reviews, replies and knowledge base entries are backed up automatically — nothing is lost if a sync fails.</p>
       </article>
     </div>
   </div>
@@ -297,9 +313,9 @@ footer.site-footer a:hover{color:var(--muted)}
 <section id="integrations">
   <div class="wrap">
     <div class="section-heading">
-      <span class="kicker">Integrations</span>
-      <h2>Connect the platforms you already ship on</h2>
-      <p>A few clicks, no config files — GameFollow pulls reviews in automatically from every store you connect.</p>
+      <span class="kicker" data-i18n="integrations.kicker">Integrations</span>
+      <h2 data-i18n="integrations.heading">Connect the platforms you already ship on</h2>
+      <p data-i18n="integrations.sub">A few clicks, no config files — GameFollow pulls reviews in automatically from every store you connect.</p>
     </div>
     <div class="integrations-panel glass">
       <div class="int-grid">
@@ -319,8 +335,8 @@ footer.site-footer a:hover{color:var(--muted)}
     <div class="quote-panel glass">
       <div class="quote-mark">"</div>
       <div>
-        <p>I used to scroll Steam reviews every morning trying to spot what actually mattered. Now GameFollow flags the real issues and drafts replies before I've had coffee.</p>
-        <footer>— early beta tester, indie studio</footer>
+        <p data-i18n="quote.text">I used to scroll Steam reviews every morning trying to spot what actually mattered. Now GameFollow flags the real issues and drafts replies before I've had coffee.</p>
+        <footer data-i18n="quote.attribution">— early beta tester, indie studio</footer>
       </div>
     </div>
   </div>
@@ -329,9 +345,9 @@ footer.site-footer a:hover{color:var(--muted)}
 <section class="cta">
   <div class="wrap">
     <div class="cta-panel glass">
-      <h2>Stop reading reviews one by one.</h2>
-      <p>Connect your first platform in minutes and see what your players are really saying.</p>
-      <a class="btn btn-primary" href="registrati.html">Get started free</a>
+      <h2 data-i18n="cta.heading">Stop reading reviews one by one.</h2>
+      <p data-i18n="cta.sub">Connect your first platform in minutes and see what your players are really saying.</p>
+      <a class="btn btn-primary" href="registrati.html" data-i18n="hero.cta_primary">Get started free</a>
     </div>
   </div>
 </section>
@@ -340,17 +356,18 @@ footer.site-footer a:hover{color:var(--muted)}
   <div class="wrap">
     <span>© 2026 GameFollow</span>
     <nav>
-      <a href="#security">Security</a>
-      <a href="#integrations">Integrations</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="termini.html">Termini</a>
-      <a href="cookie-policy.html">Cookie</a>
-      <button type="button" class="cookie-prefs-link" onclick="window.gfCookieConsent && window.gfCookieConsent.open()">Preferenze cookie</button>
-      <a href="login.html">Log in</a>
+      <a href="#security" data-i18n="nav.security">Security</a>
+      <a href="#integrations" data-i18n="nav.integrations">Integrations</a>
+      <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
+      <a href="termini.html" data-i18n="footer.terms">Termini</a>
+      <a href="cookie-policy.html" data-i18n="footer.cookie">Cookie</a>
+      <button type="button" class="cookie-prefs-link" onclick="window.gfCookieConsent && window.gfCookieConsent.open()" data-i18n="footer.cookie_prefs">Preferenze cookie</button>
+      <a href="login.html" data-i18n="nav.login">Log in</a>
     </nav>
   </div>
 </footer>
 
+<script src="js/i18n.js"></script>
 <script src="js/cookie-consent.js" defer></script>
 </body>
 </html>

@@ -15,44 +15,84 @@
       <a href="competitor.html"><i>◎</i> Competitor</a><a href="integrazioni.html"><i>⌁</i> Integrations</a><a href="impostazioni.html"><i>⚙</i> Settings</a>
     </nav>
     <div class="connected">
-      <div class="game-thumb">VH</div><div><b>Void Horizon</b><small>Connected</small></div><span>⌄</span>
-      <hr><div class="source"><strong>●</strong><div>Steam<small>Connected</small></div></div>
-      <div class="source"><strong class="play">▶</strong><div>Google Play<small>Connected</small></div></div>
-      <div class="source"><strong>▣</strong><div>App Store<small>Connect</small></div></div>
+      <div class="game-thumb" id="sidebar-game-thumb">··</div><div><b id="sidebar-game-nome">Loading…</b><small>Active game</small></div><span>⌄</span>
+      <hr><div class="source" data-provider="steam"><strong>●</strong><div>Steam<small class="sidebar-stato">Loading…</small></div></div>
+      <div class="source" data-provider="google_play"><strong class="play">▶</strong><div>Google Play<small class="sidebar-stato">Loading…</small></div></div>
+      <div class="source" data-provider="app_store"><strong>▣</strong><div>App Store<small class="sidebar-stato">Loading…</small></div></div>
     </div>
     <div class="upgrade"><span>♙</span><b>Upgrade to Pro</b><p>Unlock advanced features and unlimited analytics.</p><button>Upgrade plan</button></div>
-    <a class="collapse" href="#">← &nbsp; Collapse menu</a>
+    <a class="collapse" href="#"><span class="collapse-icon">←</span><span class="collapse-label">&nbsp;Collapse menu</span></a>
   </aside>
   <main>
     <header class="topbar">
       <button class="nav-toggle" type="button" aria-label="Open menu">☰</button>
-      <div class="game-select"><div class="game-thumb">VH</div><b>Void Horizon</b><span>⌄</span></div>
+      <div class="game-select-wrap">
+    <button class="game-select" id="game-select-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="game-thumb" id="game-select-thumb">··</span><b id="game-select-nome">Loading…</b><span>⌄</span></button>
+    <div class="game-select-menu" id="game-select-menu" hidden>
+      <div class="game-select-lista" id="game-select-lista"></div>
+      <hr>
+      <button type="button" class="game-select-add" id="game-select-aggiungi-btn">+ &nbsp;Add game</button>
+    </div>
+  </div>
       <div class="top-actions"><button class="icon-btn">♧<em></em></button><button class="icon-btn">?</button><span class="divider"></span><span class="avatar">SD</span><div><b>Studio Dreamforge</b><small>Pro Plan</small></div><span>⌄</span></div>
     </header>
     <section class="content">
       <div class="page-heading"><div><h1>Overview</h1><p>All your games' reviews, analyzed by AI.</p></div><div class="heading-actions"><button>▣ &nbsp; Last 30 days　⌄</button><button>Export report　⇩</button></div></div>
       <section class="metrics">
-        <article><small>Average rating</small><strong id="m-rating">— <span class="stars"></span></strong></article><article><small>Sentiment (this month)</small><strong class="positive">+14%</strong><div class="sparkline">⌁⌁⌁⌁⌁⌁</div></article><article><small>Total reviews</small><strong id="m-total">—</strong></article><article><small>Unanswered</small><strong id="m-unanswered" class="negative">—</strong><p id="m-unanswered-pct"></p></article><article><small>Published replies</small><strong id="m-published">—</strong><p id="m-published-pct"></p></article><article><small>Average response time</small><strong>5h 42m</strong><p class="positive">-1h 15m vs last month</p></article>
+        <article><small>Average rating</small><strong id="m-rating">— <span class="stars"></span></strong></article><article><small>Positive sentiment</small><strong id="m-sentiment">—</strong><div class="sparkline" id="m-sentiment-spark"><canvas id="m-sentiment-chart"></canvas></div></article><article><small>Total reviews</small><strong id="m-total">—</strong></article><article><small>Unanswered</small><strong id="m-unanswered" class="negative">—</strong><p id="m-unanswered-pct"></p></article><article><small>Published replies</small><strong id="m-published">—</strong><p id="m-published-pct"></p></article><article><small>Platforms connected</small><strong id="m-platforms">—</strong><p id="m-platforms-note"></p></article>
       </section>
       <section class="triple-row">
         <article class="panel issue-table"><h2>Top reported issues</h2><p id="dash-problemi-nota" style="color:var(--muted);font-size:12px">Loading…</p><table id="dash-problemi-tabella" hidden><thead><tr><th>Issue</th><th>Reports</th><th>Change</th></tr></thead><tbody id="dash-problemi-corpo"></tbody></table><a href="issue-detection.html">View all issues　→</a></article>
-        <article class="panel platform"><h2>Rating by platform</h2><div class="chart-box"><canvas id="dash-piattaforma-grafico"></canvas></div></article>
-        <article class="panel sentiment"><h2>Sentiment distribution</h2><div class="sentiment-data"><div class="chart-box chart-box-square"><canvas id="dash-sentiment-grafico"></canvas></div><div><p><i class="dot green"></i> Positive　　<b id="dash-sentiment-positive">—</b></p><p><i class="dot orange"></i> Neutral　　<b id="dash-sentiment-neutral">—</b></p><p><i class="dot red"></i> Negative　 <b id="dash-sentiment-negative">—</b></p></div></div></article>
+        <article class="panel platform"><h2>Rating by platform</h2><div class="platform-bars" id="dash-piattaforma-bars"></div></article>
+        <article class="panel sentiment"><h2>Sentiment distribution</h2><div class="sentiment-data"><div class="sentiment-ring" id="dash-sentiment-donut"><svg viewBox="0 0 64 64"><circle class="donut-ring donut-bg" cx="32" cy="32" r="26"></circle><circle class="donut-ring donut-arc" data-key="positive" cx="32" cy="32" r="26" stroke="#22C55E"></circle><circle class="donut-ring donut-arc" data-key="neutral" cx="32" cy="32" r="26" stroke="#FF9D00"></circle><circle class="donut-ring donut-arc" data-key="negative" cx="32" cy="32" r="26" stroke="#F87171"></circle></svg><b><span id="dash-sentiment-center-val">—</span><small>reviews</small></b></div><div><p><i class="dot green"></i> Positive　　<b id="dash-sentiment-positive">—</b></p><p><i class="dot orange"></i> Neutral　　<b id="dash-sentiment-neutral">—</b></p><p><i class="dot red"></i> Negative　 <b id="dash-sentiment-negative">—</b></p></div></div></article>
       </section>
       <section class="mid-row">
-        <article class="panel critical"><p class="alarm">▲　Critical issue detected</p><span class="critical-tag">♙　 POSSIBLE CRITICAL ISSUE</span><h2>Multiplayer disconnects</h2><p>247 reviews <b class="negative">+84%</b> vs last week</p><div class="platform-chips"><span>●　Steam　182</span><span>♧　Xbox　43</span><span>♧　PlayStation　22</span></div><div class="date-data"><span>First reported<br><b>Aug 12</b></span><span>Last reported<br><b>Aug 13</b></span></div><h3>AI summary</h3><p class="summary">Most reports concern disconnections from multiplayer matches after roughly 5-10 minutes. The issue increased significantly after version 2.1.</p><div class="panel-actions"><button>View full issue</button><button class="orange">♙　Create ticket　⌁</button></div></article>
-        <article class="panel update"><div class="panel-title"><h2>Update analysis</h2><button>Version 2.1　⌄</button></div><div class="chart"><span class="axis a100">100%</span><span class="axis a75">75%</span><span class="axis a50">50%</span><span class="axis a25">25%</span><div class="before">Before patch 2.1<br><b>68%</b></div><div class="after">After patch 2.1<br><b>84%</b></div><div class="line orange-line"></div><div class="line green-line"></div></div><div class="insight">♧　 <b>Update 2.1 improved player sentiment by 16%.</b><br><span>　　Crash reports decreased by 73%.</span></div><a href="#">View full analysis　→</a></article>
-        <article class="panel recent"><div class="panel-title"><h2>Recent reviews</h2><a href="#">View all</a></div><div id="recent-reviews"></div><a href="#">View all reviews　→</a></article>
+        <article class="panel critical" id="dash-critical">
+          <p id="dash-critical-caricamento" style="color:var(--muted);font-size:12px">Loading…</p>
+          <div id="dash-critical-corpo" hidden>
+            <p class="alarm">▲　Critical issue detected</p>
+            <span class="critical-tag">♙　 POSSIBLE CRITICAL ISSUE</span>
+            <h2 id="dash-critical-nome"></h2>
+            <p id="dash-critical-conteggio"></p>
+            <div class="platform-chips" id="dash-critical-piattaforme"></div>
+            <div class="date-data"><span>First reported<br><b id="dash-critical-primo">—</b></span><span>Last reported<br><b id="dash-critical-ultimo">—</b></span></div>
+            <h3>What reviewers are saying</h3>
+            <p class="summary" id="dash-critical-esempio"></p>
+            <div class="panel-actions"><a href="issue-detection.html">View full issue　→</a></div>
+          </div>
+          <div id="dash-critical-vuoto" hidden>
+            <p class="alarm" style="color:var(--green)">✓　No critical issues right now</p>
+            <p style="color:var(--muted);font-size:11px;margin-top:8px">We'll flag it here the moment AI detects a high-severity pattern in your reviews.</p>
+          </div>
+        </article>
+        <article class="panel update"><div class="panel-title"><h2>Update analysis</h2></div><div class="empty-note">Update analysis isn't available yet — GameFollow doesn't track which game version each review belongs to. <a href="analisi.html">Learn more　→</a></div></article>
+        <article class="panel recent"><div class="panel-title"><h2>Recent reviews</h2><a href="recensioni.html">View all</a></div><div id="recent-reviews"></div><a href="recensioni.html">View all reviews　→</a></article>
       </section>
       <section class="bottom-row">
-        <article class="panel competitors"><h2>Competitor comparison <span>PRO</span></h2><table><thead><tr><th>Issue</th><th>Your game</th><th>Competitor A</th><th>Competitor B</th><th>Competitor C</th></tr></thead><tbody><tr><td>Performance</td><td><b>6%</b><i class="bar b1"></i>18%</td><td><i class="bar gray"></i>9%</td><td><i class="bar gray"></i>12%</td><td><i class="bar gray"></i>14%</td></tr><tr><td>Multiplayer</td><td><b>21%</b><i class="bar b2"></i>21%</td><td><i class="bar gray"></i>14%</td><td><i class="bar gray"></i>18%</td><td><i class="bar gray"></i>13%</td></tr><tr><td>Graphics</td><td><b>4%</b><i class="bar b3"></i>4%</td><td><i class="bar gray"></i>8%</td><td><i class="bar gray"></i>6%</td><td><i class="bar gray"></i>5%</td></tr><tr><td>Controls</td><td><b>1%</b><i class="bar b4"></i>12%</td><td><i class="bar gray"></i>7%</td><td><i class="bar gray"></i>11%</td><td><i class="bar gray"></i>9%</td></tr></tbody></table></article>
-        <article class="panel automation"><h2>Reply automation</h2><div class="automation-data"><div class="mini-donut"><b>67%</b></div><div><p><b>Replies<br>handled by AI</b><small>8,421 / 12,482 reviews</small></p></div><div class="legend"><p><i class="dot green"></i> Auto reply　 5,719 (45%)</p><p><i class="dot orange"></i> Awaiting approval　2,702 (22%)</p><p><i class="dot red"></i> Human only　 2,061 (16%)</p></div></div><a href="#">View automation settings　→</a></article>
+        <article class="panel competitors"><h2>Competitor comparison <span>PRO</span></h2><div class="empty-note">Competitor comparison isn't available yet — GameFollow doesn't have a data source for other studios' reviews. <a href="competitor.html">Learn more　→</a></div></article>
+        <article class="panel automation"><h2>Reply status</h2><div class="automation-data"><div class="ring-donut" id="dash-risposte-donut"><svg viewBox="0 0 64 64"><circle class="donut-ring donut-bg" cx="32" cy="32" r="26"></circle><circle class="donut-ring donut-seg" id="dash-risposte-seg" cx="32" cy="32" r="26" stroke="#22C55E"></circle></svg><b id="dash-risposte-pct">—</b></div><div><p><b>Reviews with<br>a published reply</b><small id="dash-risposte-frazione">—</small></p></div><div class="legend"><p><i class="dot green"></i> Published　 <b id="dash-risposte-pubblicata">—</b></p><p><i class="dot orange"></i> Awaiting approval　<b id="dash-risposte-approvare">—</b></p><p><i class="dot" style="background:#374260"></i> Not yet drafted　<b id="dash-risposte-generare">—</b></p></div></div><a href="risposte.html">View all replies　→</a></article>
       </section>
     </section>
   </main>
-  <script src="js/api.js"></script>
+  <dialog id="modale-aggiungi-gioco" style="border:1px solid var(--line);border-radius:12px;padding:0;max-width:380px;width:90%">
+  <form method="dialog" style="padding:22px">
+    <h2 style="margin:0 0 6px;font-size:16px">Add a game</h2>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 16px">Add another game to follow with GameFollow. You can switch between your games any time from the menu at the top.</p>
+    <div class="field">
+      <label for="aggiungi-gioco-nome">Game name</label>
+      <input id="aggiungi-gioco-nome" type="text" autocomplete="off" placeholder="e.g. Void Horizon 2" maxlength="80">
+    </div>
+    <p id="aggiungi-gioco-errore" style="color:var(--red);font-size:12px;display:none;margin:8px 0 0"></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button type="button" id="aggiungi-gioco-annulla">Cancel</button>
+      <button type="button" id="aggiungi-gioco-salva" style="background:#FF9D00;color:#fff;border-color:#FF9D00">Add game</button>
+    </div>
+  </form>
+</dialog>
+<script src="js/api.js"></script>
   <script src="js/vendor/chart.umd.min.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/giochi.js"></script>
   <script src="js/cookie-consent.js" defer></script>
 </body>
 </html>

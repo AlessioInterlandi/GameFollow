@@ -21,12 +21,25 @@ import * as google from '../services/google.js';
 import * as n8n from '../services/n8n.js';
 import * as email from '../services/email.js';
 import { richiedeLogin } from '../middleware/auth.js';
+import { richiedeGiocoAttivo } from '../middleware/gioco.js';
+import { richiedeRuolo } from '../middleware/ruolo.js';
 import { verificaLimite } from '../middleware/piano.js';
 import { pianoEffettivo } from '../piani.js';
 import { jobQueue } from '../services/queue.js';
 
 const router = Router();
-router.use(richiedeLogin);
+// richiedeGiocoAttivo DOPO richiedeLogin: ogni recensione appartiene a un
+// gioco, e "quale gioco" per questa richiesta viene solo dalla sessione
+// (req.gameId), mai da query/body/params — stesso principio di org_id.
+router.use(richiedeLogin, richiedeGiocoAttivo);
+
+// Scrittura riservata a owner/editor (un viewer legge tutto, non scrive
+// nulla — vedi middleware/ruolo.js). Passata a mano a ogni route che
+// scrive, non con un .use() a livello di router: le GET devono restare
+// aperte a tutti i ruoli, ed elencarla esplicitamente route per route
+// evita che l'ordine in cui sono dichiarate le route in questo file
+// diventi silenziosamente rilevante per la sicurezza.
+const scrivibileDa = richiedeRuolo('owner', 'editor');
 
 function idNonValido(res, id) {
   if (Number.isInteger(id)) return false;
@@ -36,16 +49,16 @@ function idNonValido(res, id) {
 
 router.get('/', async (req, res) => {
   const { stato } = req.query;
-  const recensioni = await db.listReviews(req.orgId, { status: typeof stato === 'string' ? stato : undefined });
+  const recensioni = await db.listReviews(req.orgId, req.gameId, { status: typeof stato === 'string' ? stato : undefined });
   res.json(recensioni);
 });
 
 router.get('/stats', async (req, res) => {
-  res.json(await db.stats(req.orgId));
+  res.json(await db.stats(req.orgId, req.gameId));
 });
 
-router.post('/sync', async (req, res) => {
-  const { orgId } = req;
+router.post('/sync', scrivibileDa, async (req, res) => {
+  const { orgId, gameId } = req;
 
   // Il limite recensioni_mese esiste per contenere il costo delle chiamate
   // AI/di sync, non per punire chi lo raggiunge: bloccarlo qui, PRIMA di
@@ -61,17 +74,17 @@ router.post('/sync', async (req, res) => {
     });
   }
 
-  jobQueue.accoda(`sync-recensioni:${orgId}`, async () => {
-    const integrazioni = await db.listIntegrations(orgId);
+  jobQueue.accoda(`sync-recensioni:${orgId}:${gameId}`, async () => {
+    const integrazioni = await db.listIntegrations(orgId, gameId);
     const piattaforme = integrazioni
       .filter((r) => r.connected && ['steam', 'google_play', 'app_store', 'xbox'].includes(r.provider))
       .map((r) => r.provider);
 
     const nuove = await google.scaricaNuoveRecensioni(10, piattaforme);
     for (const recensione of nuove) {
-      await db.insertReview(orgId, recensione);
+      await db.insertReview(orgId, gameId, recensione);
     }
-    await n8n.lanciaWorkflow('nuove-recensioni', { orgId, quante: nuove.length });
+    await n8n.lanciaWorkflow('nuove-recensioni', { orgId, gameId, quante: nuove.length });
   });
 
   res.status(202).json({ accodato: true });
@@ -83,7 +96,7 @@ router.post('/sync', async (req, res) => {
 // recensioni (es. l'App Store le dà col contagocce). Conta sullo stesso
 // limite recensioni_mese del sync: entra comunque nello stesso conteggio
 // di "quante recensioni processiamo questo mese".
-router.post('/manuale', async (req, res) => {
+router.post('/manuale', scrivibileDa, async (req, res) => {
   const { orgId } = req;
   const { autore, rating, testo, piattaforma } = req.body ?? {};
 
@@ -108,7 +121,7 @@ router.post('/manuale', async (req, res) => {
     });
   }
 
-  const recensione = await db.insertReview(orgId, {
+  const recensione = await db.insertReview(orgId, req.gameId, {
     author: (typeof autore === 'string' && autore.trim()) || 'Manual entry',
     rating: ratingNumero,
     text: testo.trim(),
@@ -119,28 +132,28 @@ router.post('/manuale', async (req, res) => {
   res.status(201).json(recensione);
 });
 
-router.post('/:id/genera', async (req, res) => {
+router.post('/:id/genera', scrivibileDa, async (req, res) => {
   const id = Number(req.params.id);
   if (idNonValido(res, id)) return;
 
-  const recensione = await db.getReview(req.orgId, id);
+  const recensione = await db.getReview(req.orgId, req.gameId, id);
   if (!recensione) return res.status(404).json({ errore: 'Recensione non trovata.' });
 
   // La recensione piu' economica da gestire e' quella che non chiede
   // niente al modello: 5 stelle senza testo merita un template, non
   // una chiamata a pagamento.
   if (recensione.rating === 5 && !recensione.text) {
-    await db.updateReview(req.orgId, id, {
+    await db.updateReview(req.orgId, req.gameId, id, {
       draft_reply: 'Thank you so much for the 5 stars!',
       status: 'da_approvare',
     });
     return res.json({ accodato: false, motivo: 'template' });
   }
 
-  const { orgId } = req;
+  const { orgId, gameId } = req;
   const emailProprietario = req.session.email;
 
-  jobQueue.accoda(`genera-risposta:${orgId}:${id}`, async () => {
+  jobQueue.accoda(`genera-risposta:${orgId}:${gameId}:${id}`, async () => {
     const org = await db.findOrgById(orgId);
     const bozza = await ai.generaRisposta(recensione, org?.tone);
     const rischio = ai.classificaRischio(recensione);
@@ -156,10 +169,10 @@ router.post('/:id/genera', async (req, res) => {
 
     if (autoAttivo && rischio === 'auto') {
       await google.pubblicaRisposta(id, bozza);
-      await db.updateReview(orgId, id, { draft_reply: bozza, published_reply: bozza, status: 'pubblicata' });
+      await db.updateReview(orgId, gameId, id, { draft_reply: bozza, published_reply: bozza, status: 'pubblicata' });
 
       if (emailProprietario) {
-        jobQueue.accoda(`email-auto-risposta:${orgId}:${id}`, () =>
+        jobQueue.accoda(`email-auto-risposta:${orgId}:${gameId}:${id}`, () =>
           email.inviaEmail(
             emailProprietario,
             'Risposta pubblicata automaticamente',
@@ -168,14 +181,14 @@ router.post('/:id/genera', async (req, res) => {
         );
       }
     } else {
-      await db.updateReview(orgId, id, { draft_reply: bozza, status: 'da_approvare' });
+      await db.updateReview(orgId, gameId, id, { draft_reply: bozza, status: 'da_approvare' });
     }
   });
 
   res.status(202).json({ accodato: true });
 });
 
-router.put('/:id/bozza', async (req, res) => {
+router.put('/:id/bozza', scrivibileDa, async (req, res) => {
   const id = Number(req.params.id);
   if (idNonValido(res, id)) return;
 
@@ -184,22 +197,22 @@ router.put('/:id/bozza', async (req, res) => {
     return res.status(400).json({ errore: 'Testo mancante.' });
   }
 
-  const aggiornata = await db.updateReview(req.orgId, id, { draft_reply: testo });
+  const aggiornata = await db.updateReview(req.orgId, req.gameId, id, { draft_reply: testo });
   if (!aggiornata) return res.status(404).json({ errore: 'Recensione non trovata.' });
 
   res.json(aggiornata);
 });
 
-router.post('/:id/approva', async (req, res) => {
+router.post('/:id/approva', scrivibileDa, async (req, res) => {
   const id = Number(req.params.id);
   if (idNonValido(res, id)) return;
 
-  const recensione = await db.getReview(req.orgId, id);
+  const recensione = await db.getReview(req.orgId, req.gameId, id);
   if (!recensione) return res.status(404).json({ errore: 'Recensione non trovata.' });
   if (!recensione.draft_reply) return res.status(400).json({ errore: 'Nessuna bozza da pubblicare.' });
 
   await google.pubblicaRisposta(id, recensione.draft_reply);
-  const aggiornata = await db.updateReview(req.orgId, id, {
+  const aggiornata = await db.updateReview(req.orgId, req.gameId, id, {
     published_reply: recensione.draft_reply,
     status: 'pubblicata',
   });
@@ -207,11 +220,11 @@ router.post('/:id/approva', async (req, res) => {
   res.json(aggiornata);
 });
 
-router.post('/:id/ignora', async (req, res) => {
+router.post('/:id/ignora', scrivibileDa, async (req, res) => {
   const id = Number(req.params.id);
   if (idNonValido(res, id)) return;
 
-  const aggiornata = await db.updateReview(req.orgId, id, { status: 'ignorata' });
+  const aggiornata = await db.updateReview(req.orgId, req.gameId, id, { status: 'ignorata' });
   if (!aggiornata) return res.status(404).json({ errore: 'Recensione non trovata.' });
 
   res.json(aggiornata);
